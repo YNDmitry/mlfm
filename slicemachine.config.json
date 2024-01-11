@@ -1,0 +1,6 @@
+{
+  "repositoryName": "wlfm",
+  "adapter": "@slicemachine/adapter-nuxt",
+  "libraries": ["./src/slices"],
+  "localSliceSimulatorURL": "http://localhost:3000/slice-simulator"
+}

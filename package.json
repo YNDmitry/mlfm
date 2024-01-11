@@ -7,11 +7,23 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "slicemachine": "start-slicemachine"
   },
   "devDependencies": {
+    "@nuxt/image": "latest",
+    "@nuxtjs/prismic": "^3.0.0",
+    "@nuxtjs/robots": "latest",
+    "@pinia/nuxt": "latest",
+    "@slicemachine/adapter-nuxt": "latest",
+    "@vueuse/nuxt": "latest",
     "nuxt": "^3.9.0",
+    "nuxt-simple-sitemap": "latest",
+    "slice-machine-ui": "latest",
     "vue": "^3.4.6",
     "vue-router": "^4.2.5"
+  },
+  "dependencies": {
+    "@nuxtjs/tailwindcss": "^6.10.4"
   }
 }
