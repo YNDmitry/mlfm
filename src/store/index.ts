@@ -1,8 +1,7 @@
 export const useWebsiteStore = defineStore('websiteStore', {
-  state: () => ({
-    name: '',
-    description: ''
-  }),
-  actions: {
-  }
+	state: () => ({
+		name: '',
+		description: '',
+	}),
+	actions: {},
 })

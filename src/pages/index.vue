@@ -1,11 +1,11 @@
 <script setup lang="ts">
-definePageMeta({
-  layout: 'default'
-})
+	definePageMeta({
+		layout: 'default',
+	})
 </script>
 
 <template>
-  <div>
-    <h2>Gff</h2>
-  </div>
+	<div>
+		<h2>homepage</h2>
+	</div>
 </template>
