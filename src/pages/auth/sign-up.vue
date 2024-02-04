@@ -1,8 +1,7 @@
 <script setup lang="ts">
+	import {object, string, ref, setLocale} from 'yup'
 	// const {login} = useDirectusAuth()
 
-	// const email = ref()
-	// const password = ref()
 	// const onSubmit = async () => {
 	// 	try {
 	// 		await login({email: email.value, password: password.value})
@@ -10,59 +9,90 @@
 	// 		console.log(e)
 	// 	}
 	// }
+	const schema = object({
+		firstName: string().required().min(4).max(50).label('Имя'),
+		lastName: string().required().min(4).max(50).label('Фамилия'),
+		email: string().required().email().label('Email'),
+		password: string().required().min(6).max(200).label('Пароль'),
+		passwordConfirm: string()
+			.required()
+			.min(6)
+			.oneOf([ref('password')])
+			.label('Подтверждение пароля'),
+	})
+
+	setLocale({
+		mixed: {
+			default: 'обязательное поле',
+			required: 'Обязательное поле',
+		},
+	})
+
+	const {handleSubmit} = useForm({
+		validationSchema: schema,
+	})
+
+	const onSubmit = () =>
+		handleSubmit((values) => {
+			console.log(values)
+
+			alert(JSON.stringify(values, null, 2))
+		})
 </script>
 
 <template>
-	<!-- <form @submit.prevent="onSubmit()">
-		<input v-model.trim="email" type="email" name="email" placeholder="email" />
-		<input
-			v-model.trim="password"
-			type="password"
-			name="password"
-			placeholder="password"
-		/>
-		<button type="submit">Log in</button>
-	</form> -->
 	<AuthForm title="Регистрация">
-		<form @submit.prevent>
-			<TheInput
-				:label="'Имя'"
-				:isRequired="true"
-				:inputPlaceholder="'Иван'"
-				:inputType="'text'"
-			/>
+		<Form @submit="onSubmit" :validationSchema="schema">
+			<div class="grid grid-cols-2 gap-2">
+				<TheInput
+					:label="'Имя'"
+					:isRequired="true"
+					:inputPlaceholder="'Иван'"
+					:inputType="'text'"
+					:inputName="'firstName'"
+				/>
+				<TheInput
+					:label="'Фамилия'"
+					:isRequired="true"
+					:inputPlaceholder="'Иванов'"
+					:inputType="'text'"
+					:inputName="'lastName'"
+				/>
+			</div>
 			<TheInput
 				:label="'Email'"
 				:isRequired="true"
 				:inputPlaceholder="'email@gmail.com'"
 				:inputType="'email'"
-				class="mt-[1.5rem]"
+				:inputName="'email'"
+				class="mt-6"
 			/>
 			<TheInput
 				:label="'Пароль'"
 				:isRequired="true"
 				:inputPlaceholder="'*******'"
 				:inputType="'password'"
-				class="mt-[1.5rem]"
+				:inputName="'password'"
+				class="mt-6"
 			/>
 			<TheInput
 				:label="'Повторите пароль'"
 				:isRequired="true"
 				:inputPlaceholder="'*******'"
 				:inputType="'password'"
-				class="mt-[1.5rem]"
+				:inputName="'passwordConfirm'"
+				class="mt-6"
 			/>
-			<div class="mt-[1.5rem] w-full">
-				<NuxtLink class="button w-full">Войти</NuxtLink>
-				<NuxtLink class="button-secondary w-full mt-[1.5rem]"
-					>Войти как гость</NuxtLink
+			<div class="mt-6 w-full">
+				<UIButton :title="'Зарегистрироваться'" tag="button"></UIButton>
+				<div
+					class="text-[1rem] leading-[150%] font-light text-center block mt-6"
 				>
-				<NuxtLink
-					class="text-[1rem] leading-[150%] font-light underline text-center block mt-[1.5rem]"
-					>Забыли пароль?</NuxtLink
-				>
+					Уже есть аккаунт?
+					<NuxtLink to="/auth/log-in" class="underline">Войти</NuxtLink>
+				</div>
 			</div>
-		</form>
+		</Form>
 	</AuthForm>
 </template>
 

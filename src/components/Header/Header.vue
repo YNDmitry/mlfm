@@ -27,11 +27,12 @@
 	]
 </script>
 <template>
-	<header class="sticky top-0">
-		<div class="relative px-[1.25rem] py-5 flex items-center justify-center">
+	<header class="sticky top-0 z-50">
+		<div class="relative px-5 py-5 flex items-center justify-center bg-white">
 			<div>
-				<div>
+				<div class="flex items-center gap-2">
 					<IconsSearch />
+					<span class="text-[0.625rem]">Поиск</span>
 				</div>
 			</div>
 			<div class="absolute left-auto right-auto">
@@ -49,7 +50,7 @@
 				</NuxtLink>
 			</div>
 		</div>
-		<div class="px-[1.25rem] py-4 bg-black">
+		<div class="px-5 py-4 bg-black">
 			<div class="flex items-center justify-center gap-4">
 				<NuxtLink
 					v-for="link in links"

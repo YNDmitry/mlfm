@@ -1,14 +1,11 @@
+a {
+	@apply cursor-pointer;
+}
+
 h1 {
 	@apply text-[3.5rem] leading-[110%] text-black;
 }
 
 .button {
 	@apply text-white py-3 px-4 bg-black inline-block text-center font-light text-[1rem];
-}
-.button-secondary {
-	@apply text-black py-3 px-4 bg-white inline-block text-center font-light text-[1rem] border;
-}
-
-a {
-	@apply cursor-pointer;
 }

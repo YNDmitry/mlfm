@@ -18,6 +18,8 @@
     "@nuxtjs/google-fonts": "^3.1.3",
     "@nuxtjs/robots": "latest",
     "@pinia/nuxt": "latest",
+    "@types/yup": "^0.32.0",
+    "@vee-validate/yup": "^4.12.5",
     "@vueuse/nuxt": "latest",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
@@ -25,13 +27,16 @@
     "nuxt": "^3.9.0",
     "nuxt-directus": "latest",
     "nuxt-link-checker": "^3.0.0-rc.6",
+    "nuxt-primevue": "^0.2.2",
     "nuxt-simple-sitemap": "latest",
     "prettier": "^3.2.4",
     "vue": "^3.4.6",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.2.5",
+    "yup": "^1.3.3"
   },
   "dependencies": {
     "@nuxtjs/tailwindcss": "^6.10.4",
+    "@vee-validate/nuxt": "^4.12.5",
     "nuxt-graphql-client": "^0.2.33"
   }
 }

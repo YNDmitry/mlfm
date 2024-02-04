@@ -21,6 +21,8 @@ export default defineNuxtConfig({
 		'nuxt-directus',
 		'nuxt-link-checker',
 		'@nuxtjs/google-fonts',
+		'@vee-validate/nuxt',
+		'nuxt-primevue',
 	],
 
 	plugins: ['./src/plugins/preview.client.ts'],
@@ -36,7 +38,12 @@ export default defineNuxtConfig({
 				wght: [300, 400, 500, 700],
 			},
 		},
-		display: 'swap',
+	},
+
+	primevue: {
+		components: {
+			exclude: ['Tooltip', 'Toast'],
+		},
 	},
 
 	runtimeConfig: {
