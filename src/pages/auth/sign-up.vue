@@ -12,7 +12,7 @@
 	const schema = object({
 		firstName: string().required().min(4).max(50).label('Имя'),
 		lastName: string().required().min(4).max(50).label('Фамилия'),
-		email: string().required().email().label('Email'),
+		email: string().required().email().label('Электронная почта'),
 		password: string().required().min(6).max(200).label('Пароль'),
 		passwordConfirm: string()
 			.required()
@@ -60,7 +60,7 @@
 				/>
 			</div>
 			<TheInput
-				:label="'Email'"
+				:label="'Электронная почта'"
 				:isRequired="true"
 				:inputPlaceholder="'email@gmail.com'"
 				:inputType="'email'"
@@ -84,9 +84,13 @@
 				class="mt-6"
 			/>
 			<div class="mt-6 w-full">
-				<UIButton :title="'Зарегистрироваться'" tag="button"></UIButton>
+				<UIButton
+					:title="'Зарегистрироваться'"
+					tag="button"
+					type="submit"
+				></UIButton>
 				<div
-					class="text-[1rem] leading-[150%] font-light text-center block mt-6"
+					class="mt-6 block text-center text-[1rem] font-light leading-[150%]"
 				>
 					Уже есть аккаунт?
 					<NuxtLink to="/auth/log-in" class="underline">Войти</NuxtLink>

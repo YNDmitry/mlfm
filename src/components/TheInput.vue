@@ -35,7 +35,7 @@
 	)
 </script>
 <template>
-	<label :for="label" class="flex flex-col relative">
+	<label :for="label" class="relative flex flex-col">
 		<span class="font-light">{{ label }}</span>
 		<input
 			@change="handleChange"
@@ -49,11 +49,11 @@
 				'border-[green]': meta.touched && meta.valid,
 				'!border-[red]': meta.touched && !meta.valid,
 			}"
-			class="mt-2 min-h-12 border focus:border-black transition-all px-4 outline-none font-light"
+			class="mt-2 min-h-12 border px-4 font-light outline-none transition-all focus:border-black"
 		/>
 		<span
 			v-if="errorMessage && meta.touched"
-			class="text-[red] text-[0.625rem] mt-2"
+			class="mt-2 text-[0.625rem] text-[red]"
 			>{{ errorMessage }}</span
 		>
 	</label>

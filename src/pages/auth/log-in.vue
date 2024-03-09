@@ -27,12 +27,12 @@
 			<div class="mt-6 w-full">
 				<button type="submit" class="button w-full">Войти</button>
 				<NuxtLink
-					class="text-[1rem] leading-[150%] font-light underline text-center block mt-6"
+					class="mt-6 block text-center text-[1rem] font-light leading-[150%] underline"
 				>
 					Забыли пароль?
 				</NuxtLink>
 				<div
-					class="text-[1rem] leading-[150%] font-light text-center block mt-6"
+					class="mt-6 block text-center text-[1rem] font-light leading-[150%]"
 				>
 					Нет аккаунта?
 					<NuxtLink to="/auth/sign-up" class="underline"

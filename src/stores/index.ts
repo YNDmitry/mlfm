@@ -2,6 +2,11 @@ export const useWebsiteStore = defineStore('websiteStore', {
 	state: () => ({
 		name: '',
 		description: '',
+		isVisibleCart: false,
 	}),
-	actions: {},
+	actions: {
+		handleVisibleCart() {
+			this.isVisibleCart = true
+		},
+	},
 })

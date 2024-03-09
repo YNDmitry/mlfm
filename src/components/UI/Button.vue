@@ -24,7 +24,7 @@
 	<component
 		:is="tag"
 		:type="type"
-		class="text-white py-3 px-4 bg-black inline-block text-center font-light text-[1rem] w-full"
+		class="inline-block w-full bg-black px-4 py-3 text-center text-[1rem] font-light text-white"
 	>
 		{{ title }}
 	</component>

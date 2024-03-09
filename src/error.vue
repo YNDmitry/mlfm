@@ -19,8 +19,8 @@
 			<div class="container">
 				<div class="py-12 text-center">
 					<h1>{{ error?.statusCode }}</h1>
-					<p class="mt-2 mb-6">{{ message }}</p>
-					<div class="max-w-96 w-full mx-auto">
+					<p class="mb-6 mt-2">{{ message }}</p>
+					<div class="mx-auto w-full max-w-96">
 						<UIButton
 							@click="handleError"
 							title="Вернуться на главную"

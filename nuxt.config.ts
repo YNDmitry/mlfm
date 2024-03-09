@@ -9,7 +9,10 @@ export default defineNuxtConfig({
 		layoutTransition: {name: 'layout', mode: 'out-in'},
 	},
 
-	css: ['~/assets/css/global.css'],
+	css: [
+		'~/assets/css/global.css',
+		'primevue/resources/themes/aura-light-green/theme.css',
+	],
 
 	modules: [
 		'@nuxtjs/tailwindcss',
@@ -21,9 +24,17 @@ export default defineNuxtConfig({
 		'nuxt-directus',
 		'nuxt-link-checker',
 		'@nuxtjs/google-fonts',
-		'@vee-validate/nuxt',
 		'nuxt-primevue',
+		'nuxt-swiper',
+		'nuxt-lenis',
+		'@formkit/auto-animate',
 	],
+
+	image: {
+		quality: 80,
+		format: ['webp'],
+		densities: [2, 1],
+	},
 
 	plugins: ['./src/plugins/preview.client.ts'],
 
@@ -35,20 +46,17 @@ export default defineNuxtConfig({
 	googleFonts: {
 		families: {
 			Unbounded: {
-				wght: [300, 400, 500, 700],
+				wght: [300, 400, 500, 600, 700],
+			},
+			Montserrat: {
+				wght: [300, 400, 500, 600, 700],
 			},
 		},
 	},
 
 	primevue: {
 		components: {
-			exclude: ['Tooltip', 'Toast'],
-		},
-	},
-
-	runtimeConfig: {
-		public: {
-			GQL_HOST: process.env.GQL_HOST,
+			include: ['Tooltip', 'Toast', 'ScrollPanel', 'Sidebar'],
 		},
 	},
 })

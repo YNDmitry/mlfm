@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 	const links = [
 		{
 			title: 'Главная',
@@ -13,10 +13,6 @@
 			href: '/gift-cards',
 		},
 		{
-			title: 'Доставка',
-			href: '/delivery',
-		},
-		{
 			title: 'Скидки',
 			href: '/discounts',
 		},
@@ -25,10 +21,12 @@
 			href: '/contacts',
 		},
 	]
+
+	const websiteStore = useWebsiteStore()
 </script>
 <template>
 	<header class="sticky top-0 z-50">
-		<div class="relative px-5 py-5 flex items-center justify-center bg-white">
+		<div class="relative flex items-center justify-center bg-primary px-5 py-5">
 			<div>
 				<div class="flex items-center gap-2">
 					<IconsSearch />
@@ -38,29 +36,30 @@
 			<div class="absolute left-auto right-auto">
 				<HeaderLogo />
 			</div>
-			<div class="flex items-center gap-5 ml-auto">
-				<div>
+			<div class="ml-auto flex items-center gap-5">
+				<NuxtLink>
 					<IconsHearth />
-				</div>
-				<div>
+				</NuxtLink>
+				<button @click="websiteStore.handleVisibleCart()">
 					<IconsCart />
-				</div>
+				</button>
 				<NuxtLink to="/profile">
 					<IconsProfile />
 				</NuxtLink>
 			</div>
 		</div>
-		<div class="px-5 py-4 bg-black">
+		<div class="bg-black px-5 py-4">
 			<div class="flex items-center justify-center gap-4">
 				<NuxtLink
 					v-for="link in links"
 					:key="link.href"
 					:to="link.href"
-					class="text-[0.625rem] font-medium text-white uppercase"
+					class="text-[0.625rem] font-medium uppercase text-primary"
 				>
 					{{ link.title }}
 				</NuxtLink>
 			</div>
 		</div>
+		<PopupsTheCart />
 	</header>
 </template>
