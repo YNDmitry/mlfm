@@ -1,5 +1,5 @@
 <template>
-	<article class="relative">
+	<NuxtLink to="/catalog" class="relative">
 		<NuxtPicture
 			class="w-full object-cover object-left max-tablet:aspect-[136/165]"
 			src="/img/newItems/7.png"
@@ -21,5 +21,5 @@
 				купить
 			</button>
 		</div>
-	</article>
+	</NuxtLink>
 </template>

@@ -1,12 +1,20 @@
 export const useWebsiteStore = defineStore('websiteStore', {
 	state: () => ({
-		name: '',
-		description: '',
 		isVisibleCart: false,
+		siteSettings: {
+			meta_title: '',
+			meta_description: '',
+			meta_thumbnail: '',
+			current_phone_number: '',
+			general_message: '',
+		},
 	}),
 	actions: {
+		/**
+		 * Toggles the visibility of the cart popup.
+		 */
 		handleVisibleCart() {
-			this.isVisibleCart = true
+			this.isVisibleCart = !this.isVisibleCart
 		},
 	},
 })

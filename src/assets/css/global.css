@@ -128,7 +128,3 @@ input[type='number'] {
 	display: none !important;
 }
 /* /Для карты */
-
-.router-link-active.router-link-exact-active {
-	@apply text-red;
-}

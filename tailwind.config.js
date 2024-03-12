@@ -24,12 +24,13 @@ module.exports = {
 		gridTemplateColumns: {
 			newItems: "repeat(4, 1fr)",
 			buyImage: "1.35fr 0.55fr",
-			buyImageMobile: "1fr 100px",
+			buyImageMobile: "1fr",
 			catalogItem: "1fr 410px",
 			catalog: "repeat(3, 1fr)",
 			aside: "275px 1fr",
 			delivery: "49% 51%",
 			footer: 'repeat(4, 1fr)',
+			giftCart: "618px 1fr",
 		},
 		container: {
 			center: true,
@@ -53,7 +54,6 @@ module.exports = {
 		screens: {
 			mobile: '460px',
 			tablet: '768px',
-
 			laptop: '1024px',
 		},
 	},

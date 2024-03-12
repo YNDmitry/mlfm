@@ -1,3 +1,6 @@
+<script setup lang="ts">
+	const isMobile = useMediaQuery('(max-width: 479px)')
+</script>
 <template>
 	<div>
 		<section class="pt-[3.75rem]">
@@ -436,116 +439,7 @@
 
 						<!-- Раздел с карточками 1 -->
 						<div class="grid grid-cols-catalog gap-[1.875rem] pb-[3.75rem]">
-							<article>
-								<div class="relative">
-									<NuxtPicture
-										class="w-full max-tablet:aspect-[136/165]"
-										src="/img/newItems/1@2x.png"
-										width="300"
-										height="410"
-										loading="lazy"
-										decoding="auto"
-									/>
-
-									<svg
-										class="absolute right-[0.5rem] top-[0.625rem]"
-										width="18.430664"
-										height="16.285156"
-										viewBox="0 0 18.4307 16.2852"
-										fill="none"
-									>
-										<path
-											id="Vector 15"
-											d="M2.24023 9.50586C0.166016 7.55664 -0.0859375 4.34961 1.65918 2.10156C3.54492 -0.330078 7.33105 0.078125 8.65625 2.85547C8.84375 3.24805 9.40234 3.24805 9.58887 2.85547C10.9141 0.078125 14.7002 -0.330078 16.5869 2.10156L16.8828 2.48438C18.46 4.51562 18.2324 7.41406 16.3574 9.17578L9.80078 15.334L9.12988 15.7852L9.11523 15.7852L8.44531 15.334L2.24023 9.50586Z"
-											stroke="#222222"
-											stroke-opacity="1.000000"
-											stroke-width="1.000000"
-										/>
-									</svg>
-								</div>
-
-								<div
-									class="flex flex-col gap-[0.5rem] pt-5 text-[0.875rem] font-medium max-tablet:pt-[0.25rem] max-tablet:text-[0.625rem]"
-								>
-									<p>Жакет Red</p>
-
-									<span>32,000 ₽</span>
-								</div>
-							</article>
-
-							<article>
-								<div class="relative">
-									<NuxtPicture
-										class="w-full max-tablet:aspect-[136/165]"
-										src="/img/newItems/2@2x.png"
-										width="300"
-										height="410"
-										loading="lazy"
-										decoding="auto"
-									/>
-
-									<svg
-										class="absolute right-[0.5rem] top-[0.625rem]"
-										width="18.430664"
-										height="16.285156"
-										viewBox="0 0 18.4307 16.2852"
-										fill="none"
-									>
-										<path
-											id="Vector 15"
-											d="M2.24023 9.50586C0.166016 7.55664 -0.0859375 4.34961 1.65918 2.10156C3.54492 -0.330078 7.33105 0.078125 8.65625 2.85547C8.84375 3.24805 9.40234 3.24805 9.58887 2.85547C10.9141 0.078125 14.7002 -0.330078 16.5869 2.10156L16.8828 2.48438C18.46 4.51562 18.2324 7.41406 16.3574 9.17578L9.80078 15.334L9.12988 15.7852L9.11523 15.7852L8.44531 15.334L2.24023 9.50586Z"
-											stroke="#222222"
-											stroke-opacity="1.000000"
-											stroke-width="1.000000"
-										/>
-									</svg>
-								</div>
-
-								<div
-									class="flex flex-col gap-[0.5rem] pt-5 text-[0.875rem] font-medium max-tablet:pt-[0.25rem] max-tablet:text-[0.625rem]"
-								>
-									<p>Жакет Red</p>
-
-									<span>32,000 ₽</span>
-								</div>
-							</article>
-
-							<article>
-								<div class="relative">
-									<NuxtPicture
-										class="w-full max-tablet:aspect-[136/165]"
-										src="/img/newItems/3@2x.png"
-										width="300"
-										height="410"
-										loading="lazy"
-										decoding="auto"
-									/>
-
-									<svg
-										class="absolute right-[0.5rem] top-[0.625rem]"
-										width="18.430664"
-										height="16.285156"
-										viewBox="0 0 18.4307 16.2852"
-										fill="none"
-									>
-										<path
-											id="Vector 15"
-											d="M2.24023 9.50586C0.166016 7.55664 -0.0859375 4.34961 1.65918 2.10156C3.54492 -0.330078 7.33105 0.078125 8.65625 2.85547C8.84375 3.24805 9.40234 3.24805 9.58887 2.85547C10.9141 0.078125 14.7002 -0.330078 16.5869 2.10156L16.8828 2.48438C18.46 4.51562 18.2324 7.41406 16.3574 9.17578L9.80078 15.334L9.12988 15.7852L9.11523 15.7852L8.44531 15.334L2.24023 9.50586Z"
-											stroke="#222222"
-											stroke-opacity="1.000000"
-											stroke-width="1.000000"
-										/>
-									</svg>
-								</div>
-
-								<div
-									class="flex flex-col gap-[0.5rem] pt-5 text-[0.875rem] font-medium max-tablet:pt-[0.25rem] max-tablet:text-[0.625rem]"
-								>
-									<p>Жакет Red</p>
-
-									<span>32,000 ₽</span>
-								</div>
-							</article>
+							<ProductCard v-for="product in 3" :key="product" />
 						</div>
 						<!-- /Раздел с карточками 1 -->
 
@@ -567,118 +461,7 @@
 						<div
 							class="max-mobile:grid-cols-2 grid grid-cols-catalog gap-[1.875rem] pb-[3.75rem]"
 						>
-							<article>
-								<div class="relative">
-									<NuxtPicture
-										class="w-full max-tablet:aspect-[136/165]"
-										src="/img/newItems/1@2x.png"
-										width="300"
-										heihgt="410"
-										loading="lazy"
-										decoding="auto"
-									/>
-
-									<svg
-										class="absolute right-[0.5rem] top-[0.625rem]"
-										width="18.430664"
-										height="16.285156"
-										viewBox="0 0 18.4307 16.2852"
-										fill="none"
-									>
-										<path
-											id="Vector 15"
-											d="M2.24023 9.50586C0.166016 7.55664 -0.0859375 4.34961 1.65918 2.10156C3.54492 -0.330078 7.33105 0.078125 8.65625 2.85547C8.84375 3.24805 9.40234 3.24805 9.58887 2.85547C10.9141 0.078125 14.7002 -0.330078 16.5869 2.10156L16.8828 2.48438C18.46 4.51562 18.2324 7.41406 16.3574 9.17578L9.80078 15.334L9.12988 15.7852L9.11523 15.7852L8.44531 15.334L2.24023 9.50586Z"
-											stroke="#222222"
-											stroke-opacity="1.000000"
-											stroke-width="1.000000"
-										/>
-									</svg>
-								</div>
-
-								<div
-									class="flex flex-col gap-[0.5rem] pt-5 text-[0.875rem] font-medium max-tablet:pt-[0.25rem] max-tablet:text-[0.625rem]"
-								>
-									<p>Жакет Red</p>
-
-									<span>32,000 ₽</span>
-								</div>
-							</article>
-
-							<article>
-								<div class="relative">
-									<NuxtPicture
-										class="w-full max-tablet:aspect-[136/165]"
-										src="/img/newItems/2@2x.png"
-										width="300"
-										heihgt="410"
-										loading="lazy"
-										decoding="auto"
-									/>
-
-									<svg
-										class="absolute right-[0.5rem] top-[0.625rem]"
-										width="18.430664"
-										height="16.285156"
-										viewBox="0 0 18.4307 16.2852"
-										fill="none"
-									>
-										<path
-											id="Vector 15"
-											d="M2.24023 9.50586C0.166016 7.55664 -0.0859375 4.34961 1.65918 2.10156C3.54492 -0.330078 7.33105 0.078125 8.65625 2.85547C8.84375 3.24805 9.40234 3.24805 9.58887 2.85547C10.9141 0.078125 14.7002 -0.330078 16.5869 2.10156L16.8828 2.48438C18.46 4.51562 18.2324 7.41406 16.3574 9.17578L9.80078 15.334L9.12988 15.7852L9.11523 15.7852L8.44531 15.334L2.24023 9.50586Z"
-											stroke="#222222"
-											stroke-opacity="1.000000"
-											stroke-width="1.000000"
-										/>
-									</svg>
-								</div>
-
-								<div
-									class="flex flex-col gap-[0.5rem] pt-5 text-[0.875rem] font-medium max-tablet:pt-[0.25rem] max-tablet:text-[0.625rem]"
-								>
-									<p>Жакет Red</p>
-
-									<span>32,000 ₽</span>
-								</div>
-							</article>
-
-							<article>
-								<div class="relative">
-									<NuxtPicture
-										class="w-full max-tablet:aspect-[136/165]"
-										src="/img/newItems/3@2x.png"
-										width="300"
-										heihgt="410"
-										loading="lazy"
-										decoding="auto"
-									/>
-
-									<button class="group">
-										<svg
-											class="group-hover:fill-current group-hover:stroke-current absolute right-[0.5rem] top-[0.625rem] group-hover:text-red2-hover"
-											width="18.430664"
-											height="16.285156"
-											viewBox="0 0 18.4307 16.2852"
-											fill="none"
-										>
-											<path
-												class="group-hover:stroke-transparent"
-												d="M2.24023 9.50586C0.166016 7.55664 -0.0859375 4.34961 1.65918 2.10156C3.54492 -0.330078 7.33105 0.078125 8.65625 2.85547C8.84375 3.24805 9.40234 3.24805 9.58887 2.85547C10.9141 0.078125 14.7002 -0.330078 16.5869 2.10156L16.8828 2.48438C18.46 4.51562 18.2324 7.41406 16.3574 9.17578L9.80078 15.334L9.12988 15.7852L9.11523 15.7852L8.44531 15.334L2.24023 9.50586Z"
-												stroke="#222222"
-												stroke-opacity="1.000000"
-												stroke-width="1.000000"
-											/>
-										</svg>
-									</button>
-								</div>
-
-								<div
-									class="flex flex-col gap-[0.5rem] pt-5 text-[0.875rem] font-medium max-tablet:pt-[0.25rem] max-tablet:text-[0.625rem]"
-								>
-									<p>Жакет Red</p>
-
-									<span>32,000 ₽</span>
-								</div>
-							</article>
+							<ProductCard v-for="product in 3" :key="product" />
 						</div>
 						<!-- /Раздел с карточками 2 -->
 
@@ -686,122 +469,7 @@
 						<div
 							class="max-mobile:grid-cols-2 grid grid-cols-catalog gap-[1.875rem] pb-[3.75rem]"
 						>
-							<article>
-								<div class="relative">
-									<NuxtPicture
-										class="w-full max-tablet:aspect-[136/165]"
-										src="/img/newItems/1@2x.png"
-										width="300"
-										heihgt="410"
-										loading="lazy"
-										decoding="auto"
-									/>
-
-									<button class="group">
-										<svg
-											class="group-hover:fill-current group-hover:stroke-current absolute right-[0.5rem] top-[0.625rem] group-hover:text-red2-hover"
-											width="18.430664"
-											height="16.285156"
-											viewBox="0 0 18.4307 16.2852"
-											fill="none"
-										>
-											<path
-												class="group-hover:stroke-transparent"
-												d="M2.24023 9.50586C0.166016 7.55664 -0.0859375 4.34961 1.65918 2.10156C3.54492 -0.330078 7.33105 0.078125 8.65625 2.85547C8.84375 3.24805 9.40234 3.24805 9.58887 2.85547C10.9141 0.078125 14.7002 -0.330078 16.5869 2.10156L16.8828 2.48438C18.46 4.51562 18.2324 7.41406 16.3574 9.17578L9.80078 15.334L9.12988 15.7852L9.11523 15.7852L8.44531 15.334L2.24023 9.50586Z"
-												stroke="#222222"
-												stroke-opacity="1.000000"
-												stroke-width="1.000000"
-											/>
-										</svg>
-									</button>
-								</div>
-
-								<div
-									class="flex flex-col gap-[0.5rem] pt-5 text-[0.875rem] font-medium max-tablet:pt-[0.25rem] max-tablet:text-[0.625rem]"
-								>
-									<p>Жакет Red</p>
-
-									<span>32,000 ₽</span>
-								</div>
-							</article>
-
-							<article>
-								<div class="relative">
-									<NuxtPicture
-										class="w-full max-tablet:aspect-[136/165]"
-										src="/img/newItems/2@2x.png"
-										width="300"
-										heihgt="410"
-										loading="lazy"
-										decoding="auto"
-									/>
-
-									<button class="group">
-										<svg
-											class="group-hover:fill-current group-hover:stroke-current absolute right-[0.5rem] top-[0.625rem] group-hover:text-red2-hover"
-											width="18.430664"
-											height="16.285156"
-											viewBox="0 0 18.4307 16.2852"
-											fill="none"
-										>
-											<path
-												class="group-hover:stroke-transparent"
-												d="M2.24023 9.50586C0.166016 7.55664 -0.0859375 4.34961 1.65918 2.10156C3.54492 -0.330078 7.33105 0.078125 8.65625 2.85547C8.84375 3.24805 9.40234 3.24805 9.58887 2.85547C10.9141 0.078125 14.7002 -0.330078 16.5869 2.10156L16.8828 2.48438C18.46 4.51562 18.2324 7.41406 16.3574 9.17578L9.80078 15.334L9.12988 15.7852L9.11523 15.7852L8.44531 15.334L2.24023 9.50586Z"
-												stroke="#222222"
-												stroke-opacity="1.000000"
-												stroke-width="1.000000"
-											/>
-										</svg>
-									</button>
-								</div>
-
-								<div
-									class="flex flex-col gap-[0.5rem] pt-5 text-[0.875rem] font-medium max-tablet:pt-[0.25rem] max-tablet:text-[0.625rem]"
-								>
-									<p>Жакет Red</p>
-
-									<span>32,000 ₽</span>
-								</div>
-							</article>
-
-							<article>
-								<div class="relative">
-									<NuxtPicture
-										class="w-full max-tablet:aspect-[136/165]"
-										src="/img/newItems/3@2x.png"
-										width="300"
-										heihgt="410"
-										loading="lazy"
-										decoding="auto"
-									/>
-
-									<button class="group">
-										<svg
-											class="group-hover:fill-current group-hover:stroke-current absolute right-[0.5rem] top-[0.625rem] group-hover:text-red2-hover"
-											width="18.430664"
-											height="16.285156"
-											viewBox="0 0 18.4307 16.2852"
-											fill="none"
-										>
-											<path
-												class="group-hover:stroke-transparent"
-												d="M2.24023 9.50586C0.166016 7.55664 -0.0859375 4.34961 1.65918 2.10156C3.54492 -0.330078 7.33105 0.078125 8.65625 2.85547C8.84375 3.24805 9.40234 3.24805 9.58887 2.85547C10.9141 0.078125 14.7002 -0.330078 16.5869 2.10156L16.8828 2.48438C18.46 4.51562 18.2324 7.41406 16.3574 9.17578L9.80078 15.334L9.12988 15.7852L9.11523 15.7852L8.44531 15.334L2.24023 9.50586Z"
-												stroke="#222222"
-												stroke-opacity="1.000000"
-												stroke-width="1.000000"
-											/>
-										</svg>
-									</button>
-								</div>
-
-								<div
-									class="flex flex-col gap-[0.5rem] pt-5 text-[0.875rem] font-medium max-tablet:pt-[0.25rem] max-tablet:text-[0.625rem]"
-								>
-									<p>Жакет Red</p>
-
-									<span>32,000 ₽</span>
-								</div>
-							</article>
+							<ProductCard v-for="product in 3" :key="product" />
 						</div>
 						<!-- /Раздел с карточками 3 -->
 
@@ -835,278 +503,23 @@
 						<div
 							class="max-mobile:grid-cols-2 grid grid-cols-catalog gap-[1.875rem] pb-[3.75rem]"
 						>
-							<article>
-								<div class="relative">
-									<NuxtPicture
-										class="w-full max-tablet:aspect-[136/165]"
-										src="/img/newItems/1@2x.png"
-										width="300"
-										heihgt="410"
-										loading="lazy"
-										decoding="auto"
-									/>
-
-									<button class="group">
-										<svg
-											class="group-hover:fill-current group-hover:stroke-current absolute right-[0.5rem] top-[0.625rem] group-hover:text-red2-hover"
-											width="18.430664"
-											height="16.285156"
-											viewBox="0 0 18.4307 16.2852"
-											fill="none"
-										>
-											<path
-												class="group-hover:stroke-transparent"
-												d="M2.24023 9.50586C0.166016 7.55664 -0.0859375 4.34961 1.65918 2.10156C3.54492 -0.330078 7.33105 0.078125 8.65625 2.85547C8.84375 3.24805 9.40234 3.24805 9.58887 2.85547C10.9141 0.078125 14.7002 -0.330078 16.5869 2.10156L16.8828 2.48438C18.46 4.51562 18.2324 7.41406 16.3574 9.17578L9.80078 15.334L9.12988 15.7852L9.11523 15.7852L8.44531 15.334L2.24023 9.50586Z"
-												stroke="#222222"
-												stroke-opacity="1.000000"
-												stroke-width="1.000000"
-											/>
-										</svg>
-									</button>
-								</div>
-
-								<div
-									class="flex flex-col gap-[0.5rem] pt-5 text-[0.875rem] font-medium max-tablet:pt-[0.25rem] max-tablet:text-[0.625rem]"
-								>
-									<p>Жакет Red</p>
-
-									<span>32,000 ₽</span>
-								</div>
-							</article>
-
-							<article>
-								<div class="relative">
-									<NuxtPicture
-										class="w-full max-tablet:aspect-[136/165]"
-										src="/img/newItems/2@2x.png"
-										width="300"
-										heihgt="410"
-										loading="lazy"
-										decoding="auto"
-									/>
-
-									<button class="group">
-										<svg
-											class="group-hover:fill-current group-hover:stroke-current absolute right-[0.5rem] top-[0.625rem] group-hover:text-red2-hover"
-											width="18.430664"
-											height="16.285156"
-											viewBox="0 0 18.4307 16.2852"
-											fill="none"
-										>
-											<path
-												class="group-hover:stroke-transparent"
-												d="M2.24023 9.50586C0.166016 7.55664 -0.0859375 4.34961 1.65918 2.10156C3.54492 -0.330078 7.33105 0.078125 8.65625 2.85547C8.84375 3.24805 9.40234 3.24805 9.58887 2.85547C10.9141 0.078125 14.7002 -0.330078 16.5869 2.10156L16.8828 2.48438C18.46 4.51562 18.2324 7.41406 16.3574 9.17578L9.80078 15.334L9.12988 15.7852L9.11523 15.7852L8.44531 15.334L2.24023 9.50586Z"
-												stroke="#222222"
-												stroke-opacity="1.000000"
-												stroke-width="1.000000"
-											/>
-										</svg>
-									</button>
-								</div>
-
-								<div
-									class="flex flex-col gap-[0.5rem] pt-5 text-[0.875rem] font-medium max-tablet:pt-[0.25rem] max-tablet:text-[0.625rem]"
-								>
-									<p>Жакет Red</p>
-
-									<span>32,000 ₽</span>
-								</div>
-							</article>
-
-							<article>
-								<div class="relative">
-									<NuxtPicture
-										class="w-full max-tablet:aspect-[136/165]"
-										src="/img/newItems/3@2x.png"
-										width="300"
-										heihgt="410"
-										loading="lazy"
-										decoding="auto"
-									/>
-
-									<button class="group">
-										<svg
-											class="group-hover:fill-current group-hover:stroke-current absolute right-[0.5rem] top-[0.625rem] group-hover:text-red2-hover"
-											width="18.430664"
-											height="16.285156"
-											viewBox="0 0 18.4307 16.2852"
-											fill="none"
-										>
-											<path
-												class="group-hover:stroke-transparent"
-												d="M2.24023 9.50586C0.166016 7.55664 -0.0859375 4.34961 1.65918 2.10156C3.54492 -0.330078 7.33105 0.078125 8.65625 2.85547C8.84375 3.24805 9.40234 3.24805 9.58887 2.85547C10.9141 0.078125 14.7002 -0.330078 16.5869 2.10156L16.8828 2.48438C18.46 4.51562 18.2324 7.41406 16.3574 9.17578L9.80078 15.334L9.12988 15.7852L9.11523 15.7852L8.44531 15.334L2.24023 9.50586Z"
-												stroke="#222222"
-												stroke-opacity="1.000000"
-												stroke-width="1.000000"
-											/>
-										</svg>
-									</button>
-								</div>
-
-								<div
-									class="flex flex-col gap-[0.5rem] pt-5 text-[0.875rem] font-medium max-tablet:pt-[0.25rem] max-tablet:text-[0.625rem]"
-								>
-									<p>Жакет Red</p>
-
-									<span>32,000 ₽</span>
-								</div>
-							</article>
+							<ProductCard v-for="product in 3" :key="product" />
 						</div>
 						<!-- /Раздел с карточками 4 -->
 
 						<!-- Пагинация -->
-						<div
-							class="relative flex w-full justify-between after:absolute after:left-0 after:top-[-8.5px] after:h-[2px] after:w-full after:bg-gray2 after:content-[''] max-laptop:mt-[3.75rem] tablet:px-[35px]"
-						>
-							<div class="flex gap-[12px]">
-								<button>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="25"
-										height="25"
-										viewBox="0 0 25 25"
-										fill="none"
-									>
-										<g clip-path="url(#clip0_476_2655)">
-											<path
-												d="M14.062 7.13281L9.06201 12.1328L14.062 17.1328"
-												stroke="#292929"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-											/>
-										</g>
-										<line
-											x1="4.56201"
-											y1="18.1328"
-											x2="4.56201"
-											y2="7.13281"
-											stroke="#3C3C3C"
-										/>
-										<defs>
-											<clipPath id="clip0_476_2655">
-												<rect
-													width="24"
-													height="24"
-													fill="white"
-													transform="matrix(-1 0 0 -1 24.062 24.1328)"
-												/>
-											</clipPath>
-										</defs>
-									</svg>
-								</button>
-
-								<button>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="25"
-										height="25"
-										viewBox="0 0 25 25"
-										fill="none"
-									>
-										<g clip-path="url(#clip0_476_2658)">
-											<path
-												d="M14.062 7.13281L9.06201 12.1328L14.062 17.1328"
-												stroke="#292929"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-											/>
-										</g>
-										<defs>
-											<clipPath id="clip0_476_2658">
-												<rect
-													width="24"
-													height="24"
-													fill="white"
-													transform="matrix(-1 0 0 -1 24.062 24.1328)"
-												/>
-											</clipPath>
-										</defs>
-									</svg>
-								</button>
-							</div>
-
-							<div
-								class="flex w-full items-center justify-between px-[25px] text-[8px] max-tablet:justify-center"
-							>
-								<button class="max-tablet:hidden">Назад</button>
-
-								<div>
-									<span class="max-tablet:hidden">Страница</span>
-
-									<span>16</span>
-									из
-									<span>16</span>
-								</div>
-
-								<button class="max-tablet:hidden">Вперед</button>
-							</div>
-
-							<div class="flex gap-[12px]">
-								<button>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="25"
-										height="25"
-										viewBox="0 0 25 25"
-										fill="none"
-									>
-										<g clip-path="url(#clip0_476_2650)">
-											<path
-												d="M10.084 17.5L15.084 12.5L10.084 7.5"
-												stroke="#292929"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-											/>
-										</g>
-										<defs>
-											<clipPath id="clip0_476_2650">
-												<rect
-													width="24"
-													height="24"
-													fill="white"
-													transform="translate(0.0839844 0.5)"
-												/>
-											</clipPath>
-										</defs>
-									</svg>
-								</button>
-
-								<button>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="25"
-										height="25"
-										viewBox="0 0 25 25"
-										fill="none"
-									>
-										<g clip-path="url(#clip0_476_2651)">
-											<path
-												d="M10.084 17.5L15.084 12.5L10.084 7.5"
-												stroke="#292929"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-											/>
-										</g>
-										<line
-											x1="19.584"
-											y1="6.5"
-											x2="19.584"
-											y2="17.5"
-											stroke="#3C3C3C"
-										/>
-										<defs>
-											<clipPath id="clip0_476_2651">
-												<rect
-													width="24"
-													height="24"
-													fill="white"
-													transform="translate(0.0839844 0.5)"
-												/>
-											</clipPath>
-										</defs>
-									</svg>
-								</button>
-							</div>
+						<div class="w-ful relative border-t-[1px] border-[#AAAAAA]">
+							<Paginator
+								:rows="10"
+								:totalRecords="120"
+								template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+								:currentPageReportTemplate="
+									!isMobile
+										? 'Страница {currentPage} из {totalPages}'
+										: '{currentPage} из {totalPages}'
+								"
+								class="w-full"
+							/>
 						</div>
 						<!-- /Пагинация -->
 					</div>
@@ -1115,3 +528,17 @@
 		</section>
 	</div>
 </template>
+
+<style>
+	.p-paginator.p-component {
+		@apply w-full;
+	}
+
+	[data-pc-section='previouspagebutton'] {
+		@apply mr-auto;
+	}
+
+	[data-pc-section='nextpagebutton'] {
+		@apply ml-auto;
+	}
+</style>

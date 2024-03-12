@@ -1,7 +1,7 @@
 <template>
-	<footer class="border-t border-t-[#B4B4B4] pt-[4rem]">
+	<footer class="mt-auto border-t border-t-[#B4B4B4] pt-[4rem]">
 		<div class="container">
-			<div class="grid-cols-footer grid">
+			<div class="grid grid-cols-footer">
 				<div>
 					<div class="text-[1rem] font-bold">Информация</div>
 					<ul class="mt-[30px] flex flex-col gap-3">

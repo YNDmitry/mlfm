@@ -7,6 +7,10 @@ export default defineNuxtConfig({
 	app: {
 		pageTransition: {name: 'page', mode: 'out-in'},
 		layoutTransition: {name: 'layout', mode: 'out-in'},
+
+		head: {
+			link: [{rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg'}],
+		},
 	},
 
 	css: [
@@ -56,7 +60,14 @@ export default defineNuxtConfig({
 
 	primevue: {
 		components: {
-			include: ['Tooltip', 'Toast', 'ScrollPanel', 'Sidebar'],
+			include: [
+				'Tooltip',
+				'Toast',
+				'ScrollPanel',
+				'Sidebar',
+				'Breadcrumb',
+				'Paginator',
+			],
 		},
 	},
 })

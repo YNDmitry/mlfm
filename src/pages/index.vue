@@ -1,27 +1,47 @@
-import { HomePatternCard } from '../../.nuxt/components';
 <script setup lang="ts">
+	const {getItems} = useDirectusItems()
+	const {getThumbnail: img} = useDirectusFiles()
+
 	definePageMeta({
 		layout: 'default',
+	})
+
+	const {data: siteSettings} = await useAsyncData('siteSettings', () => {
+		return getItems({
+			collection: 'site',
+		})
+	})
+
+	const websiteStore = useWebsiteStore()
+
+	websiteStore.siteSettings = siteSettings
+
+	useSeoMeta({
+		title: websiteStore?.siteSettings?.meta_title,
+		description: websiteStore?.siteSettings?.meta_description,
+		ogImage: img(websiteStore?.siteSettings?.meta_thumbnail),
 	})
 </script>
 
 <template>
 	<div>
-		<section class="relative min-h-[37.5rem]">
+		<section class="relative flex h-[37.5rem] items-center justify-center">
 			<Swiper
-				class="swiper w-full"
+				id="collection-swiper"
+				class="swiper h-full w-full"
 				:speed="700"
 				:autoplay="{
 					delay: 5000,
 					disableOnInteraction: true,
 				}"
 				:loop="true"
+				:effect="'fade'"
 			>
-				<SwiperSlide class="swiper-slide">
+				<SwiperSlide class="h-full">
 					<div class="relative w-full">
 						<NuxtImg
 							src="/img/mainSlider/1.png"
-							class="w-full max-tablet:aspect-[320/138]"
+							class="h-full w-full object-cover max-tablet:aspect-[320/138]"
 							width="1440"
 							height="600"
 							loading="lazy"
@@ -31,7 +51,7 @@ import { HomePatternCard } from '../../.nuxt/components';
 					</div>
 				</SwiperSlide>
 
-				<SwiperSlide class="swiper-slide">
+				<SwiperSlide class="h-full">
 					<div class="relative">
 						<NuxtImg
 							src="/img/mainSlider/1.png"
@@ -44,7 +64,7 @@ import { HomePatternCard } from '../../.nuxt/components';
 					</div>
 				</SwiperSlide>
 
-				<SwiperSlide class="swiper-slide">
+				<SwiperSlide class="h-full">
 					<div class="relative">
 						<NuxtImg
 							src="/img/mainSlider/1.png"
@@ -56,73 +76,72 @@ import { HomePatternCard } from '../../.nuxt/components';
 						/>
 					</div>
 				</SwiperSlide>
-
-				<div
-					class="absolute z-10 flex translate-y-[-50%] flex-col items-center justify-center gap-[1.5rem] text-primary max-tablet:right-[0.75rem] max-tablet:top-[40%] tablet:left-2/4 tablet:top-2/4 tablet:translate-x-[-50%]"
-				>
-					<h3
-						class="tablet:text-2xl uppercase max-tablet:max-w-[7.563rem] max-tablet:text-right max-tablet:text-[0.625rem] max-tablet:font-light max-tablet:leading-[0.75rem] max-tablet:tracking-[2.5px] tablet:max-w-[15.625rem] tablet:text-center tablet:font-bold tablet:tracking-[0.375rem]"
-					>
-						новая коллекция
-					</h3>
-
-					<button
-						class="h-11 w-full max-w-[10.625rem] rounded-main bg-red2 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] transition-colors hover:bg-red2-hover max-tablet:hidden"
-					>
-						Купить
-					</button>
-				</div>
-
-				<div
-					class="swiper-btn swiper-button-next h-[19.5px] text-primary max-tablet:top-[62%] max-mobile:top-[73%]"
-				>
-					<IconsSliderArrow />
-				</div>
-				<div
-					class="swiper-btn swiper-button-prev h-[19.5px] text-primary max-tablet:top-[62%] max-mobile:top-[73%]"
-				>
-					<IconsSliderArrow />
-				</div>
-
-				<div
-					class="swiper-pagination swiper-mainBanner-pagination max-tablet:hidden"
-				></div>
 			</Swiper>
+			<div
+				class="absolute z-10 flex translate-y-[-50%] flex-col items-center justify-center gap-[1.5rem] text-primary max-tablet:right-[0.75rem] max-tablet:top-[40%] tablet:left-2/4 tablet:top-2/4 tablet:translate-x-[-50%]"
+			>
+				<h3
+					class="tablet:text-2xl uppercase max-tablet:max-w-[7.563rem] max-tablet:text-right max-tablet:text-[0.625rem] max-tablet:font-light max-tablet:leading-[0.75rem] max-tablet:tracking-[2.5px] tablet:max-w-[15.625rem] tablet:text-center tablet:font-bold tablet:tracking-[0.375rem]"
+				>
+					новая коллекция
+				</h3>
+
+				<NuxtLink
+					to="/catalog"
+					class="flex h-11 w-full max-w-[10.625rem] items-center justify-center rounded-main bg-red2 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] transition-colors hover:bg-red2-hover max-tablet:hidden"
+				>
+					Купить
+				</NuxtLink>
+			</div>
+
+			<div
+				class="swiper-btn swiper-button-next h-[19.5px] text-primary max-tablet:top-[62%] max-mobile:top-[73%]"
+			>
+				<IconsSliderArrow />
+			</div>
+			<div
+				class="swiper-btn swiper-button-prev h-[19.5px] text-primary max-tablet:top-[62%] max-mobile:top-[73%]"
+			>
+				<IconsSliderArrow />
+			</div>
+
+			<div
+				class="swiper-pagination swiper-mainBanner-pagination max-tablet:hidden"
+			></div>
 		</section>
 		<!-- /Главный банер - слайдер -->
 
 		<!-- Ряд кнопок -->
 		<section
-			class="container block max-w-[84rem] overflow-x-scroll whitespace-nowrap py-11 text-center font-montserrat max-laptop:text-[0.875rem] max-laptop:tracking-[0.15px] max-tablet:mb-[2.5rem] max-tablet:pb-[1.25rem] max-tablet:pt-[2rem] max-tablet:text-[0.5rem] laptop:tracking-[2px]"
+			class="container flex max-w-[84rem] flex-wrap items-center justify-center gap-y-2 py-11 font-montserrat max-laptop:gap-x-3 max-laptop:text-[0.875rem] max-laptop:tracking-[0.15px] max-tablet:mb-[2.5rem] max-tablet:pb-[1.25rem] max-tablet:pt-[2rem] max-tablet:text-[0.5rem] laptop:gap-x-6 laptop:tracking-[2px]"
 		>
 			<button
-				v-animateonscroll="{enterClass: 'fadein', leaveClass: 'fadeout'}"
-				class="animation-duration-1000 mr-6 h-11 w-full shrink-0 rounded-main border-[1px] border-black transition-all hover:bg-black hover:text-primary max-laptop:mr-4 max-laptop:max-w-[7.5rem] max-tablet:mr-[0.5rem] max-tablet:h-5 max-tablet:max-w-[4.25rem] laptop:max-w-[10.625rem]"
+				class="h-11 w-full rounded-main border-[1px] border-black transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-laptop:max-w-[7.5rem] max-tablet:mr-[0.5rem] max-tablet:h-5 max-tablet:max-w-[4.25rem] laptop:max-w-[10.625rem]"
 			>
 				кольца
 			</button>
 			<button
-				class="mr-6 h-11 w-full shrink-0 rounded-main border-[1px] border-black transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-laptop:max-w-[7.5rem] max-tablet:mr-[0.5rem] max-tablet:h-5 max-tablet:max-w-[4.25rem] laptop:max-w-[10.625rem]"
+				class="h-11 w-full rounded-main border-[1px] border-black transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-laptop:max-w-[7.5rem] max-tablet:mr-[0.5rem] max-tablet:h-5 max-tablet:max-w-[4.25rem] laptop:max-w-[10.625rem]"
 			>
 				серьги
 			</button>
 			<button
-				class="mr-6 h-11 w-full shrink-0 rounded-main border-[1px] border-black transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-laptop:max-w-[7.5rem] max-tablet:mr-[0.5rem] max-tablet:h-5 max-tablet:max-w-[4.25rem] laptop:max-w-[10.625rem]"
+				class="h-11 w-full rounded-main border-[1px] border-black transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-laptop:max-w-[7.5rem] max-tablet:mr-[0.5rem] max-tablet:h-5 max-tablet:max-w-[4.25rem] laptop:max-w-[10.625rem]"
 			>
 				подвески
 			</button>
 			<button
-				class="mr-6 h-11 w-full shrink-0 rounded-main border-[1px] border-black transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-laptop:max-w-[7.5rem] max-tablet:mr-[0.5rem] max-tablet:h-5 max-tablet:max-w-[4.25rem] laptop:max-w-[10.625rem]"
+				class="h-11 w-full rounded-main border-[1px] border-black transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-laptop:max-w-[7.5rem] max-tablet:mr-[0.5rem] max-tablet:h-5 max-tablet:max-w-[4.25rem] laptop:max-w-[10.625rem]"
 			>
 				броши
 			</button>
 			<button
-				class="mr-6 h-11 w-full shrink-0 rounded-main border-[1px] border-black transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-laptop:max-w-[7.5rem] max-tablet:mr-[0.5rem] max-tablet:h-5 max-tablet:max-w-[4.25rem] laptop:max-w-[10.625rem]"
+				class="h-11 w-full rounded-main border-[1px] border-black transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-laptop:max-w-[7.5rem] max-tablet:mr-[0.5rem] max-tablet:h-5 max-tablet:max-w-[4.25rem] laptop:max-w-[10.625rem]"
 			>
 				сумки
 			</button>
 			<button
-				class="mr-6 h-11 w-full shrink-0 rounded-main border-[1px] border-black transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-laptop:max-w-[7.5rem] max-tablet:mr-[0.5rem] max-tablet:h-5 max-tablet:max-w-[4.25rem] laptop:max-w-[10.625rem]"
+				class="h-11 w-full rounded-main border-[1px] border-black transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-laptop:max-w-[7.5rem] max-tablet:mr-[0.5rem] max-tablet:h-5 max-tablet:max-w-[4.25rem] laptop:max-w-[10.625rem]"
 			>
 				сертификаты
 			</button>
@@ -193,7 +212,11 @@ import { HomePatternCard } from '../../.nuxt/components';
 						height="579"
 					/>
 
-					<Swiper :slidesPerView="1" class="relative max-w-[300px]">
+					<Swiper
+						:slidesPerView="1"
+						:spaceBetween="20"
+						class="relative max-w-[300px]"
+					>
 						<SwiperSlide v-for="slide in 3" :key="slide">
 							<HomePatternCard />
 						</SwiperSlide>
@@ -256,34 +279,37 @@ import { HomePatternCard } from '../../.nuxt/components';
 		<!-- /фирменный магазин -->
 
 		<!-- Подарочные карты -->
-		<section class="relative bg-[#f9f2d8]">
-			<NuxtPicture
-				class="w-full max-tablet:ml-[-45px] max-mobile:ml-[-35px]"
-				src="/img/giftCards/1.png"
-				width="1440"
-				height="495"
-			/>
-
+		<section class="relative w-full bg-third">
 			<div
-				class="absolute text-red2 max-laptop:right-[20%] max-tablet:right-[3%] max-tablet:top-[16px] max-mobile:right-[10%] max-mobile:max-w-[95px] mobile:max-w-[200px] tablet:top-1/2 tablet:translate-y-[-40%] laptop:right-[17%]"
+				class="container max-w-[1127px] max-tablet:py-[20px] tablet:py-[50px]"
 			>
-				<h3
-					class="font-bold uppercase max-laptop:text-[16px] max-laptop:tracking-[4px] max-tablet:mb-[10px] max-mobile:text-[8px] max-mobile:tracking-[2px] tablet:mb-[21px] laptop:text-[21px] laptop:tracking-[5.25px]"
+				<div
+					class="items-center justify-items-center gap-5 max-laptop:flex laptop:grid laptop:grid-cols-giftCart"
 				>
-					Подарочные карты
-				</h3>
+					<div>
+						<NuxtImg class="h-full w-full" src="/gift.png" loading="lazy" />
+					</div>
 
-				<p
-					class="font-montserrat max-laptop:text-[14px] max-tablet:mb-[10px] max-mobile:text-[8px] tablet:mb-[40px]"
-				>
-					Идеальный подарок на любой праздник!
-				</p>
+					<div class="max-w-[245px] text-red2">
+						<h3
+							class="font-bold uppercase max-laptop:text-[1rem] max-laptop:tracking-[0.25rem] max-tablet:mb-[0.625rem] max-mobile:text-[0.5rem] max-mobile:tracking-[2px] tablet:mb-[1.313rem] laptop:text-[1.313rem] laptop:tracking-[5.25px]"
+						>
+							Подарочные карты
+						</h3>
 
-				<button
-					class="max-w-[10.625rem] rounded-main border-red2 font-montserrat uppercase transition-colors hover:bg-red2-hover hover:text-primary max-tablet:h-[1rem] max-tablet:w-[4.5rem] max-tablet:border-[0.5px] max-tablet:text-[0.5rem] max-tablet:font-light tablet:h-11 tablet:w-full tablet:border-[1px] tablet:text-[0.75rem] tablet:font-bold tablet:tracking-[3px]"
-				>
-					подарить
-				</button>
+						<p
+							class="font-montserrat max-laptop:text-[0.875rem] max-tablet:mb-[0.625rem] max-mobile:text-[0.5rem] tablet:mb-[2.5rem]"
+						>
+							Идеальный подарок на любой праздник!
+						</p>
+
+						<button
+							class="max-w-[10.625rem] rounded-main border-red2 font-montserrat uppercase transition-colors hover:bg-red2-hover hover:text-primary max-tablet:h-[1rem] max-tablet:w-[4.5rem] max-tablet:border-[0.5px] max-tablet:text-[0.5rem] max-tablet:font-light tablet:h-11 tablet:w-full tablet:border-[1px] tablet:text-[0.75rem] tablet:font-bold tablet:tracking-[3px]"
+						>
+							подарить
+						</button>
+					</div>
+				</div>
 			</div>
 		</section>
 		<!-- /Подарочные карты -->
@@ -328,3 +354,9 @@ import { HomePatternCard } from '../../.nuxt/components';
 		<!-- /Выбор стилиста -->
 	</div>
 </template>
+
+<style scoped>
+	#collection-swiper .swiper-wrapper {
+		@apply h-full;
+	}
+</style>

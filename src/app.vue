@@ -1,14 +1,8 @@
-<template>
-	<div>
-		<NuxtLayout>
-			<lenis :options="LenisOptions">
-				<NuxtPage />
-			</lenis>
-		</NuxtLayout>
-	</div>
-</template>
-
 <script setup lang="ts">
+	useHead({
+		title: 'MLFM',
+	})
+
 	// https://github.com/darkroomengineering/lenis
 	const LenisOptions = ref({
 		duration: 0.2,
@@ -20,3 +14,13 @@
 		autoResize: true,
 	})
 </script>
+
+<template>
+	<div>
+		<NuxtLayout>
+			<lenis :options="LenisOptions">
+				<NuxtPage />
+			</lenis>
+		</NuxtLayout>
+	</div>
+</template>
