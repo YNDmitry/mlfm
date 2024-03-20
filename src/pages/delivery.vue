@@ -12,11 +12,11 @@
 				<form class="pt-8">
 					<!-- Контактная информация -->
 					<div>
-						<h3
+						<h1
 							class="max-tablet:pb-[24px] max-tablet:text-[0.875rem] max-tablet:font-medium tablet:pb-[3.125rem] tablet:text-[24px]"
 						>
 							Контактная информация
-						</h3>
+						</h1>
 
 						<div class="flex flex-col gap-[1.25rem]">
 							<label class="flex cursor-pointer flex-col gap-2" for="inpName">

@@ -1,13 +1,48 @@
 <script setup>
+	const {getItemById} = useDirectusItems()
+	const {getItems} = useDirectusItems()
+	const {getThumbnail: img} = useDirectusFiles()
+
 	definePageMeta({
 		layout: 'default',
 	})
+
+	const {id} = useRoute().params
+
+	const product = await getItemById({
+		collection: 'products',
+		id: id,
+	})
+
+	useSeoMeta({
+		title: product.title + ' | MLFM',
+		description: product.description,
+		ogImage: img(product.og_image),
+	})
+
+	const {data: randomProducts} = await useLazyAsyncData(
+		'randomProducts',
+		() => {
+			return getItems({
+				collection: 'products',
+				params: {
+					fields: ['title', 'price', 'main_image', 'id'],
+					filter: {
+						id: {
+							_neq: id,
+						},
+					},
+					limit: 4,
+				},
+			})
+		},
+	)
 </script>
 
 <template>
 	<div>
 		<!-- Карточка товара -->
-		<section class="pt-[78px]">
+		<section class="pt-[78px] max-laptop:pt-0">
 			<div
 				class="laptop:mx-auto laptop:my-0 laptop:max-w-[1189px] laptop:px-[1rem]"
 			>
@@ -15,18 +50,8 @@
 					class="max-laptop:flex max-laptop:flex-col max-tablet:gap-4 tablet:gap-7 laptop:grid laptop:grid-cols-catalogItem"
 				>
 					<Swiper
-						class="w-[720px]"
+						class="!sticky top-40 h-[650px] w-[720px] max-laptop:!static max-laptop:w-full"
 						:slides-per-view="1"
-						:effect="'creative'"
-						:creative-effect="{
-							prev: {
-								shadow: false,
-								translate: ['-20%', 0, -1],
-							},
-							next: {
-								translate: ['100%', 0, 0],
-							},
-						}"
 						:autoplay="{
 							delay: 8000,
 							disableOnInteraction: true,
@@ -34,11 +59,25 @@
 						:loop="true"
 					>
 						<SwiperSlide v-for="slide in 3" :key="slide">
-							<NuxtImg
-								class="w-full"
-								src="/img/catalogItem/1@2x.png"
-								alt="1.png"
-							/>
+							<Image preview class="h-full w-full text-primary">
+								<template #image>
+									<NuxtImg
+										provider="directus"
+										class="h-full w-full object-cover"
+										:src="product.main_image"
+									/>
+								</template>
+								<template #preview="slotProps">
+									<NuxtImg
+										provider="directus"
+										class="h-full w-full object-cover"
+										width="720"
+										:src="product.main_image"
+										:style="slotProps.style"
+										@click="slotProps.onClick"
+									/>
+								</template>
+							</Image>
 						</SwiperSlide>
 					</Swiper>
 
@@ -56,7 +95,7 @@
 						<h3
 							class="max-tablet:font-light tablet:text-[2rem] tablet:font-extralight"
 						>
-							SUSAN
+							{{ product.title }}
 						</h3>
 
 						<div class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-4">
@@ -111,7 +150,7 @@
 						</div>
 
 						<span class="max-tablet:text-[0.625rem] tablet:text-[0.875rem]"
-							>Цена: ₽ 12,000</span
+							>Цена: ₽ {{ product.price }}</span
 						>
 
 						<!-- Кнопки "Добавить" -->
@@ -135,73 +174,25 @@
 						<div
 							class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-[1.25rem]"
 						>
-							<div
-								data-dropdown
-								class="flex flex-col items-start text-[0.625rem] max-tablet:gap-[1.25rem] tablet:gap-[0.625rem]"
-							>
-								<div class="flex w-full items-center justify-between">
-									<button type="button">Доставка</button>
-
-									<button data-dropdownBtn>
-										<svg
-											width="13"
-											height="8"
-											viewBox="0 0 13 8"
-											fill="currentColor"
-											class="transition-transform"
-										>
-											<path
-												d="M6.09766 0.625C5.86523 0.625 5.66699 0.713867 5.48926 0.891602L0.273438 6.22363C0.123047 6.37402 0.0478516 6.55859 0.0478516 6.77734C0.0478516 7.22168 0.389648 7.57715 0.833984 7.57715C1.05273 7.57715 1.25098 7.48828 1.4082 7.33789L6.09766 2.52539L10.7871 7.33789C10.9375 7.48145 11.1357 7.57715 11.3545 7.57715C11.8057 7.57715 12.1475 7.22168 12.1475 6.77734C12.1475 6.55859 12.0723 6.37402 11.9219 6.22363L6.70605 0.891602C6.52832 0.707031 6.33008 0.625 6.09766 0.625Z"
-											/>
-										</svg>
-									</button>
-								</div>
-
-								<div
-									data-dropdownList
-									class="max-h-0 overflow-hidden leading-[1rem] transition-all max-tablet:font-extralight tablet:font-light"
-								>
+							<Accordion :multiple="true" v-if="product.description">
+								<AccordionTab class="p-0">
+									<template #header class="p-0">
+										<div class="font-normal">О продукте</div>
+									</template>
+									<p>{{ product.description }}</p>
+								</AccordionTab>
+								<AccordionTab class="p-0">
+									<template #header>
+										<div class="font-normal">Доставка</div>
+									</template>
 									<p>
-										SUSAN — это украшения для тех, кто любит моду. Каждый сезон
-										дизайнеры бренда адаптируют подиумные и стритстайл-тренды в
-										своих коллекциях.
+										Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+										Fuga illo ex architecto distinctio esse dolorum, quis totam
+										deserunt! Harum saepe alias veniam ex iusto accusamus sunt
+										commodi officia sit blanditiis?
 									</p>
-								</div>
-							</div>
-
-							<div
-								data-dropdown
-								class="flex flex-col items-start text-[0.625rem] max-tablet:gap-[1.25rem] tablet:gap-[0.625rem]"
-							>
-								<div class="flex w-full items-center justify-between">
-									<button type="button">Доставка</button>
-
-									<button data-dropdownBtn>
-										<svg
-											width="13"
-											height="8"
-											viewBox="0 0 13 8"
-											fill="currentColor"
-											class="transition-transform"
-										>
-											<path
-												d="M6.09766 0.625C5.86523 0.625 5.66699 0.713867 5.48926 0.891602L0.273438 6.22363C0.123047 6.37402 0.0478516 6.55859 0.0478516 6.77734C0.0478516 7.22168 0.389648 7.57715 0.833984 7.57715C1.05273 7.57715 1.25098 7.48828 1.4082 7.33789L6.09766 2.52539L10.7871 7.33789C10.9375 7.48145 11.1357 7.57715 11.3545 7.57715C11.8057 7.57715 12.1475 7.22168 12.1475 6.77734C12.1475 6.55859 12.0723 6.37402 11.9219 6.22363L6.70605 0.891602C6.52832 0.707031 6.33008 0.625 6.09766 0.625Z"
-											/>
-										</svg>
-									</button>
-								</div>
-
-								<div
-									data-dropdownList
-									class="max-h-0 overflow-hidden leading-[1rem] transition-all max-tablet:font-extralight tablet:font-light"
-								>
-									<p>
-										SUSAN — это украшения для тех, кто любит моду. Каждый сезон
-										дизайнеры бренда адаптируют подиумные и стритстайл-тренды в
-										своих коллекциях.
-									</p>
-								</div>
-							</div>
+								</AccordionTab>
+							</Accordion>
 						</div>
 						<!-- /Dropdown-ы -->
 					</div>
@@ -222,8 +213,17 @@
 				</h4>
 
 				<Swiper :slides-per-view="4" :space-between="30" id="related-products">
-					<SwiperSlide v-for="slide in 4" :key="slide">
-						<ProductCard />
+					<SwiperSlide v-for="product in randomProducts" :key="product.id">
+						<ProductCard
+							v-animateonscroll="{
+								enterClass: 'fadein',
+							}"
+							:id="product.id"
+							:title="product.title"
+							:imgSrc="product.main_image"
+							:price="product.price"
+							class="animation-duration-2000 max-w-[18.5rem] flex-shrink-0 transition-all"
+						/>
 					</SwiperSlide>
 				</Swiper>
 			</div>
@@ -231,7 +231,7 @@
 		<!-- /Похожие товары -->
 
 		<!-- С этим товаром покупают -->
-		<section class="max-laptop:pb-[3.75rem] laptop:pb-[12.5rem]">
+		<!-- <section class="max-laptop:pb-[3.75rem] laptop:pb-[12.5rem]">
 			<div class="container">
 				<h4
 					class="pb-[2rem] text-[0.875rem] max-mobile:text-[0.625rem] mobile:text-center mobile:font-bold mobile:tracking-[0.25rem]"
@@ -249,14 +249,18 @@
 					</SwiperSlide>
 				</Swiper>
 			</div>
-		</section>
+		</section> -->
 		<!-- /С этим товаром покупают -->
 	</div>
 </template>
 
-<style scoped>
+<style>
 	#related-products,
 	#related-products-2 {
 		overflow: visible;
+	}
+
+	.p-accordion .p-accordion-header .p-accordion-header-link {
+		@apply pl-0 pr-0;
 	}
 </style>

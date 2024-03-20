@@ -1,13 +1,13 @@
 <template>
 	<section
-		class="max-laptop:pt-[6.25rem] max-tablet:pt-[3.125rem] max-mobile:pt-[2rem] laptop:pt-[9.938rem]"
+		class="pb-[10rem] max-laptop:pt-[6.25rem] max-tablet:pb-[6.25rem] max-tablet:pt-[3.125rem] max-mobile:pt-[2rem] laptop:pt-[10rem]"
 	>
 		<div class="container max-w-[732px]">
-			<h2
+			<h1
 				class="pb-[2rem] font-medium max-tablet:text-[1.25rem] tablet:text-[2rem]"
 			>
 				О КОМПАНИИ
-			</h2>
+			</h1>
 
 			<p
 				class="font-light leading-[1.188rem] max-tablet:text-[0.625rem] tablet:text-[0.875rem]"
@@ -20,7 +20,7 @@
 			</p>
 
 			<div class="max-tablet:pt-[2rem] tablet:pt-[1.625rem]">
-				<NuxtPicture src="/img/about/1@2x.png" />
+				<NuxtImg src="/img/about/1@2x.png" class="w-full" />
 			</div>
 		</div>
 	</section>

@@ -29,7 +29,7 @@ module.exports = {
 			catalog: "repeat(3, 1fr)",
 			aside: "275px 1fr",
 			delivery: "49% 51%",
-			footer: 'repeat(4, 1fr)',
+			footer: '1fr 1fr auto auto',
 			giftCart: "618px 1fr",
 		},
 		container: {

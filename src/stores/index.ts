@@ -7,6 +7,9 @@ export const useWebsiteStore = defineStore('websiteStore', {
 			meta_thumbnail: '',
 			current_phone_number: '',
 			general_message: '',
+			current_address: '',
+			current_email: '',
+			current_whatsapp: '',
 		},
 	}),
 	actions: {

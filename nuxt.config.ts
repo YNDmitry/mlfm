@@ -26,18 +26,18 @@ export default defineNuxtConfig({
 		'@nuxtjs/robots',
 		'nuxt-simple-sitemap',
 		'nuxt-directus',
-		'nuxt-link-checker',
 		'@nuxtjs/google-fonts',
 		'nuxt-primevue',
 		'nuxt-swiper',
 		'nuxt-lenis',
-		'@formkit/auto-animate',
 	],
 
 	image: {
-		quality: 80,
 		format: ['webp'],
 		densities: [2, 1],
+		directus: {
+			baseURL: process.env.DATABASE_URL + 'assets/',
+		},
 	},
 
 	plugins: ['./src/plugins/preview.client.ts'],
@@ -67,6 +67,9 @@ export default defineNuxtConfig({
 				'Sidebar',
 				'Breadcrumb',
 				'Paginator',
+				'Accordion',
+				'AccordionTab',
+				'Image',
 			],
 		},
 	},

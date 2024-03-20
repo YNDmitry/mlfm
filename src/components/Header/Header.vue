@@ -9,19 +9,20 @@
 			href: '/catalog',
 		},
 		{
+			title: 'О нас',
+			href: '/about',
+		},
+		{
 			title: 'Подарочная карта',
 			href: '/gift-cards',
 		},
 		{
-			title: 'Скидки',
-			href: '/discounts',
-		},
-		{
 			title: 'Контакты',
-			href: '/contacts',
+			href: '/contact-us',
 		},
 	]
 
+	const config = useState('config')
 	const websiteStore = useWebsiteStore()
 
 	const isMobile = useMediaQuery('(max-width: 768px)')
@@ -32,12 +33,12 @@
 		class="flex justify-between gap-2 bg-black px-5 py-3 text-primary"
 	>
 		<div class="text-[0.625rem] font-semibold max-laptop:hidden">
-			{{ websiteStore?.siteSettings?.current_phone_number }}
+			{{ config?.current_phone_number }}
 		</div>
 		<div class="text-[0.625rem] uppercase">
-			{{ websiteStore?.siteSettings?.general_message }}
+			{{ config?.general_message }}
 		</div>
-		<NuxtLink to="/contacts" class="flex items-center gap-2 !text-primary">
+		<NuxtLink to="/contact-us" class="flex items-center gap-2 !text-primary">
 			<IconsLocation />
 			<span class="text-[0.625rem]">Магазины</span>
 		</NuxtLink>
@@ -50,10 +51,13 @@
 					<span class="text-[0.625rem]">Поиск</span>
 				</div>
 			</div>
-			<div class="absolute left-auto right-auto z-50 max-tablet:relative">
+			<NuxtLink
+				to="/"
+				class="absolute left-auto right-auto z-50 max-tablet:relative"
+			>
 				<HeaderLogo v-if="!isMobile" />
 				<IconsFooterLogo v-else class="h-7 w-7" />
-			</div>
+			</NuxtLink>
 			<div v-if="isMobile" class="relative z-50 ml-auto">
 				<div class="h-[1px] w-5 bg-black"></div>
 				<div class="mt-[5px] h-[1px] w-5 bg-black"></div>
@@ -61,7 +65,7 @@
 			</div>
 			<div class="ml-auto flex items-center gap-5" v-if="!isMobile">
 				<NuxtLink to="/wishlist" class="h-5 w-5">
-					<IconsHearth />
+					<IconsHearth class="text-primary" />
 				</NuxtLink>
 				<button @click="websiteStore.handleVisibleCart" class="h-5 w-5">
 					<IconsCart />

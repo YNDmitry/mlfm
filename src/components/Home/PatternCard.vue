@@ -9,7 +9,7 @@
 
 		<div class="flex flex-col items-center justify-center">
 			<div
-				class="flex flex-col items-center gap-[5px] font-medium text-third max-laptop:py-[10px] max-tablet:text-[8px] tablet:text-[14px] laptop:py-[20px]"
+				class="flex flex-col items-center gap-[5px] font-medium text-third max-laptop:py-[10px] tablet:text-[14px] laptop:py-[20px]"
 			>
 				<p class="text-center">Серьги с жемчугом</p>
 				<span>12,600₽</span>

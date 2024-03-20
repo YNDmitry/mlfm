@@ -1,3 +1,7 @@
+<script setup>
+	const config = useState('config')
+</script>
+
 <template>
 	<NuxtLink
 		v-tooltip="{
@@ -7,6 +11,7 @@
 				text: 'text-[0.625rem] mr-2',
 			},
 		}"
+		:to="config.current_whatsapp"
 		class="fixed bottom-3 right-3 z-50 flex items-center gap-3 transition-all hover:scale-110"
 	>
 		<IconsWhatsApp

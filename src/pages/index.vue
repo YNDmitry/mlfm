@@ -1,31 +1,72 @@
-<script setup lang="ts">
-	const {getItems} = useDirectusItems()
+<script setup>
 	const {getThumbnail: img} = useDirectusFiles()
+	const {getItems} = useDirectusItems()
+	const {getItemById} = useDirectusItems()
 
 	definePageMeta({
 		layout: 'default',
 	})
 
-	const {data: siteSettings} = await useAsyncData('siteSettings', () => {
+	const config = useState('config')
+
+	useSeoMeta({
+		title: config.meta_title,
+		description: config.meta_description,
+		ogImage: img(config.meta_thumbnail),
+	})
+
+	const {data: page} = await useAsyncData(() => {
 		return getItems({
-			collection: 'site',
+			collection: 'homepage',
+			params: {
+				fields: [
+					'slider_collection',
+					'new_products',
+					'look_image',
+					'look_product',
+				],
+			},
 		})
 	})
 
-	const websiteStore = useWebsiteStore()
+	const {data: mainSlider} = await useAsyncData(() => {
+		return getItemById({
+			collection: 'collection',
+			id: page.value.slider_collection,
+		})
+	})
 
-	websiteStore.siteSettings = siteSettings
+	const {data: mainSliderImages} = await useAsyncData(() => {
+		return getItems({
+			collection: 'collection_files_1',
+		})
+	})
 
-	useSeoMeta({
-		title: websiteStore?.siteSettings?.meta_title,
-		description: websiteStore?.siteSettings?.meta_description,
-		ogImage: img(websiteStore?.siteSettings?.meta_thumbnail),
+	const {data: products} = await useAsyncData('newProducts', () => {
+		return getItems({
+			collection: 'products',
+			params: {
+				fields: ['title', 'price', 'main_image', 'id'],
+				limit: 4,
+			},
+		})
+	})
+
+	const {data: categories} = await useLazyAsyncData('categories', () => {
+		return getItems({
+			collection: 'categories',
+			params: {
+				fields: ['title', 'id'],
+			},
+		})
 	})
 </script>
 
 <template>
 	<div>
-		<section class="relative flex h-[37.5rem] items-center justify-center">
+		<section
+			class="relative flex h-[37.5rem] items-center justify-center max-tablet:h-[20rem] max-mobile:h-[15rem]"
+		>
 			<Swiper
 				id="collection-swiper"
 				class="swiper h-full w-full"
@@ -37,42 +78,18 @@
 				:loop="true"
 				:effect="'fade'"
 			>
-				<SwiperSlide class="h-full">
-					<div class="relative w-full">
+				<SwiperSlide
+					class="h-full"
+					v-for="slide in mainSliderImages"
+					:key="slide.id"
+				>
+					<div class="relative h-full w-full">
 						<NuxtImg
-							src="/img/mainSlider/1.png"
-							class="h-full w-full object-cover max-tablet:aspect-[320/138]"
+							provider="directus"
+							:src="slide.directus_files_id"
+							class="h-full w-full object-cover"
 							width="1440"
 							height="600"
-							loading="lazy"
-							decoding="auto"
-							placeholder
-						/>
-					</div>
-				</SwiperSlide>
-
-				<SwiperSlide class="h-full">
-					<div class="relative">
-						<NuxtImg
-							src="/img/mainSlider/1.png"
-							class="w-full max-tablet:aspect-[320/138]"
-							width="1440"
-							height="600"
-							loading="lazy"
-							decoding="auto"
-						/>
-					</div>
-				</SwiperSlide>
-
-				<SwiperSlide class="h-full">
-					<div class="relative">
-						<NuxtImg
-							src="/img/mainSlider/1.png"
-							class="w-full max-tablet:aspect-[320/138]"
-							width="1440"
-							height="600"
-							loading="lazy"
-							decoding="auto"
 						/>
 					</div>
 				</SwiperSlide>
@@ -80,11 +97,12 @@
 			<div
 				class="absolute z-10 flex translate-y-[-50%] flex-col items-center justify-center gap-[1.5rem] text-primary max-tablet:right-[0.75rem] max-tablet:top-[40%] tablet:left-2/4 tablet:top-2/4 tablet:translate-x-[-50%]"
 			>
-				<h3
+				<h1
+					v-if="mainSlider"
 					class="tablet:text-2xl uppercase max-tablet:max-w-[7.563rem] max-tablet:text-right max-tablet:text-[0.625rem] max-tablet:font-light max-tablet:leading-[0.75rem] max-tablet:tracking-[2.5px] tablet:max-w-[15.625rem] tablet:text-center tablet:font-bold tablet:tracking-[0.375rem]"
 				>
-					новая коллекция
-				</h3>
+					Новая коллекция <br /><br />{{ mainSlider.title }}
+				</h1>
 
 				<NuxtLink
 					to="/catalog"
@@ -95,17 +113,6 @@
 			</div>
 
 			<div
-				class="swiper-btn swiper-button-next h-[19.5px] text-primary max-tablet:top-[62%] max-mobile:top-[73%]"
-			>
-				<IconsSliderArrow />
-			</div>
-			<div
-				class="swiper-btn swiper-button-prev h-[19.5px] text-primary max-tablet:top-[62%] max-mobile:top-[73%]"
-			>
-				<IconsSliderArrow />
-			</div>
-
-			<div
 				class="swiper-pagination swiper-mainBanner-pagination max-tablet:hidden"
 			></div>
 		</section>
@@ -113,100 +120,81 @@
 
 		<!-- Ряд кнопок -->
 		<section
-			class="container flex max-w-[84rem] flex-wrap items-center justify-center gap-y-2 py-11 font-montserrat max-laptop:gap-x-3 max-laptop:text-[0.875rem] max-laptop:tracking-[0.15px] max-tablet:mb-[2.5rem] max-tablet:pb-[1.25rem] max-tablet:pt-[2rem] max-tablet:text-[0.5rem] laptop:gap-x-6 laptop:tracking-[2px]"
+			class="container flex max-w-[84rem] flex-wrap items-center justify-center gap-y-4 py-11 font-montserrat max-laptop:gap-x-3 max-tablet:mb-[2.5rem] max-tablet:pb-[1.25rem] max-tablet:pt-[2rem] max-mobile:text-[0.875rem] laptop:gap-x-6"
 		>
 			<button
-				class="h-11 w-full rounded-main border-[1px] border-black transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-laptop:max-w-[7.5rem] max-tablet:mr-[0.5rem] max-tablet:h-5 max-tablet:max-w-[4.25rem] laptop:max-w-[10.625rem]"
+				v-for="category in categories"
+				:key="category.id"
+				class="h-11 min-w-[10.625rem] rounded-main border-[1px] border-black px-2 transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-tablet:mr-[0.5rem]"
 			>
-				кольца
-			</button>
-			<button
-				class="h-11 w-full rounded-main border-[1px] border-black transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-laptop:max-w-[7.5rem] max-tablet:mr-[0.5rem] max-tablet:h-5 max-tablet:max-w-[4.25rem] laptop:max-w-[10.625rem]"
-			>
-				серьги
-			</button>
-			<button
-				class="h-11 w-full rounded-main border-[1px] border-black transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-laptop:max-w-[7.5rem] max-tablet:mr-[0.5rem] max-tablet:h-5 max-tablet:max-w-[4.25rem] laptop:max-w-[10.625rem]"
-			>
-				подвески
-			</button>
-			<button
-				class="h-11 w-full rounded-main border-[1px] border-black transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-laptop:max-w-[7.5rem] max-tablet:mr-[0.5rem] max-tablet:h-5 max-tablet:max-w-[4.25rem] laptop:max-w-[10.625rem]"
-			>
-				броши
-			</button>
-			<button
-				class="h-11 w-full rounded-main border-[1px] border-black transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-laptop:max-w-[7.5rem] max-tablet:mr-[0.5rem] max-tablet:h-5 max-tablet:max-w-[4.25rem] laptop:max-w-[10.625rem]"
-			>
-				сумки
-			</button>
-			<button
-				class="h-11 w-full rounded-main border-[1px] border-black transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-laptop:max-w-[7.5rem] max-tablet:mr-[0.5rem] max-tablet:h-5 max-tablet:max-w-[4.25rem] laptop:max-w-[10.625rem]"
-			>
-				сертификаты
+				{{ category.title }}
 			</button>
 		</section>
 		<!-- /Ряд кнопок -->
 
 		<!-- Новинки -->
 		<section class="pb-[70px] max-tablet:pb-[45px]">
-			<div class="container mx-auto my-0 px-3">
+			<div class="container mx-auto my-0">
 				<div class="pb-[65px] max-tablet:pb-[74px]">
-					<h4
+					<h2
 						v-animateonscroll="{
 							enterClass: 'fadein',
 						}"
-						class="animation-duration-2000 pb-6 text-center text-[0.875rem] font-bold tracking-[0.25rem] transition-all"
+						class="animation-duration-2000 pb-6 text-center font-bold transition-all max-tablet:text-[18px] max-mobile:text-[10px] max-mobile:tracking-[2.5px] mobile:tracking-[5.25px] tablet:text-[21px]"
 					>
 						новинки
-					</h4>
+					</h2>
 
-					<Swiper :slidesPerView="4" :spaceBetween="45" class="swiper-newItems">
-						<SwiperSlide v-for="slide in 8" :key="slide">
+					<div
+						class="no-scrollbar flex scroll-px-3 gap-[45px] overflow-x-auto"
+						v-animateonscroll="{
+							enterClass: 'fadein',
+						}"
+					>
+						<template v-for="product in products" :key="product.id">
 							<ProductCard
-								v-animateonscroll="{
-									enterClass: 'fadein',
-								}"
-								class="animation-duration-2000 transition-all"
+								:id="product.id"
+								:title="product.title"
+								:imgSrc="product.main_image"
+								:price="product.price"
+								class="animation-duration-2000 max-w-[18.5rem] flex-shrink-0 transition-all"
 							/>
-						</SwiperSlide>
-					</Swiper>
+						</template>
+					</div>
 				</div>
 
-				<Swiper
-					:slidesPerView="3"
-					:spaceBetween="8"
-					class="swiper-newItemsBottom"
-				>
-					<SwiperSlide v-for="slide in 3" :key="slide">
+				<div class="no-scrollbar flex scroll-px-3 gap-[8px] overflow-x-auto">
+					<div
+						v-for="slide in 3"
+						:key="slide"
+						class="max-w-[27rem] flex-shrink-0"
+						v-animateonscroll="{
+							enterClass: 'fadein',
+						}"
+					>
 						<ProductCardSmall
-							v-animateonscroll="{
-								enterClass: 'fadein',
-							}"
 							class="transition-duration-1000 transition-ease-in-out transition-all"
 						/>
-					</SwiperSlide>
-				</Swiper>
+					</div>
+				</div>
 			</div>
 		</section>
 		<!-- /Новинки -->
 
 		<!-- Купить образ -->
-		<section class="bg-red max-mobile:pb-[40px] mobile:pb-[65px]">
-			<div
-				class="mx-auto my-0 max-w-[1095px] px-3 max-tablet:pl-[20px] max-tablet:pr-8"
-			>
-				<h4
-					class="text-center text-third max-mobile:pb-[10px] max-mobile:pt-2 max-mobile:text-[10px] mobile:py-[41px]"
+		<section class="bg-red pb-16 pt-10">
+			<div class="mx-auto my-0 max-w-[1095px] px-3">
+				<h2
+					class="text-center font-bold uppercase text-third max-tablet:text-[18px] max-mobile:text-[10px] max-mobile:tracking-[2.5px] mobile:tracking-[5.25px] tablet:text-[21px]"
 				>
 					купить образ
-				</h4>
+				</h2>
 
 				<div
-					class="grid-cols-2 relative grid gap-4 max-tablet:gap-[20px] max-mobile:grid-cols-buyImageMobile mobile:grid-cols-buyImage"
+					class="relative grid grid-cols-buyImage gap-4 pt-10 max-tablet:flex max-tablet:flex-col max-tablet:gap-[20px]"
 				>
-					<NuxtPicture
-						class="h-full w-full object-cover max-mobile:max-h-[165px]"
+					<NuxtImg
+						class="h-full w-full object-cover"
 						src="/img/buyImage/1.png"
 						width="678"
 						height="579"
@@ -236,16 +224,16 @@
 		<section class="max-mobile:py-[58px] mobile:py-[77px]">
 			<div class="mx-auto my-0 max-w-[1095px] px-4">
 				<div
-					class="flex items-center justify-between max-mobile:gap-[8px] mobile:gap-5"
+					class="flex items-center justify-between max-mobile:flex-col max-mobile:gap-[8px] mobile:gap-5"
 				>
 					<div
-						class="max-tablet:max-w-[200px] max-mobile:max-w-[125px] tablet:max-w-[270px]"
+						class="max-tablet:max-w-[200px] max-mobile:mb-4 max-mobile:max-w-[125px] max-mobile:max-w-none tablet:max-w-[270px]"
 					>
-						<h3
+						<h2
 							class="font-bold uppercase text-red2 max-tablet:text-[18px] max-mobile:text-[10px] max-mobile:tracking-[2.5px] mobile:tracking-[5.25px] tablet:text-[21px]"
 						>
 							фирменный магазин
-						</h3>
+						</h2>
 
 						<p
 							class="font-montserrat max-mobile:pt-[12px] max-mobile:text-[8px] max-mobile:leading-[14px] mobile:pt-[27px] mobile:text-[11px] mobile:leading-[20px]"
@@ -260,9 +248,9 @@
 						<div
 							class="flex flex-col gap-[15px] font-montserrat text-[14px] leading-[20px] max-mobile:hidden max-mobile:pt-[12px] mobile:pt-[27px]"
 						>
-							<span>Малая Бронная 24с3</span>
+							<span>{{ config.current_address }}</span>
 
-							<b>+7(499)755-74-27</b>
+							<b>{{ config.current_phone_number }}</b>
 						</div>
 					</div>
 
@@ -291,11 +279,11 @@
 					</div>
 
 					<div class="max-w-[245px] text-red2">
-						<h3
+						<h2
 							class="font-bold uppercase max-laptop:text-[1rem] max-laptop:tracking-[0.25rem] max-tablet:mb-[0.625rem] max-mobile:text-[0.5rem] max-mobile:tracking-[2px] tablet:mb-[1.313rem] laptop:text-[1.313rem] laptop:tracking-[5.25px]"
 						>
 							Подарочные карты
-						</h3>
+						</h2>
 
 						<p
 							class="font-montserrat max-laptop:text-[0.875rem] max-tablet:mb-[0.625rem] max-mobile:text-[0.5rem] tablet:mb-[2.5rem]"
@@ -334,11 +322,12 @@
 							>
 						</div>
 
-						<button
-							class="max-w-[10.625rem] rounded-main bg-red2 font-montserrat text-[0.75rem] font-bold uppercase text-primary transition-colors hover:bg-red2-hover max-mobile:h-[1.125rem] max-mobile:w-[3.75rem] max-mobile:text-[0.5rem] max-mobile:font-light max-mobile:tracking-[0.5px] mobile:h-11 mobile:w-full mobile:tracking-[3px]"
+						<NuxtLink
+							to="/"
+							class="flex max-w-[10.625rem] items-center justify-center rounded-main bg-red2 font-montserrat text-[0.75rem] font-bold uppercase text-primary transition-colors hover:bg-red2-hover max-mobile:h-[1.125rem] max-mobile:w-[3.75rem] max-mobile:text-[0.5rem] max-mobile:font-light max-mobile:tracking-[0.5px] mobile:h-11 mobile:w-full mobile:tracking-[3px]"
 						>
 							Купить
-						</button>
+						</NuxtLink>
 					</div>
 
 					<div>
