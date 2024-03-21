@@ -56,5 +56,8 @@ module.exports = {
 			tablet: '768px',
 			laptop: '1024px',
 		},
+		plugins: [require('@tailwindcss/typography')({
+			className: 'wysiwyg'
+		}),]
 	},
 }

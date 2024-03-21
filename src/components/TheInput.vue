@@ -3,7 +3,7 @@
 		label: {
 			type: String,
 			default: () => '',
-			required: true,
+			required: false,
 		},
 		isRequired: {
 			type: Boolean,
@@ -27,29 +27,32 @@
 		},
 	})
 
-	// const model = defineModel()
-
 	const {handleChange, handleBlur, value, errorMessage, meta} = useField(
 		() => props.inputName,
 		undefined,
 	)
 </script>
 <template>
-	<label :for="label" class="relative flex flex-col">
-		<span class="font-light">{{ label }}</span>
+	<label class="flex cursor-pointer flex-col gap-2" :for="inputName">
+		<span
+			class="max-tablet:text-[0.625rem] tablet:text-[12px]"
+			v-if="label.length > 0"
+			>{{ label }}*</span
+		>
+
 		<input
+			class="w-full border-[1px] border-black font-light focus:outline-none max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
+			:class="{
+				'border-[#B1B1B1]': meta.dirty,
+				'border-[green]': meta.touched && meta.valid,
+				'!border-[red]': meta.touched && !meta.valid,
+			}"
 			@change="handleChange"
 			@blur="handleBlur"
 			:value="value"
 			:type="inputType"
 			:placeholder="inputPlaceholder"
 			:name="inputName"
-			:class="{
-				'border-[#B1B1B1]': meta.dirty,
-				'border-[green]': meta.touched && meta.valid,
-				'!border-[red]': meta.touched && !meta.valid,
-			}"
-			class="mt-2 min-h-12 border px-4 font-light outline-none transition-all focus:border-black"
 		/>
 		<span
 			v-if="errorMessage && meta.touched"

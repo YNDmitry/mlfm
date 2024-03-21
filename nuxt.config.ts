@@ -27,6 +27,7 @@ export default defineNuxtConfig({
 		'nuxt-simple-sitemap',
 		'nuxt-directus',
 		'@nuxtjs/google-fonts',
+		'@vee-validate/nuxt',
 		'nuxt-primevue',
 		'nuxt-swiper',
 		'nuxt-lenis',

@@ -1,3 +1,8 @@
+<script setup>
+	definePageMeta({
+		middleware: ['auth'],
+	})
+</script>
 <template>
 	<section class="pb-44 pt-20">
 		<div class="container">

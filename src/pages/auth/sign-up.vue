@@ -1,14 +1,9 @@
 <script setup lang="ts">
 	import {object, string, ref, setLocale} from 'yup'
-	// const {login} = useDirectusAuth()
+	definePageMeta({
+		middleware: ['auth'],
+	})
 
-	// const onSubmit = async () => {
-	// 	try {
-	// 		await login({email: email.value, password: password.value})
-	// 	} catch (e) {
-	// 		console.log(e)
-	// 	}
-	// }
 	const schema = object({
 		firstName: string().required().min(4).max(50).label('Имя'),
 		lastName: string().required().min(4).max(50).label('Фамилия'),
@@ -32,27 +27,33 @@
 		validationSchema: schema,
 	})
 
-	const onSubmit = () =>
-		handleSubmit((values) => {
-			console.log(values)
-
-			alert(JSON.stringify(values, null, 2))
-		})
+	const userStore = useUserStore()
+	const onSubmit = handleSubmit(async (values) => {
+		try {
+			const data = await userStore.create(
+				values.email,
+				values.password,
+				values.firstName,
+				values.lastName,
+			)
+			console.log(data)
+		} catch (e) {
+			console.log(e)
+		}
+	})
 </script>
 
 <template>
 	<AuthForm title="Регистрация">
-		<Form @submit="onSubmit" :validationSchema="schema">
-			<div class="grid grid-cols-2 gap-2">
+		<Form @submit="onSubmit()" :validationSchema="schema">
+			<div class="grid grid-cols-[1fr_1fr] gap-2">
 				<TheInput
-					:label="'Имя'"
 					:isRequired="true"
 					:inputPlaceholder="'Иван'"
 					:inputType="'text'"
 					:inputName="'firstName'"
 				/>
 				<TheInput
-					:label="'Фамилия'"
 					:isRequired="true"
 					:inputPlaceholder="'Иванов'"
 					:inputType="'text'"
@@ -60,35 +61,32 @@
 				/>
 			</div>
 			<TheInput
-				:label="'Электронная почта'"
 				:isRequired="true"
-				:inputPlaceholder="'email@gmail.com'"
+				:inputPlaceholder="'Email'"
 				:inputType="'email'"
 				:inputName="'email'"
 				class="mt-6"
 			/>
 			<TheInput
-				:label="'Пароль'"
 				:isRequired="true"
-				:inputPlaceholder="'*******'"
+				:inputPlaceholder="'Пароль'"
 				:inputType="'password'"
 				:inputName="'password'"
 				class="mt-6"
 			/>
 			<TheInput
-				:label="'Повторите пароль'"
 				:isRequired="true"
-				:inputPlaceholder="'*******'"
+				:inputPlaceholder="'Повторите пароль'"
 				:inputType="'password'"
 				:inputName="'passwordConfirm'"
 				class="mt-6"
 			/>
 			<div class="mt-6 w-full">
-				<UIButton
-					:title="'Зарегистрироваться'"
-					tag="button"
-					type="submit"
-				></UIButton>
+				<button
+					class="w-full bg-red2 text-primary transition-colors hover:bg-red2-hover max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[45px] tablet:rounded-[1.875rem]"
+				>
+					Зарегистрироваться
+				</button>
 				<div
 					class="mt-6 block text-center text-[1rem] font-light leading-[150%]"
 				>
@@ -99,5 +97,3 @@
 		</Form>
 	</AuthForm>
 </template>
-
-<style scoped></style>

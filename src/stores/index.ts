@@ -1,6 +1,7 @@
 export const useWebsiteStore = defineStore('websiteStore', {
 	state: () => ({
 		isVisibleCart: false,
+		isNewsletterPopup: false,
 		siteSettings: {
 			meta_title: '',
 			meta_description: '',
