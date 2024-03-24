@@ -5,11 +5,17 @@ interface UserState {
 	lastName: string
 	email: string
 	id: string
+	isAuthenticated: boolean
+	newsletter: boolean
+	phone: string
 }
 
 interface CreateUserPayload {
 	email: string
 	password: string
+	first_name: string
+	last_name: string
+	terms: boolean
 	role: string
 }
 
@@ -30,8 +36,11 @@ export const useUserStore = defineStore('userStore', {
 	state: (): UserState => ({
 		firstName: '',
 		lastName: '',
+		newsletter: '',
+		phone: '',
 		email: '',
 		id: '',
+		isAuthenticated: false,
 	}),
 	actions: {
 		async create(
@@ -39,6 +48,7 @@ export const useUserStore = defineStore('userStore', {
 			password: string,
 			firstName: string,
 			lastName: string,
+			terms: string,
 		) {
 			const {createUser, login} = useDirectusAuth()
 			const {updateUser} = useDirectusUsers()
@@ -55,33 +65,65 @@ export const useUserStore = defineStore('userStore', {
 				})
 				.then(() => {
 					this.getUserInfo()
-					return updateUser({
+					updateUser({
 						id: this.id,
 						user: {
 							first_name: firstName,
 							last_name: lastName,
+							terms: terms,
 						},
 					})
 				})
 				.then(() => {
 					navigateTo('/profile/')
 				})
+				.catch((e) => {
+					return e.errors
+				})
 		},
 
 		async userLogin(email: string, password: string) {
 			const {login} = useDirectusAuth()
 			await login({email, password})
-			navigateTo('/profile')
-			this.getUserInfo()
+				.then(() => {
+					navigateTo('/profile')
+					this.getUserInfo()
+				})
+				.catch((error) => {
+					console.log(error)
+				})
 		},
 
 		async getUserInfo() {
-			const user: DirectusUser = await useDirectusUser().value
+			const user = await useDirectusUser()
+
+			console.log(user.value)
+
+			if (!user.value) {
+				return
+			}
+
 			this.$patch({
-				firstName: user.first_name,
-				lastName: user.last_name,
-				email: user.email,
-				id: user.id,
+				firstName: user.value.first_name,
+				lastName: user.value.last_name,
+				newsletter: user.value.newsletter,
+				email: user.value.email,
+				id: user.value.id,
+				isAuthenticated: true,
+			})
+		},
+
+		async logOut() {
+			const {logout} = useDirectusAuth()
+			logout().then(() => {
+				navigateTo('/auth/log-in')
+				this.$patch({
+					firstName: '',
+					lastName: '',
+					email: '',
+					id: '',
+					isAuthenticated: false,
+				})
 			})
 		},
 	},

@@ -1,6 +1,12 @@
-<script setup lang="ts">
+<script setup>
 	definePageMeta({
 		layout: 'checkout',
+	})
+
+	useSeoMeta({
+		title: 'Оформление заказа | MLFM',
+		ogTitle: 'Оформление заказа | MLFM',
+		lang: 'ru',
 	})
 </script>
 

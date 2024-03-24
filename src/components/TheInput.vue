@@ -56,7 +56,7 @@
 		/>
 		<span
 			v-if="errorMessage && meta.touched"
-			class="mt-2 text-[0.625rem] text-[red]"
+			class="mt-1 text-[0.625rem] text-[red]"
 			>{{ errorMessage }}</span
 		>
 	</label>

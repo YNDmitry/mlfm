@@ -1,5 +1,18 @@
-<script setup lang="ts">
+<script setup>
+	const {getItems} = useDirectusItems()
 	const websiteStore = useWebsiteStore()
+
+	const {data: products} = await useLazyAsyncData('cartRelatedProducts', () => {
+		return getItems({
+			collection: 'products',
+			params: {
+				fields: ['title', 'price', 'main_image', 'id'],
+				limit: 3,
+			},
+		})
+	})
+
+	const useCart = useCartStore()
 </script>
 
 <template>
@@ -12,38 +25,19 @@
 	>
 		<template #container>
 			<div>
-				<div class="px-10">
-					<h3
-						class="relative pb-[1.25rem] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-[''] max-tablet:text-[0.875rem]"
-					>
-						Корзина / 2 шт.
-					</h3>
-
+				<div
+					class="flex w-full items-center justify-between border-b-[1px] border-b-gray2 px-10 pb-[1.25rem]"
+				>
+					<div class="max-tablet:text-[0.875rem]">Корзина</div>
+					<button type="button" @click="websiteStore.isVisibleCart = false">
+						<IconsClose class="h-3 w-3" />
+					</button>
+				</div>
+				<div class="px-10" v-if="useCart.items.length > 0">
 					<!--  Товары -->
 					<div
 						class="flex flex-col font-montserrat max-tablet:gap-[1.875rem] max-tablet:py-[1.875rem] tablet:gap-[1.25rem] tablet:pb-[55px] tablet:pt-[45px]"
 					>
-						<article
-							class="flex max-mobile:gap-[0.625rem] mobile:gap-[0.938rem]"
-						>
-							<NuxtImg
-								src="/img/delivery/1@2x.png"
-								class="object-cover max-mobile:h-[6.25rem] max-mobile:w-[3.813rem] mobile:h-[6.25rem]"
-							/>
-
-							<div class="flex w-full items-center justify-between">
-								<div class="flex flex-col gap-1">
-									<span class="text-[0.625rem]">Подвеска</span>
-
-									<p class="text-[0.625rem] font-medium">Undi</p>
-
-									<span class="text-[8px] opacity-50">1 шт</span>
-								</div>
-
-								<span class="text-[0.625rem]">12,000 ₽</span>
-							</div>
-						</article>
-
 						<article
 							class="flex max-mobile:gap-[0.625rem] mobile:gap-[0.938rem]"
 						>
@@ -105,6 +99,7 @@
 
 					<!--  Кнопка - Перейти к оплате -->
 					<button
+						to="/checkout"
 						class="w-full bg-red2 text-[0.625rem] text-primary transition-colors hover:bg-red2-hover max-tablet:mt-[1.875rem] max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] tablet:mt-[1.25rem] tablet:min-h-[37px] tablet:rounded-[1.875rem] tablet:font-medium"
 					>
 						Перейти к оплате
@@ -112,22 +107,42 @@
 					<!--  /Кнопка - Перейти к оплате -->
 				</div>
 
+				<div class="mt-10 px-10" v-else>Корзина пустая</div>
+
 				<!--  Вас могут заинтересовать -->
 				<div
-					class="max-tablet:pl-4 max-tablet:pt-[1.875rem] tablet:pl-[42px] tablet:pt-[55px]"
+					class="pr-5 max-tablet:pl-4 max-tablet:pt-[1.875rem] tablet:pl-[42px] tablet:pt-[55px]"
 				>
-					<h4 class="text-[12px] max-tablet:pb-[1.875rem] tablet:pb-[18px]">
+					<h4 class="max-tablet:pb-[1.875rem] tablet:pb-[18px]">
 						Вас могут заинтересовать
 					</h4>
 
 					<Swiper
 						:slidesPerView="3"
-						:spaceBetween="24"
+						:spaceBetween="10"
 						class="overflow-visible"
 					>
-						<SwiperSlide v-for="slide in 6" :key="slide">
-							<NuxtLink>
-								<NuxtImg class="w-full" src="/img/basket/1@2x.png" />
+						<SwiperSlide v-for="product in products" :key="product.id">
+							<NuxtLink
+								:to="'/catalog/' + product.id"
+								@click="websiteStore.isVisibleCart = false"
+							>
+								<div class="relative flex w-full flex-col justify-center">
+									<NuxtImg
+										provider="directus"
+										class="h-32 object-cover"
+										:src="product.main_image"
+										width="200"
+									/>
+									<div class="inset-0 mt-2 overflow-hidden whitespace-nowrap">
+										<div class="overflow-hidden overflow-ellipsis font-medium">
+											{{ product.title }}
+										</div>
+										<div class="overflow-ellipsis text-[10px]">
+											₽ {{ product.price }}
+										</div>
+									</div>
+								</div>
 							</NuxtLink>
 						</SwiperSlide>
 					</Swiper>

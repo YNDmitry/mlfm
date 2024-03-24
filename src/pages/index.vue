@@ -1,5 +1,5 @@
 <script setup>
-	const {getThumbnail: img} = useDirectusFiles()
+	const appConfig = useRuntimeConfig()
 	const {getItems} = useDirectusItems()
 	const {getItemById} = useDirectusItems()
 
@@ -8,12 +8,6 @@
 	})
 
 	const config = useState('config')
-
-	useSeoMeta({
-		title: config.meta_title,
-		description: config.meta_description,
-		ogImage: img(config.meta_thumbnail),
-	})
 
 	const {data: page} = await useAsyncData(() => {
 		return getItems({
@@ -24,6 +18,9 @@
 					'new_products',
 					'look_image',
 					'look_product',
+					'uniq_product_image',
+					'uniq_product_image_2',
+					'uniq_product_id',
 				],
 			},
 		})
@@ -47,7 +44,31 @@
 			collection: 'products',
 			params: {
 				fields: ['title', 'price', 'main_image', 'id'],
+				sort: ['-date_created'],
 				limit: 4,
+			},
+		})
+	})
+
+	const {data: lookProductsIds} = await useAsyncData('lookProductsIds', () => {
+		return getItems({
+			collection: 'homepage_products_1',
+			params: {
+				fields: ['products_id'],
+			},
+		})
+	})
+
+	const {data: lookProducts} = await useAsyncData('lookProducts', () => {
+		return getItems({
+			collection: 'products',
+			params: {
+				fields: ['title', 'price', 'main_image', 'id'],
+				filter: {
+					id: {
+						_in: lookProductsIds.value.map((item) => item.products_id),
+					},
+				},
 			},
 		})
 	})
@@ -56,23 +77,56 @@
 		return getItems({
 			collection: 'categories',
 			params: {
-				fields: ['title', 'id'],
+				fields: ['title', 'title_eng', 'id'],
 			},
 		})
 	})
+
+	const productsCards = ref([
+		{
+			title: 'Кольца на любой случай',
+			image: '0be9b81f-8385-4825-b3db-40fa578090b8',
+			link: '/catalog',
+		},
+		{
+			title: 'Оригинальные сумки',
+			image: '566bc5b9-76ca-42a9-83f7-fd06f3134cea',
+			link: '/catalog',
+		},
+		{
+			title: 'Кольца на любой случай',
+			image: '6316da09-e197-4baf-a8dc-7e74d1cf7252',
+			link: '/catalog',
+		},
+	])
+
+	useSeoMeta({
+		title: config.value.meta_title,
+		ogTitle: config.value.meta_title,
+		description: config.value.meta_description,
+		ogDescription: config.value.meta_description,
+		ogImage:
+			appConfig.public.databaseUrl + 'assets/' + config.value.meta_thumbnail,
+		lang: 'ru',
+	})
+
+	// const route = useRoute()
 </script>
 
 <template>
 	<div>
+		<!-- Главный банер - слайдер -->
 		<section
 			class="relative flex h-[37.5rem] items-center justify-center max-tablet:h-[20rem] max-mobile:h-[15rem]"
 		>
 			<Swiper
 				id="collection-swiper"
 				class="swiper h-full w-full"
+				:pagination="{clickable: true}"
+				:modules="[SwiperAutoplay, SwiperEffectFade, SwiperPagination]"
 				:speed="700"
 				:autoplay="{
-					delay: 5000,
+					delay: 3000,
 					disableOnInteraction: true,
 				}"
 				:loop="true"
@@ -111,10 +165,6 @@
 					Купить
 				</NuxtLink>
 			</div>
-
-			<div
-				class="swiper-pagination swiper-mainBanner-pagination max-tablet:hidden"
-			></div>
 		</section>
 		<!-- /Главный банер - слайдер -->
 
@@ -122,13 +172,14 @@
 		<section
 			class="container flex max-w-[84rem] flex-wrap items-center justify-center gap-y-4 py-11 font-montserrat max-laptop:gap-x-3 max-tablet:mb-[2.5rem] max-tablet:pb-[1.25rem] max-tablet:pt-[2rem] max-mobile:text-[0.875rem] laptop:gap-x-6"
 		>
-			<button
+			<NuxtLink
 				v-for="category in categories"
 				:key="category.id"
-				class="h-11 min-w-[10.625rem] rounded-main border-[1px] border-black px-2 transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-tablet:mr-[0.5rem]"
+				:to="'/catalog'"
+				class="flex h-11 min-w-[10.625rem] items-center justify-center rounded-main border-[1px] border-black px-2 transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-tablet:mr-[0.5rem]"
 			>
 				{{ category.title }}
-			</button>
+			</NuxtLink>
 		</section>
 		<!-- /Ряд кнопок -->
 
@@ -137,27 +188,19 @@
 			<div class="container mx-auto my-0">
 				<div class="pb-[65px] max-tablet:pb-[74px]">
 					<h2
-						v-animateonscroll="{
-							enterClass: 'fadein',
-						}"
 						class="animation-duration-2000 pb-6 text-center font-bold transition-all max-tablet:text-[18px] max-mobile:text-[10px] max-mobile:tracking-[2.5px] mobile:tracking-[5.25px] tablet:text-[21px]"
 					>
 						новинки
 					</h2>
 
-					<div
-						class="no-scrollbar flex scroll-px-3 gap-[45px] overflow-x-auto"
-						v-animateonscroll="{
-							enterClass: 'fadein',
-						}"
-					>
+					<div class="no-scrollbar flex scroll-px-3 gap-[45px] overflow-x-auto">
 						<template v-for="product in products" :key="product.id">
 							<ProductCard
 								:id="product.id"
 								:title="product.title"
 								:imgSrc="product.main_image"
 								:price="product.price"
-								class="animation-duration-2000 max-w-[18.5rem] flex-shrink-0 transition-all"
+								class="animation-duration-2000 max-w-[18.31rem] flex-shrink-0 transition-all"
 							/>
 						</template>
 					</div>
@@ -165,14 +208,14 @@
 
 				<div class="no-scrollbar flex scroll-px-3 gap-[8px] overflow-x-auto">
 					<div
-						v-for="slide in 3"
-						:key="slide"
-						class="max-w-[27rem] flex-shrink-0"
-						v-animateonscroll="{
-							enterClass: 'fadein',
-						}"
+						v-for="(slide, idx) in productsCards"
+						:key="idx"
+						class="max-w-[26.9rem] flex-shrink-0"
 					>
 						<ProductCardSmall
+							:title="slide.title"
+							:image="slide.image"
+							:link="slide.link"
 							class="transition-duration-1000 transition-ease-in-out transition-all"
 						/>
 					</div>
@@ -194,27 +237,35 @@
 					class="relative grid grid-cols-buyImage gap-4 pt-10 max-tablet:flex max-tablet:flex-col max-tablet:gap-[20px]"
 				>
 					<NuxtImg
+						provider="directus"
 						class="h-full w-full object-cover"
-						src="/img/buyImage/1.png"
+						:src="page.look_image"
 						width="678"
-						height="579"
 					/>
 
 					<Swiper
+						:modules="[SwiperAutoplay, SwiperPagination]"
+						:pagination="{clickable: true}"
 						:slidesPerView="1"
 						:spaceBetween="20"
+						:speed="700"
+						:autoplay="{
+							delay: 3000,
+							disableOnInteraction: true,
+						}"
+						:loop="true"
 						class="relative max-w-[300px]"
+						id="look-swiper"
 					>
-						<SwiperSlide v-for="slide in 3" :key="slide">
-							<HomePatternCard />
+						<SwiperSlide v-for="product in lookProducts" :key="product.id">
+							<HomePatternCard
+								:title="product.title"
+								:price="product.price"
+								:image="product.main_image"
+								:link="product.id"
+							/>
 						</SwiperSlide>
 					</Swiper>
-				</div>
-
-				<div
-					class="grid-cols-2 relative grid gap-4 max-tablet:gap-[20px] max-mobile:grid-cols-buyImageMobile mobile:grid-cols-buyImage"
-				>
-					<div class="swiper-pagination swiper-buyImage-pagination"></div>
 				</div>
 			</div>
 		</section>
@@ -227,7 +278,7 @@
 					class="flex items-center justify-between max-mobile:flex-col max-mobile:gap-[8px] mobile:gap-5"
 				>
 					<div
-						class="max-tablet:max-w-[200px] max-mobile:mb-4 max-mobile:max-w-[125px] max-mobile:max-w-none tablet:max-w-[270px]"
+						class="max-tablet:max-w-[200px] max-mobile:mb-4 max-mobile:max-w-[125px] max-mobile:max-w-none tablet:max-w-[370px]"
 					>
 						<h2
 							class="font-bold uppercase text-red2 max-tablet:text-[18px] max-mobile:text-[10px] max-mobile:tracking-[2.5px] mobile:tracking-[5.25px] tablet:text-[21px]"
@@ -238,11 +289,11 @@
 						<p
 							class="font-montserrat max-mobile:pt-[12px] max-mobile:text-[8px] max-mobile:leading-[14px] mobile:pt-[27px] mobile:text-[11px] mobile:leading-[20px]"
 						>
-							Многие думают, что Lorem Ipsum - взятый с потолка псевдо-латинский
-							набор слов, но это не совсем так. Его корни уходят в один фрагмент
-							классической латыни 45 года н.э., то есть более двух тысячелетий
-							назад. Ричард МакКлинток, профессор латыни из колледжа
-							Hampden-Sydney.
+							MLFM - это эксклюзивный магазин, основанный в 2014 году, который
+							специализируется на продаже уникальных винтажных украшений и
+							одежды. Мы предлагаем нашим клиентам только самые изысканные и
+							стильные аксессуары, которые подчеркнут вашу индивидуальность и
+							сделают ваш образ неповторимым.
 						</p>
 
 						<div
@@ -255,8 +306,9 @@
 					</div>
 
 					<div>
-						<NuxtPicture
-							src="/img/brandStore/1@2x.png"
+						<NuxtImg
+							provider="directus"
+							src="744ac27e-c809-4bcf-8062-fadfda74377b"
 							width="623"
 							height="461"
 						/>
@@ -267,39 +319,7 @@
 		<!-- /фирменный магазин -->
 
 		<!-- Подарочные карты -->
-		<section class="relative w-full bg-third">
-			<div
-				class="container max-w-[1127px] max-tablet:py-[20px] tablet:py-[50px]"
-			>
-				<div
-					class="items-center justify-items-center gap-5 max-laptop:flex laptop:grid laptop:grid-cols-giftCart"
-				>
-					<div>
-						<NuxtImg class="h-full w-full" src="/gift.png" loading="lazy" />
-					</div>
-
-					<div class="max-w-[245px] text-red2">
-						<h2
-							class="font-bold uppercase max-laptop:text-[1rem] max-laptop:tracking-[0.25rem] max-tablet:mb-[0.625rem] max-mobile:text-[0.5rem] max-mobile:tracking-[2px] tablet:mb-[1.313rem] laptop:text-[1.313rem] laptop:tracking-[5.25px]"
-						>
-							Подарочные карты
-						</h2>
-
-						<p
-							class="font-montserrat max-laptop:text-[0.875rem] max-tablet:mb-[0.625rem] max-mobile:text-[0.5rem] tablet:mb-[2.5rem]"
-						>
-							Идеальный подарок на любой праздник!
-						</p>
-
-						<button
-							class="max-w-[10.625rem] rounded-main border-red2 font-montserrat uppercase transition-colors hover:bg-red2-hover hover:text-primary max-tablet:h-[1rem] max-tablet:w-[4.5rem] max-tablet:border-[0.5px] max-tablet:text-[0.5rem] max-tablet:font-light tablet:h-11 tablet:w-full tablet:border-[1px] tablet:text-[0.75rem] tablet:font-bold tablet:tracking-[3px]"
-						>
-							подарить
-						</button>
-					</div>
-				</div>
-			</div>
-		</section>
+		<HomeGiftCards />
 		<!-- /Подарочные карты -->
 
 		<!-- Выбор стилиста -->
@@ -310,20 +330,16 @@
 						class="flex flex-col items-center gap-[35px] max-mobile:gap-[15px] max-mobile:px-[35px]"
 					>
 						<div class="relative">
-							<NuxtPicture
-								src="/img/choiceStylist/2@2x.png"
+							<NuxtImg
+								provider="directus"
+								:src="page.uniq_product_image"
 								width="368"
 								height="442"
 							/>
-
-							<span
-								class="absolute left-1/2 top-1/2 block translate-x-[-50%] translate-y-[-50%] text-center font-extrabold uppercase text-red max-tablet:max-w-[50px] max-tablet:text-[10px] max-tablet:leading-[16px] max-mobile:max-w-[34px] max-mobile:text-[5px] max-mobile:leading-[10px] tablet:max-w-[95px] tablet:leading-[26px]"
-								>choice of stylist</span
-							>
 						</div>
 
 						<NuxtLink
-							to="/"
+							:to="'/catalog/' + page.uniq_product_id"
 							class="flex max-w-[10.625rem] items-center justify-center rounded-main bg-red2 font-montserrat text-[0.75rem] font-bold uppercase text-primary transition-colors hover:bg-red2-hover max-mobile:h-[1.125rem] max-mobile:w-[3.75rem] max-mobile:text-[0.5rem] max-mobile:font-light max-mobile:tracking-[0.5px] mobile:h-11 mobile:w-full mobile:tracking-[3px]"
 						>
 							Купить
@@ -331,8 +347,9 @@
 					</div>
 
 					<div>
-						<NuxtPicture
-							src="/img/choiceStylist/1@2x.png"
+						<NuxtImg
+							provider="directus"
+							:src="page.uniq_product_image_2"
 							width="486"
 							height="602"
 						/>
@@ -344,8 +361,29 @@
 	</div>
 </template>
 
-<style scoped>
+<style>
 	#collection-swiper .swiper-wrapper {
 		@apply h-full;
+	}
+
+	#collection-swiper .swiper-pagination-bullet {
+		background: #838383 !important;
+		opacity: 0.85 !important;
+		transition: all 200ms ease;
+	}
+
+	#look-swiper .swiper-pagination-bullet {
+		transition: all 200ms ease;
+	}
+
+	#look-swiper .swiper-pagination-bullet.swiper-pagination-bullet-active {
+		background: #f3eacc;
+	}
+
+	#collection-swiper .swiper-pagination-bullet.swiper-pagination-bullet-active {
+		width: 2rem !important;
+		opacity: 1 !important;
+		background: #ffffff !important;
+		border-radius: 10px;
 	}
 </style>

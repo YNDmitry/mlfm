@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	const {getThumbnail: img} = useDirectusFiles()
+	const appConfig = useRuntimeConfig()
 	const {getItems} = useDirectusItems()
 	const {$directus} = useNuxtApp()
 	import {aggregate} from '@directus/sdk'
@@ -16,16 +16,55 @@
 
 	useSeoMeta({
 		title: page.value.meta_title,
+		ogTitle: page.value.meta_title,
 		description: page.value.meta_description,
-		ogImage: img(page.value.og_image),
+		ogDescription: page.value.meta_description,
+		ogImage: appConfig.public.databaseUrl + 'assets/' + page.value.og_image,
+		lang: 'ru',
+		twitterImage:
+			appConfig.public.databaseUrl + 'assets/' + page.value.og_image,
 	})
 
-	const {data: products} = await useLazyAsyncData('catalogProducts', () => {
+	const currentPage = ref(1)
+	const totalPages = ref(0)
+	const productsPerPage = ref(9) // Количество продуктов на странице
+
+	const {data: count} = await useAsyncData('countOfProducts', () => {
+		return $directus.request(
+			aggregate('products', {
+				aggregate: {count: '*'},
+			}),
+		)
+	})
+
+	const {data: products} = await useLazyAsyncData(
+		() => {
+			return getItems({
+				collection: 'products',
+				params: {
+					fields: ['title', 'price', 'main_image', 'id'],
+					sort: ['-date_created'],
+					limit: productsPerPage.value,
+					offset: currentPage.value,
+				},
+			})
+		},
+		{
+			watch: [currentPage],
+		},
+	)
+
+	watchEffect(() => {
+		totalPages.value = Math.ceil(count.value[0].count / productsPerPage.value)
+	})
+
+	watch([currentPage], () => {
+		window.scrollTo(0, 0)
+	})
+
+	const {data: catalogBanners} = await useLazyAsyncData(() => {
 		return getItems({
-			collection: 'products',
-			params: {
-				fields: ['title', 'price', 'main_image', 'id'],
-			},
+			collection: 'catalog_files',
 		})
 	})
 
@@ -33,7 +72,7 @@
 		return getItems({
 			collection: 'categories',
 			params: {
-				fields: ['title', 'id'],
+				fields: ['title', 'title_eng', 'id'],
 			},
 		})
 	})
@@ -68,14 +107,6 @@
 		},
 	)
 
-	const {data: count} = await useLazyAsyncData('countOfProducts', () => {
-		return $directus.request(
-			aggregate('products', {
-				aggregate: {count: '*'},
-			}),
-		)
-	})
-
 	const {data: minPrice} = await useLazyAsyncData('maxPrice', () => {
 		return $directus.request(
 			aggregate('products', {
@@ -92,7 +123,10 @@
 		)
 	})
 
-	const currentBrand = ref('Бренд')
+	const currentBrand = ref([])
+	const currentCollection = ref([])
+	const currentColor = ref([])
+	const currentCategory = ref(['All'])
 </script>
 <template>
 	<div>
@@ -145,6 +179,12 @@
 											<input
 												type="checkbox"
 												class="absolute h-5 w-5 cursor-pointer opacity-0"
+												:value="'All'"
+												:checked="
+													currentCategory.includes('All') &&
+													currentCategory.length <= 1
+												"
+												v-model="currentCategory"
 											/>
 
 											<div
@@ -164,6 +204,8 @@
 											<input
 												type="checkbox"
 												class="absolute h-5 w-5 cursor-pointer opacity-0"
+												:value="category.title"
+												v-model="currentCategory"
 											/>
 
 											<div
@@ -197,16 +239,21 @@
 							>
 								<span class="text-[0.875rem]">Коллекция</span>
 
-								<select class="h-[1.25rem] cursor-pointer text-[0.625rem]">
-									<option value="defulat">Коллекция</option>
-									<option
-										v-for="collection in collections"
-										:key="collection.id"
-										:value="collection.title"
-									>
-										{{ collection.title }}
-									</option>
-								</select>
+								<Dropdown
+									v-model="currentCollection"
+									:options="collections.map((el) => el.title)"
+									placeholder="Коллекция"
+									class="flex cursor-pointer justify-between border-0 text-[0.625rem] shadow-none outline-none"
+									unstyled
+									showClear
+									:pt="{
+										dropdownicon: 'w-[10px]',
+										clearicon: 'w-[10px] ml-auto mr-2',
+										wrapper: 'bg-primary py-2',
+										item: 'text-[0.625rem] flex items-center px-2 rounded-main text-black h-[1.25rem] w-full cursor-pointer my-[1rem] hover:bg-grayLight',
+										input: 'outline-none',
+									}"
+								/>
 							</div>
 							<!-- /Коллекция -->
 
@@ -217,16 +264,21 @@
 							>
 								<span class="text-[0.875rem]">Цвет</span>
 
-								<select class="h-[1.25rem] cursor-pointer text-[0.625rem]">
-									<option value="default">Цвет</option>
-									<option
-										:value="color.title"
-										v-for="color in colors"
-										:key="color.id"
-									>
-										{{ color.title }}
-									</option>
-								</select>
+								<Dropdown
+									v-model="currentColor"
+									:options="colors.map((el) => el.title)"
+									placeholder="Цвет"
+									class="flex cursor-pointer justify-between border-0 text-[0.625rem] shadow-none outline-none"
+									unstyled
+									showClear
+									:pt="{
+										dropdownicon: 'w-[10px]',
+										clearicon: 'w-[10px] ml-auto mr-2',
+										wrapper: 'bg-primary py-2 ',
+										item: 'text-[0.625rem] flex items-center px-2 rounded-main text-black h-[1.25rem] w-full cursor-pointer my-[1rem] hover:bg-grayLight',
+										input: 'outline-none',
+									}"
+								/>
 							</div>
 							<!-- /Цвет -->
 
@@ -237,19 +289,21 @@
 							>
 								<span class="text-[0.875rem]">Бренд</span>
 
-								<select
+								<Dropdown
 									v-model="currentBrand"
-									class="h-[1.25rem] cursor-pointer text-[0.625rem]"
-								>
-									<option value="Бренд">Бренд</option>
-									<option
-										v-for="brand in brands"
-										:key="brand.id"
-										:value="brand.title"
-									>
-										{{ brand.title }}
-									</option>
-								</select>
+									:options="brands.map((brand) => brand.title)"
+									placeholder="Бренд"
+									class="flex cursor-pointer justify-between border-0 text-[0.625rem] shadow-none outline-none"
+									unstyled
+									showClear
+									:pt="{
+										dropdownicon: 'w-[10px]',
+										clearicon: 'w-[10px] ml-auto mr-2',
+										wrapper: 'bg-primary py-2 ',
+										item: 'text-[0.625rem] flex items-center px-2 rounded-main text-black h-[1.25rem] w-full cursor-pointer my-[1rem] hover:bg-grayLight',
+										input: 'outline-none',
+									}"
+								/>
 							</div>
 							<!-- /Бренды -->
 
@@ -321,59 +375,66 @@
 
 						<!-- О бренде -->
 						<p
-							v-if="currentBrand !== 'Бренд'"
+							v-if="currentBrand.length > 0"
 							class="mb-[3.75rem] rounded-[12px] border-[1px] border-gray p-[9px] text-[0.625rem] leading-[18px] max-laptop:hidden"
 						>
-							{{
-								brands.find((brand) => brand.title === currentBrand)
-									.description || ''
-							}}
+							{{ brands.find((el) => (el === currentBrand[0] ? el : '')) }}
 						</p>
 						<!-- /О бренде -->
 
 						<!-- Раздел с карточками -->
 						<div class="grid grid-cols-catalog gap-[1.875rem] pb-[3.75rem]">
-							<template v-for="product in products" :key="product.id">
+							<template v-for="(product, index) in products" :key="product.id">
 								<ProductCard
-									v-animateonscroll="{
-										enterClass: 'fadein',
-									}"
 									:id="product.id"
 									:title="product.title"
 									:imgSrc="product.main_image"
 									:price="product.price"
 									class="animation-duration-2000 max-w-[18.5rem] flex-shrink-0 transition-all"
 								/>
+
+								<!-- Вставить изображение после каждых трех продуктов -->
+								<template v-if="(index + 1) % 3 === 0">
+									<div
+										v-if="
+											catalogBanners?.length >
+											((currentPage - 1) * productsPerPage) / 3 + index / 3
+										"
+										class="col-span-3 w-full overflow-hidden"
+									>
+										<NuxtImg
+											provider="directus"
+											:src="
+												catalogBanners[
+													Math.floor(index / 3) % catalogBanners?.length
+												].directus_files_id
+											"
+											class="h-auto max-w-full"
+											width="955"
+										/>
+									</div>
+								</template>
 							</template>
 						</div>
 						<!-- /Раздел с карточками -->
 
-						<!-- Изображение -->
-						<!-- <div
-							class="overflow-hidden max-laptop:mx-[-16px] max-laptop:pb-[3.75rem] laptop:pb-[6.25rem]"
-						>
-							<NuxtImg
-								src="/img/catalog/1@2x.png"
-								width="955"
-								height="605"
-								loading="lazy"
-								decoding="auto"
-							/>
-						</div> -->
-						<!-- /Изображение -->
-
 						<!-- Пагинация -->
 						<div class="w-ful relative border-t-[1px] border-[#AAAAAA]">
 							<Paginator
-								:rows="10"
-								:totalRecords="120"
+								v-model:first="currentPage"
+								:rows="productsPerPage"
+								:totalRecords="Number(count[0].count)"
 								template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
 								:currentPageReportTemplate="
 									!isMobile
 										? 'Страница {currentPage} из {totalPages}'
 										: '{currentPage} из {totalPages}'
 								"
-								class="w-full"
+								:pt="{
+									paginator: 'w-full',
+									previouspagebutton: 'mr-auto',
+									nextpagebutton: 'ml-auto',
+								}"
 							/>
 						</div>
 						<!-- /Пагинация -->
@@ -383,17 +444,3 @@
 		</section>
 	</div>
 </template>
-
-<style>
-	.p-paginator.p-component {
-		@apply w-full;
-	}
-
-	[data-pc-section='previouspagebutton'] {
-		@apply mr-auto;
-	}
-
-	[data-pc-section='nextpagebutton'] {
-		@apply ml-auto;
-	}
-</style>

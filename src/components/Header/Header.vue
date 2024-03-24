@@ -32,10 +32,13 @@
 		v-if="!isMobile"
 		class="flex justify-between gap-2 bg-black px-5 py-3 text-primary"
 	>
-		<div class="text-[0.625rem] font-semibold max-laptop:hidden">
+		<div
+			v-if="config?.current_phone_number"
+			class="text-[0.625rem] font-semibold max-laptop:hidden"
+		>
 			{{ config.current_phone_number }}
 		</div>
-		<div class="text-[0.625rem] uppercase">
+		<div v-if="config?.general_message" class="text-[0.625rem] uppercase">
 			{{ config.general_message }}
 		</div>
 		<NuxtLink to="/contact-us" class="flex items-center gap-2 !text-primary">

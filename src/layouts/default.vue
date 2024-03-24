@@ -6,5 +6,6 @@
 		</main>
 		<Footer />
 		<TheWhatsapp />
+		<PopupsTheNewsletter />
 	</div>
 </template>

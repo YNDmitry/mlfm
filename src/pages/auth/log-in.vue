@@ -3,9 +3,21 @@
 	definePageMeta({
 		middleware: ['auth'],
 	})
+
+	useSeoMeta({
+		title: 'Вход | MLFM',
+		ogTitle: 'Вход | MLFM',
+		lang: 'ru',
+	})
+
 	const schema = object({
-		email: string().required().email().label('Email'),
-		password: string().required().min(6).label('Пароль'),
+		email: string()
+			.required('Обязательное поле')
+			.email('Введите корректный адрес электронной почты'),
+		password: string()
+			.required('Обязательное поле')
+			.min(6, 'Минимальная длина 6')
+			.max(200, 'Максимальная длина 200'),
 	})
 
 	const {handleSubmit} = useForm({
@@ -13,19 +25,21 @@
 	})
 
 	const userStore = useUserStore()
-	const onSubmit = handleSubmit(async (values) => {
+	const onSubmit = (values) => {
 		try {
-			const data = await userStore.userLogin(values.email, values.password)
-			console.log(data)
+			userStore.userLogin(values.email, values.password)
 		} catch (e) {
 			console.log(e)
 		}
-	})
+	}
+
+	const isResetPasswordPopup = ref(false)
 </script>
 
 <template>
 	<AuthForm title="Войти">
-		<Form @submit="onSubmit()" :validationSchema="schema">
+		<PopupsAuthResetPassword />
+		<Form @submit="onSubmit" :validationSchema="schema">
 			<TheInput
 				:isRequired="true"
 				:inputPlaceholder="'Email'"
@@ -46,11 +60,13 @@
 				>
 					Войти
 				</button>
-				<NuxtLink
-					class="mt-6 block text-center text-[1rem] font-light leading-[150%] underline"
+				<button
+					@click="isResetPasswordPopup = true"
+					type="button"
+					class="mx-auto mt-6 block text-center text-[1rem] font-light leading-[150%] underline"
 				>
 					Забыли пароль?
-				</NuxtLink>
+				</button>
 				<div
 					class="mt-6 block text-center text-[1rem] font-light leading-[150%]"
 				>
@@ -63,5 +79,3 @@
 		</Form>
 	</AuthForm>
 </template>
-
-<style scoped></style>

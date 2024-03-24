@@ -9,7 +9,16 @@ export default defineNuxtConfig({
 		layoutTransition: {name: 'layout', mode: 'out-in'},
 
 		head: {
+			htmlAttrs: {
+				lang: 'ru',
+			},
 			link: [{rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg'}],
+		},
+	},
+
+	runtimeConfig: {
+		public: {
+			databaseUrl: process.env.DATABASE_URL,
 		},
 	},
 
@@ -45,7 +54,6 @@ export default defineNuxtConfig({
 
 	directus: {
 		url: process.env.DATABASE_URL,
-		autoFetch: false,
 	},
 
 	googleFonts: {
@@ -71,6 +79,9 @@ export default defineNuxtConfig({
 				'Accordion',
 				'AccordionTab',
 				'Image',
+				'Dialog',
+				'Dropdown',
+				'Checkbox',
 			],
 		},
 	},

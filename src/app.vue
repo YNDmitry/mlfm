@@ -30,6 +30,10 @@
 		})
 	})
 	config.value = webConfig
+	const userStore = useUserStore()
+	await callOnce(() => {
+		return userStore.getUserInfo()
+	})
 </script>
 
 <template>

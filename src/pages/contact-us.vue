@@ -1,6 +1,26 @@
 <script setup>
+	const appConfig = useRuntimeConfig()
+
 	definePageMeta({
 		layout: 'default',
+	})
+
+	const {data: page} = await useAsyncData(() => {
+		return getItems({
+			collection: 'contacts',
+			params: {
+				fields: ['meta_title', 'meta_description', 'og_image'],
+			},
+		})
+	})
+
+	useSeoMeta({
+		title: page.meta_title,
+		ogTitle: page.meta_title,
+		description: page.meta_description,
+		ogDescription: page.meta_description,
+		ogImage: appConfig.public.databaseUrl + 'assets/' + page.og_image,
+		lang: 'ru',
 	})
 
 	const config = useState('config')
@@ -55,11 +75,10 @@
 			class="mx-auto max-tablet:w-full max-tablet:pt-[1rem] max-mobile:h-[250px] mobile:h-[405px] tablet:w-[635px] tablet:pt-[35px]"
 		>
 			<NuxtImg
-				src="/img/contact/map.jpg"
+				provider="directus"
+				src="8a3d173d-d1f6-4f31-b792-8e15baa93d7d"
 				width="635"
 				height="405"
-				loading="lazy"
-				decoding="auto"
 				class="h-full"
 			/>
 		</div>

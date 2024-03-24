@@ -1,5 +1,5 @@
 <script setup>
-	const {getThumbnail: img} = useDirectusFiles()
+	const appConfig = useRuntimeConfig()
 	const {getItems} = useDirectusItems()
 	const {data: page} = await useAsyncData(() => {
 		return getItems({
@@ -12,8 +12,13 @@
 
 	useSeoMeta({
 		title: page.value.meta_title,
+		ogTitle: page.value.meta_title,
 		description: page.value.meta_description,
-		ogImage: img(page.value.og_image),
+		ogDescription: page.value.meta_description,
+		ogImage: appConfig.public.databaseUrl + 'assets/' + page.value.og_image,
+		twitterImage:
+			appConfig.public.databaseUrl + 'assets/' + page.value.og_image,
+		lang: 'ru',
 	})
 </script>
 

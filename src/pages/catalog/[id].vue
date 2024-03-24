@@ -1,7 +1,6 @@
 <script setup>
-	const {getItemById} = useDirectusItems()
-	const {getItems} = useDirectusItems()
-	const {getThumbnail: img} = useDirectusFiles()
+	const appConfig = useRuntimeConfig()
+	const {getItems, getItemById} = useDirectusItems()
 
 	definePageMeta({
 		layout: 'default',
@@ -9,15 +8,30 @@
 
 	const {id} = useRoute().params
 
-	const product = await getItemById({
-		collection: 'products',
-		id: id,
+	const {data: product, error} = await useAsyncData(() => {
+		return getItemById({
+			collection: 'products',
+			id: id,
+		})
 	})
 
+	if (!product.value) {
+		throw createError({
+			statusCode: 404,
+			statusMessage: 'Продукт не найден',
+		})
+	}
+
 	useSeoMeta({
-		title: product.title + ' | MLFM',
-		description: product.description,
-		ogImage: img(product.og_image),
+		title: product.value.title + ' | MLFM',
+		ogTitle: product.value.title + ' | MLFM',
+		description: product.value.description,
+		ogDescription: product.value.description,
+		ogImage:
+			appConfig.public.databaseUrl + 'assets/' + product.value.main_image,
+		twitterImage:
+			appConfig.public.databaseUrl + 'assets/' + product.value.main_image,
+		lang: 'ru',
 	})
 
 	const {data: randomProducts} = await useLazyAsyncData(
@@ -215,9 +229,6 @@
 				<Swiper :slides-per-view="4" :space-between="30" id="related-products">
 					<SwiperSlide v-for="product in randomProducts" :key="product.id">
 						<ProductCard
-							v-animateonscroll="{
-								enterClass: 'fadein',
-							}"
 							:id="product.id"
 							:title="product.title"
 							:imgSrc="product.main_image"
