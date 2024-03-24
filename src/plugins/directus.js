@@ -1,8 +1,9 @@
 import { createDirectus, rest, aggregate, createItem, passwordRequest } from '@directus/sdk';
 
-const directus = createDirectus(process.env.DATABASE_URL).with(rest());
-
 export default defineNuxtPlugin(() => {
+  const config = useRuntimeConfig();
+
+  const directus = createDirectus(config.public.databaseUrl).with(rest());
   return {
     provide: { directus, aggregate, createItem, passwordRequest },
   };
