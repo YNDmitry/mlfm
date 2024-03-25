@@ -79,7 +79,7 @@
 				src="8a3d173d-d1f6-4f31-b792-8e15baa93d7d"
 				width="635"
 				height="405"
-				class="h-full"
+				class="h-full w-full object-cover"
 			/>
 		</div>
 	</section>

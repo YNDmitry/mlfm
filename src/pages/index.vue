@@ -170,13 +170,13 @@
 
 		<!-- Ряд кнопок -->
 		<section
-			class="container flex max-w-[84rem] flex-wrap items-center justify-center gap-y-4 py-11 font-montserrat max-laptop:gap-x-3 max-tablet:mb-[2.5rem] max-tablet:pb-[1.25rem] max-tablet:pt-[2rem] max-mobile:text-[0.875rem] laptop:gap-x-6"
+			class="container flex max-w-[84rem] flex-wrap items-center justify-center gap-y-4 py-11 font-montserrat max-laptop:gap-x-3 max-tablet:mb-[2.5rem] max-tablet:grid max-tablet:grid-cols-[1fr_1fr] max-tablet:pb-[1.25rem] max-tablet:pt-[2rem] max-mobile:text-[0.875rem] laptop:gap-x-6"
 		>
 			<NuxtLink
 				v-for="category in categories"
 				:key="category.id"
 				:to="'/catalog'"
-				class="flex h-11 min-w-[10.625rem] items-center justify-center rounded-main border-[1px] border-black px-2 transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-tablet:mr-[0.5rem]"
+				class="flex h-11 min-w-[10.625rem] items-center justify-center rounded-main border-[1px] border-black px-2 transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-tablet:mr-[0.5rem] max-tablet:min-w-full"
 			>
 				{{ category.title }}
 			</NuxtLink>
@@ -193,7 +193,9 @@
 						новинки
 					</h2>
 
-					<div class="no-scrollbar flex scroll-px-3 gap-[45px] overflow-x-auto">
+					<div
+						class="no-scrollbar mx-[-1rem] flex scroll-px-3 gap-[45px] overflow-x-auto px-[1rem] max-tablet:gap-[20px]"
+					>
 						<template v-for="product in products" :key="product.id">
 							<ProductCard
 								:id="product.id"
@@ -206,7 +208,9 @@
 					</div>
 				</div>
 
-				<div class="no-scrollbar flex scroll-px-3 gap-[8px] overflow-x-auto">
+				<div
+					class="no-scrollbar mx-[-1rem] flex scroll-px-3 gap-[8px] overflow-x-auto px-[1rem]"
+				>
 					<div
 						v-for="(slide, idx) in productsCards"
 						:key="idx"
@@ -254,7 +258,7 @@
 							disableOnInteraction: true,
 						}"
 						:loop="true"
-						class="relative max-w-[300px]"
+						class="relative w-full max-w-[300px] max-tablet:max-w-[600px]"
 						id="look-swiper"
 					>
 						<SwiperSlide v-for="product in lookProducts" :key="product.id">
@@ -275,10 +279,10 @@
 		<section class="max-mobile:py-[58px] mobile:py-[77px]">
 			<div class="mx-auto my-0 max-w-[1095px] px-4">
 				<div
-					class="flex items-center justify-between max-mobile:flex-col max-mobile:gap-[8px] mobile:gap-5"
+					class="flex items-center justify-between max-tablet:flex-col max-mobile:gap-[8px] mobile:gap-5"
 				>
 					<div
-						class="max-tablet:max-w-[200px] max-mobile:mb-4 max-mobile:max-w-[125px] max-mobile:max-w-none tablet:max-w-[370px]"
+						class="max-tablet:max-w-none max-mobile:mb-4 max-mobile:max-w-none tablet:max-w-[370px]"
 					>
 						<h2
 							class="font-bold uppercase text-red2 max-tablet:text-[18px] max-mobile:text-[10px] max-mobile:tracking-[2.5px] mobile:tracking-[5.25px] tablet:text-[21px]"
@@ -305,12 +309,13 @@
 						</div>
 					</div>
 
-					<div>
+					<div class="max-tablet:mt-3 max-tablet:w-full">
 						<NuxtImg
 							provider="directus"
 							src="744ac27e-c809-4bcf-8062-fadfda74377b"
 							width="623"
 							height="461"
+							class="max-tablet:w-full"
 						/>
 					</div>
 				</div>
@@ -370,6 +375,11 @@
 		background: #838383 !important;
 		opacity: 0.85 !important;
 		transition: all 200ms ease;
+	}
+
+	#look-swiper .swiper-pagination {
+		position: static;
+		margin-top: 2rem;
 	}
 
 	#look-swiper .swiper-pagination-bullet {

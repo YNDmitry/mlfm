@@ -24,19 +24,11 @@ interface LoginPayload {
 	password: string
 }
 
-// Этот интерфейс может быть расширен в соответствии с вашим API
-interface DirectusUser {
-	first_name: string
-	last_name: string
-	email: string
-	id: string
-}
-
 export const useUserStore = defineStore('userStore', {
 	state: (): UserState => ({
 		firstName: '',
 		lastName: '',
-		newsletter: '',
+		newsletter: false,
 		phone: '',
 		email: '',
 		id: '',
@@ -64,14 +56,15 @@ export const useUserStore = defineStore('userStore', {
 					return login({email: mail, password: password})
 				})
 				.then(() => {
-					this.getUserInfo()
-					updateUser({
-						id: this.id,
-						user: {
-							first_name: firstName,
-							last_name: lastName,
-							terms: terms,
-						},
+					this.getUserInfo().then(() => {
+						updateUser({
+							id: this.id,
+							user: {
+								first_name: firstName,
+								last_name: lastName,
+								terms: terms,
+							},
+						})
 					})
 				})
 				.then(() => {

@@ -24,7 +24,7 @@
 		<div class="relative">
 			<NuxtImg
 				provider="directus"
-				class="w-full max-tablet:aspect-[136/165]"
+				class="w-full object-cover max-tablet:w-[200px]"
 				:src="imgSrc"
 				width="300"
 				height="410"

@@ -26,11 +26,17 @@
 	const websiteStore = useWebsiteStore()
 
 	const isMobile = useMediaQuery('(max-width: 768px)')
+
+	const isOpen = ref(false)
+
+	const openMenu = () => {
+		if (!isMobile) return
+		isOpen.value = !isOpen.value
+	}
 </script>
 <template>
 	<div
-		v-if="!isMobile"
-		class="flex justify-between gap-2 bg-black px-5 py-3 text-primary"
+		class="flex justify-between gap-2 bg-black px-5 py-3 text-primary max-tablet:hidden"
 	>
 		<div
 			v-if="config?.current_phone_number"
@@ -48,7 +54,7 @@
 	</div>
 	<header class="sticky top-0 z-50">
 		<div class="relative flex items-center justify-center bg-primary px-5 py-5">
-			<div v-if="!isMobile">
+			<div class="max-tablet:hidden">
 				<div class="flex items-center gap-2">
 					<IconsSearch />
 					<span class="text-[0.625rem]">Поиск</span>
@@ -58,28 +64,48 @@
 				to="/"
 				class="absolute left-auto right-auto z-50 max-tablet:relative"
 			>
-				<HeaderLogo v-if="!isMobile" />
-				<IconsFooterLogo v-else class="h-7 w-7" />
+				<HeaderLogo class="max-tablet:hidden" />
+				<IconsFooterLogo class="h-7 w-7 tablet:hidden" />
 			</NuxtLink>
-			<div v-if="isMobile" class="relative z-50 ml-auto">
+			<button
+				type="button"
+				@click="openMenu"
+				class="relative z-50 ml-auto tablet:hidden"
+			>
 				<div class="h-[1px] w-5 bg-black"></div>
 				<div class="mt-[5px] h-[1px] w-5 bg-black"></div>
 				<div class="mt-[5px] h-[1px] w-5 bg-black"></div>
-			</div>
-			<div class="ml-auto flex items-center gap-5" v-if="!isMobile">
-				<NuxtLink to="/wishlist" class="h-5 w-5">
-					<IconsHearth class="text-primary" />
-				</NuxtLink>
-				<button @click="websiteStore.handleVisibleCart" class="h-5 w-5">
-					<IconsCart />
-				</button>
-				<NuxtLink to="/profile" class="h-5 w-5">
-					<IconsProfile />
-				</NuxtLink>
-			</div>
+			</button>
+			<Teleport to="#mobile-links" :disabled="!isMobile">
+				<ClientOnly>
+					<div class="ml-auto flex items-center gap-5">
+						<div
+							class="flex items-start gap-5 max-tablet:mt-5 max-tablet:flex-col"
+						>
+							<NuxtLink to="/wishlist" @click="openMenu">
+								<IconsHearth
+									class="inline-block h-5 w-5 text-primary max-tablet:mr-2"
+								/>
+								<span class="tablet:hidden">Избранное</span>
+							</NuxtLink>
+							<button @click="websiteStore.handleVisibleCart">
+								<IconsCart class="inline-block h-5 w-5 max-tablet:mr-2" />
+								<span class="tablet:hidden">Корзина</span>
+							</button>
+							<NuxtLink to="/profile" @click="openMenu">
+								<IconsProfile class="inline-block h-5 w-5 max-tablet:mr-2" />
+								<span class="tablet:hidden">Профиль</span>
+							</NuxtLink>
+						</div>
+					</div>
+				</ClientOnly>
+			</Teleport>
 		</div>
 		<div
-			class="bg-black px-5 py-4 max-tablet:fixed max-tablet:left-0 max-tablet:right-0 max-tablet:top-0 max-tablet:z-40 max-tablet:hidden max-tablet:h-screen max-tablet:bg-primary max-tablet:pt-20 max-mobile:bottom-0"
+			:class="{
+				'max-tablet:hidden': !isOpen,
+			}"
+			class="bg-black px-5 py-4 max-tablet:fixed max-tablet:left-0 max-tablet:right-0 max-tablet:top-0 max-tablet:z-40 max-tablet:h-screen max-tablet:bg-primary max-tablet:pt-20 max-mobile:bottom-0"
 		>
 			<div
 				class="flex items-center justify-center gap-4 max-tablet:flex-col max-tablet:items-start max-tablet:gap-5"
@@ -88,24 +114,15 @@
 					v-for="link in links"
 					:key="link.href"
 					:to="link.href"
+					@click="openMenu"
 					class="text-[0.625rem] font-medium uppercase text-primary max-tablet:text-[1rem] max-tablet:text-black"
 				>
 					{{ link.title }}
 				</NuxtLink>
-				<div class="mt-5 flex flex-col items-start gap-5" v-if="isMobile">
-					<NuxtLink to="/wishlist">
-						<IconsHearth class="mr-2 inline-block h-5 w-5" />
-						<span>Избранное</span>
-					</NuxtLink>
-					<button @click="websiteStore.handleVisibleCart">
-						<IconsCart class="mr-2 inline-block h-5 w-5" />
-						<span>Корзина</span>
-					</button>
-					<NuxtLink to="/profile">
-						<IconsProfile class="mr-2 inline-block h-5 w-5" />
-						<span>Профиль</span>
-					</NuxtLink>
-				</div>
+				<div
+					id="mobile-links"
+					class="mt-5 flex flex-col items-start gap-5"
+				></div>
 			</div>
 		</div>
 		<PopupsTheCart />

@@ -1,5 +1,5 @@
-<script setup lang="ts">
-	import {object, string, boolean, ref, setLocale} from 'yup'
+<script setup>
+	import {object, string, boolean, ref} from 'yup'
 
 	definePageMeta({
 		middleware: ['auth'],
