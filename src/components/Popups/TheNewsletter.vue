@@ -1,16 +1,22 @@
 <script setup>
-	import {useStorage} from '@vueuse/core'
 	import {useTimeoutFn} from '@vueuse/core'
 
 	const websiteStore = useWebsiteStore()
 
-	if (useStorage('newsletterPopup').value === 'true' || null) {
+	const isNewsletterPopup = useCookie('isNewsletterPopup', {
+		default: () => 'true',
+	})
+
+	if (isNewsletterPopup.value === 'true') {
 		useTimeoutFn(() => {
 			websiteStore.isNewsletterPopup = true
-			useStorage('newsletterPopup', false)
+			isNewsletterPopup.value = 'false'
 		}, 10000)
 	} else {
-		websiteStore.isNewsletterPopup = useStorage('newsletterPopup').value
+		useTimeoutFn(() => {
+			websiteStore.isNewsletterPopup = isNewsletterPopup.value
+			isNewsletterPopup.value = 'false'
+		}, 10000)
 	}
 </script>
 
@@ -32,23 +38,19 @@
 			</div>
 
 			<div
-				class="container flex max-w-[507px] flex-col pt-[34px] max-laptop:gap-[1.25rem] max-laptop:pb-[35px] laptop:gap-[2rem] laptop:pb-[4.375rem]"
+				class="mx-1rem container flex max-w-[507px] flex-col gap-[2rem] pb-[4.375rem] pt-[34px]"
 			>
-				<div
-					class="font-medium max-laptop:text-[0.875rem] laptop:text-[1.25rem]"
-				>
-					Присоединяйтесь к нам!
-				</div>
+				<div class="text-[1.25rem] font-medium">Присоединяйтесь к нам!</div>
 
-				<p class="max-laptop:text-[0.625rem] laptop:text-[0.875rem]">
+				<p class="">
 					Получите доступ к закрытым акциям и первыми узнавайте о лимитированных
 					коллекциях!
 				</p>
 
-				<Form class="flex w-full max-laptop:h-[35px] laptop:h-[54px]">
+				<Form class="flex h-[54px] w-full">
 					<input
 						placeholder="EMAIL"
-						class="w-full border-[1px] border-black font-extralight focus:outline-none max-tablet:px-[12px] tablet:px-[1rem]"
+						class="w-full border-[1px] border-black px-5 font-extralight focus:outline-none"
 						type="text"
 					/>
 

@@ -40,6 +40,7 @@ export default defineNuxtConfig({
 		'nuxt-primevue',
 		'nuxt-swiper',
 		'nuxt-lenis',
+		'@formkit/auto-animate',
 	],
 
 	image: {
@@ -54,6 +55,7 @@ export default defineNuxtConfig({
 
 	directus: {
 		url: process.env.DATABASE_URL,
+		autoFetch: false,
 	},
 
 	googleFonts: {

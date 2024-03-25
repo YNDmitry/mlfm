@@ -1,9 +1,9 @@
-<script setup lang="ts">
+<script setup>
 	const appConfig = useRuntimeConfig()
 	const {getItems} = useDirectusItems()
 	const {$directus} = useNuxtApp()
 	import {aggregate} from '@directus/sdk'
-	const isMobile = useMediaQuery('(max-width: 479px)')
+	const isMobile = useMediaQuery('(max-width: 768px)')
 
 	const {data: page} = await useAsyncData(() => {
 		return getItems({
@@ -27,7 +27,14 @@
 
 	const currentPage = ref(1)
 	const totalPages = ref(0)
-	const productsPerPage = ref(9) // Количество продуктов на странице
+	const productsPerPage = ref(!isMobile.value ? 9 : 10) // Количество продуктов на странице
+	const currentBrand = ref('')
+	const currentCollection = ref('')
+	const currentColor = ref('')
+	const currentSize = ref('')
+	const currentCategory = ref(['All'])
+	const currentMinPrice = ref()
+	const currentMaxPrice = ref()
 
 	const {data: count} = await useAsyncData('countOfProducts', () => {
 		return $directus.request(
@@ -37,6 +44,27 @@
 		)
 	})
 
+	const filters = ref({
+		collection: {
+			_in: currentCollection.value,
+		},
+		brand: {
+			_in: currentBrand.value,
+		},
+		category: {
+			_in: currentCategory.value,
+		},
+		color: {
+			_in: currentColor.value,
+		},
+		size: {
+			_in: currentSize.value,
+		},
+		price: {
+			_lte: 0,
+		},
+	})
+
 	const {data: products} = await useLazyAsyncData(
 		() => {
 			return getItems({
@@ -44,13 +72,14 @@
 				params: {
 					fields: ['title', 'price', 'main_image', 'id'],
 					sort: ['-date_created'],
+					filters: filters.value,
 					limit: productsPerPage.value,
 					offset: currentPage.value,
 				},
 			})
 		},
 		{
-			watch: [currentPage],
+			watch: [currentPage, filters],
 		},
 	)
 
@@ -95,6 +124,15 @@
 		})
 	})
 
+	const {data: sizes} = await useLazyAsyncData('catalogSizes', () => {
+		return getItems({
+			collection: 'sizes',
+			params: {
+				fields: ['small_title', 'large_title', 'id'],
+			},
+		})
+	})
+
 	const {data: collections} = await useLazyAsyncData(
 		'catalogCollections',
 		() => {
@@ -122,11 +160,6 @@
 			}),
 		)
 	})
-
-	const currentBrand = ref([])
-	const currentCollection = ref([])
-	const currentColor = ref([])
-	const currentCategory = ref(['All'])
 </script>
 <template>
 	<div>
@@ -138,14 +171,14 @@
 						class="items-center justify-between gap-4 pb-[2.5rem] pt-[70] max-laptop:flex laptop:hidden"
 					>
 						<button
-							class="flex h-[3.125rem] w-full max-w-[250px] items-center justify-center gap-[0.625rem] rounded-[12px] border-[1px] border-black text-[0.625rem] max-mobile:h-[28px]"
+							class="flex h-[3.125rem] w-full items-center justify-center gap-[0.625rem] rounded-[12px] border-[1px] border-black text-[0.625rem] max-mobile:h-[38px]"
 						>
 							<IconsSelect />
 							<span>Новое</span>
 						</button>
 
 						<button
-							class="flex h-[3.125rem] w-full max-w-[250px] items-center justify-center gap-[0.625rem] rounded-[12px] border-[1px] border-black text-[0.625rem] max-mobile:h-[28px]"
+							class="flex h-[3.125rem] w-full items-center justify-center gap-[0.625rem] rounded-[12px] border-[1px] border-black text-[0.625rem] max-mobile:h-[38px]"
 						>
 							<IconsFilters />
 							<span>Фильтры</span>
@@ -233,78 +266,39 @@
 							<!-- /Чекбоксы -->
 
 							<!-- Коллекция -->
-							<div
-								v-if="collections"
-								class="relative flex flex-col gap-[1.25rem] pb-[0.625rem] pt-[1.25rem] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-['']"
-							>
-								<span class="text-[0.875rem]">Коллекция</span>
-
-								<Dropdown
-									v-model="currentCollection"
-									:options="collections.map((el) => el.title)"
-									placeholder="Коллекция"
-									class="flex cursor-pointer justify-between border-0 text-[0.625rem] shadow-none outline-none"
-									unstyled
-									showClear
-									:pt="{
-										dropdownicon: 'w-[10px]',
-										clearicon: 'w-[10px] ml-auto mr-2',
-										wrapper: 'bg-primary py-2',
-										item: 'text-[0.625rem] flex items-center px-2 rounded-main text-black h-[1.25rem] w-full cursor-pointer my-[1rem] hover:bg-grayLight',
-										input: 'outline-none',
-									}"
-								/>
-							</div>
+							<CatalogFilter
+								:filters="collections"
+								:title="`Коллекция`"
+								:currentFilter="currentCollection"
+								@update:currentFilter="currentCollection = $event"
+							/>
 							<!-- /Коллекция -->
 
 							<!-- Цвет -->
-							<div
-								v-if="colors"
-								class="relative flex flex-col gap-[1.25rem] pb-[0.625rem] pt-[1.25rem] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-['']"
-							>
-								<span class="text-[0.875rem]">Цвет</span>
-
-								<Dropdown
-									v-model="currentColor"
-									:options="colors.map((el) => el.title)"
-									placeholder="Цвет"
-									class="flex cursor-pointer justify-between border-0 text-[0.625rem] shadow-none outline-none"
-									unstyled
-									showClear
-									:pt="{
-										dropdownicon: 'w-[10px]',
-										clearicon: 'w-[10px] ml-auto mr-2',
-										wrapper: 'bg-primary py-2 ',
-										item: 'text-[0.625rem] flex items-center px-2 rounded-main text-black h-[1.25rem] w-full cursor-pointer my-[1rem] hover:bg-grayLight',
-										input: 'outline-none',
-									}"
-								/>
-							</div>
+							<CatalogFilter
+								:filters="colors"
+								:title="`Цвет`"
+								:currentFilter="currentColor"
+								@update:currentFilter="currentColor = $event"
+							/>
 							<!-- /Цвет -->
 
-							<!-- Бренды -->
-							<div
-								v-if="brands"
-								class="relative flex flex-col gap-[1.25rem] pb-[0.625rem] pt-[1.25rem] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-['']"
-							>
-								<span class="text-[0.875rem]">Бренд</span>
+							<!-- Размер -->
+							<CatalogFilter
+								:filters="sizes"
+								:title="`Размер`"
+								:currentFilter="currentSize"
+								@update:currentFilter="currentSize = $event"
+							/>
+							<!-- /Размер -->
 
-								<Dropdown
-									v-model="currentBrand"
-									:options="brands.map((brand) => brand.title)"
-									placeholder="Бренд"
-									class="flex cursor-pointer justify-between border-0 text-[0.625rem] shadow-none outline-none"
-									unstyled
-									showClear
-									:pt="{
-										dropdownicon: 'w-[10px]',
-										clearicon: 'w-[10px] ml-auto mr-2',
-										wrapper: 'bg-primary py-2 ',
-										item: 'text-[0.625rem] flex items-center px-2 rounded-main text-black h-[1.25rem] w-full cursor-pointer my-[1rem] hover:bg-grayLight',
-										input: 'outline-none',
-									}"
-								/>
-							</div>
+							<!-- Бренды -->
+							<CatalogFilter
+								:filters="brands"
+								:title="`Бренд`"
+								:currentFilter="currentBrand"
+								@update:currentFilter="currentBrand = $event"
+							/>
 							<!-- /Бренды -->
 
 							<!-- Цена -->
@@ -318,7 +312,6 @@
 									class="flex justify-between gap-[0.625rem] text-[0.625rem]"
 								>
 									<label
-										for="inp1"
 										class="rounded-full flex min-h-[46px] w-full cursor-pointer items-center justify-center gap-[2px] border"
 									>
 										<span
@@ -329,12 +322,14 @@
 										<input
 											class="w-[72px] focus:outline-none"
 											type="number"
-											:value="minPrice[0].min.price"
+											v-model="currentMinPrice"
+											:placeholder="minPrice[0].min.price"
+											:min="minPrice[0].min.price"
+											:max="maxPrice[0].max.price"
 										/>
 									</label>
 
 									<label
-										for="inp2"
 										class="rounded-full flex min-h-[46px] w-full cursor-pointer items-center justify-center gap-[2px] border"
 									>
 										<span
@@ -345,7 +340,10 @@
 										<input
 											class="w-[72px] focus:outline-none"
 											type="number"
-											:value="maxPrice[0].max.price"
+											v-model="currentMaxPrice"
+											:placeholder="maxPrice[0].max.price"
+											:min="minPrice[0].min.price"
+											:max="maxPrice[0].max.price"
 										/>
 									</label>
 								</div>
@@ -374,39 +372,49 @@
 						<!-- /Хлебные крошки -->
 
 						<!-- О бренде -->
-						<p
-							v-if="currentBrand.length > 0"
-							class="mb-[3.75rem] rounded-[12px] border-[1px] border-gray p-[9px] text-[0.625rem] leading-[18px] max-laptop:hidden"
-						>
-							{{ brands.find((el) => (el === currentBrand[0] ? el : '')) }}
-						</p>
+						<div v-auto-animate>
+							<p
+								v-if="currentBrand"
+								class="mb-[3.75rem] rounded-[12px] border-[1px] border-gray p-[9px] text-[0.625rem] leading-[18px] max-laptop:hidden"
+							>
+								{{
+									brands.find((el) => (el.title === currentBrand ? el : null))
+										.description
+								}}
+							</p>
+						</div>
 						<!-- /О бренде -->
 
 						<!-- Раздел с карточками -->
-						<div class="grid grid-cols-catalog gap-[1.875rem] pb-[3.75rem]">
+						<div
+							class="grid grid-cols-catalog gap-[1.875rem] pb-[3.75rem] max-tablet:grid-cols-[1fr_1fr]"
+						>
 							<template v-for="(product, index) in products" :key="product.id">
 								<ProductCard
 									:id="product.id"
 									:title="product.title"
 									:imgSrc="product.main_image"
 									:price="product.price"
-									class="animation-duration-2000 max-w-[18.5rem] flex-shrink-0 transition-all"
+									class="animation-duration-2000 flex-shrink-0 transition-all"
 								/>
 
 								<!-- Вставить изображение после каждых трех продуктов -->
-								<template v-if="(index + 1) % 3 === 0">
+								<template v-if="(index + 1) % (!isMobile ? 3 : 2) === 0">
 									<div
 										v-if="
 											catalogBanners?.length >
-											((currentPage - 1) * productsPerPage) / 3 + index / 3
+											((currentPage - 1) * productsPerPage) /
+												(!isMobile ? 3 : 2) +
+												index / (!isMobile ? 3 : 2)
 										"
-										class="col-span-3 w-full overflow-hidden"
+										class="col-span-3 w-full overflow-hidden max-tablet:col-span-2"
 									>
 										<NuxtImg
 											provider="directus"
 											:src="
 												catalogBanners[
-													Math.floor(index / 3) % catalogBanners?.length
+													Math.floor(index / (!isMobile ? 3 : 2)) %
+														catalogBanners?.length
 												].directus_files_id
 											"
 											class="h-auto max-w-full"

@@ -27,7 +27,7 @@
 					<div class="mx-auto w-full max-w-96">
 						<button
 							@click="handleError"
-							class="h-11 rounded-main bg-red2 px-7 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] text-primary transition-colors hover:bg-red2-hover max-tablet:hidden"
+							class="h-11 rounded-main bg-red2 px-7 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] text-primary transition-colors hover:bg-red2-hover"
 						>
 							Вернуться на главную
 						</button>

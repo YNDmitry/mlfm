@@ -24,7 +24,7 @@
 				<div class="mt-6">
 					<NuxtLink
 						to="/catalog"
-						class="flex h-11 w-full items-center justify-center rounded-main bg-red2 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] text-primary transition-colors hover:bg-red2-hover max-tablet:hidden"
+						class="flex h-11 w-full items-center justify-center rounded-main bg-red2 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] text-primary transition-colors hover:bg-red2-hover"
 					>
 						перейти в каталог
 					</NuxtLink>

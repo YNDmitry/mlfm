@@ -34,12 +34,12 @@
 				class="flex flex-col items-center gap-[5px] font-medium text-third max-laptop:py-[10px] tablet:text-[14px] laptop:py-[20px]"
 			>
 				<p class="text-center">{{ title }}</p>
-				<span>{{ price }}</span>
+				<span>₽ {{ price }}</span>
 			</div>
 
 			<NuxtLink
 				:to="'/catalog/' + link"
-				class="flex min-h-[2.813rem] max-w-[10.625rem] items-center justify-center rounded-main bg-third font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] text-red2 transition-colors hover:bg-primary mobile:w-full"
+				class="flex min-h-[2.813rem] max-w-[10.625rem] items-center justify-center rounded-main bg-third px-6 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] text-red2 transition-colors hover:bg-primary mobile:w-full"
 			>
 				купить
 			</NuxtLink>

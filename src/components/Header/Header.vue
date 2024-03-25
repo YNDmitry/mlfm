@@ -1,5 +1,5 @@
 <script setup>
-	const links = [
+	const links = ref([
 		{
 			title: 'Главная',
 			href: '/',
@@ -20,7 +20,7 @@
 			title: 'Контакты',
 			href: '/contact-us',
 		},
-	]
+	])
 
 	const config = useState('config')
 	const websiteStore = useWebsiteStore()

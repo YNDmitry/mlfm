@@ -20,11 +20,11 @@
 </script>
 
 <template>
-	<NuxtLink :to="'/catalog/' + id" class="product_card">
-		<div class="relative">
+	<NuxtLink :to="'/catalog/' + id" class="product_card w-full">
+		<div class="relative w-full">
 			<NuxtImg
 				provider="directus"
-				class="w-full object-cover max-tablet:w-[200px]"
+				class="w-full object-cover"
 				:src="imgSrc"
 				width="300"
 				height="410"
@@ -38,7 +38,7 @@
 		</div>
 
 		<div
-			class="flex flex-col gap-[0.5rem] pt-5 text-[14px] font-medium max-tablet:pt-[4px] max-tablet:text-[10px]"
+			class="flex flex-col gap-[0.5rem] pt-5 text-[14px] font-medium max-tablet:pt-[4px]"
 		>
 			<div>{{ title }}</div>
 

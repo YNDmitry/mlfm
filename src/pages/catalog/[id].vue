@@ -15,7 +15,7 @@
 		})
 	})
 
-	if (!product.value) {
+	if (!error) {
 		throw createError({
 			statusCode: 404,
 			statusMessage: 'Продукт не найден',
@@ -34,37 +34,30 @@
 		lang: 'ru',
 	})
 
-	const {data: randomProducts} = await useLazyAsyncData(
-		'randomProducts',
-		() => {
-			return getItems({
-				collection: 'products',
-				params: {
-					fields: ['title', 'price', 'main_image', 'id'],
-					filter: {
-						id: {
-							_neq: id,
-						},
+	const {data: randomProducts} = await useAsyncData('randomProducts', () => {
+		return getItems({
+			collection: 'products',
+			params: {
+				fields: ['title', 'price', 'main_image', 'id'],
+				filter: {
+					id: {
+						_neq: id,
 					},
-					limit: 4,
 				},
-			})
-		},
-	)
+				limit: 4,
+			},
+		})
+	})
 </script>
 
 <template>
 	<div>
 		<!-- Карточка товара -->
-		<section class="pt-[78px] max-laptop:pt-0">
-			<div
-				class="laptop:mx-auto laptop:my-0 laptop:max-w-[1189px] laptop:px-[1rem]"
-			>
-				<div
-					class="max-laptop:flex max-laptop:flex-col max-tablet:gap-4 tablet:gap-7 laptop:grid laptop:grid-cols-catalogItem"
-				>
+		<section class="pt-[78px] max-tablet:pt-0">
+			<div class="mx-auto my-0 max-w-[1189px] px-[1rem]">
+				<div class="flex gap-7 max-tablet:flex-col max-tablet:gap-4">
 					<Swiper
-						class="!sticky top-40 h-[650px] w-[720px] max-laptop:!static max-laptop:w-full"
+						class="!sticky top-40 max-h-[650px] max-w-[700px] max-laptop:!static max-laptop:w-full max-tablet:h-[500px]"
 						:slides-per-view="1"
 						:autoplay="{
 							delay: 8000,
@@ -96,7 +89,7 @@
 					</Swiper>
 
 					<div
-						class="flex flex-col max-laptop:px-[1rem] max-tablet:gap-[0.75rem] tablet:gap-[2rem]"
+						class="flex w-full max-w-[420px] flex-col max-tablet:max-w-none max-tablet:gap-[0.75rem] tablet:gap-[2rem]"
 					>
 						<div
 							class="gap-2 text-[0.625rem] text-primary max-tablet:flex tablet:hidden"
@@ -106,11 +99,11 @@
 							>
 						</div>
 
-						<h3
+						<h1
 							class="max-tablet:font-light tablet:text-[2rem] tablet:font-extralight"
 						>
 							{{ product.title }}
-						</h3>
+						</h1>
 
 						<div class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-4">
 							<div
@@ -155,10 +148,9 @@
 								</div>
 								<!-- /radio кнопки! -->
 
-								<a
-									href="javascript:void(0)"
+								<NuxtLink
 									class="text-[0.625rem] text-darkGray2 underline tablet:hidden"
-									>Руководсто по размерам</a
+									>Руководсто по размерам</NuxtLink
 								>
 							</div>
 						</div>
@@ -221,56 +213,31 @@
 		>
 			<div class="container my-0 px-3">
 				<h4
-					class="pb-[2rem] text-[0.875rem] max-mobile:text-[0.625rem] mobile:text-center mobile:font-bold mobile:tracking-[0.25rem]"
+					class="pb-[2rem] mobile:text-center mobile:font-bold mobile:tracking-[0.25rem]"
 				>
 					похожие товары
 				</h4>
 
-				<Swiper :slides-per-view="4" :space-between="30" id="related-products">
-					<SwiperSlide v-for="product in randomProducts" :key="product.id">
+				<div
+					class="no-scrollbar mx-[-1rem] flex scroll-px-3 gap-[45px] overflow-x-auto px-[1rem] max-tablet:gap-[20px]"
+				>
+					<template v-for="product in randomProducts" :key="product.id">
 						<ProductCard
 							:id="product.id"
 							:title="product.title"
 							:imgSrc="product.main_image"
 							:price="product.price"
-							class="animation-duration-2000 max-w-[18.5rem] flex-shrink-0 transition-all"
+							class="animation-duration-2000 max-w-[18.31rem] flex-shrink-0 transition-all"
 						/>
-					</SwiperSlide>
-				</Swiper>
+					</template>
+				</div>
 			</div>
 		</section>
 		<!-- /Похожие товары -->
-
-		<!-- С этим товаром покупают -->
-		<!-- <section class="max-laptop:pb-[3.75rem] laptop:pb-[12.5rem]">
-			<div class="container">
-				<h4
-					class="pb-[2rem] text-[0.875rem] max-mobile:text-[0.625rem] mobile:text-center mobile:font-bold mobile:tracking-[0.25rem]"
-				>
-					с этим товаром покупают
-				</h4>
-
-				<Swiper
-					:slides-per-view="4"
-					:space-between="30"
-					id="related-products-2"
-				>
-					<SwiperSlide v-for="slide in 4" :key="slide">
-						<ProductCard />
-					</SwiperSlide>
-				</Swiper>
-			</div>
-		</section> -->
-		<!-- /С этим товаром покупают -->
 	</div>
 </template>
 
 <style>
-	#related-products,
-	#related-products-2 {
-		overflow: visible;
-	}
-
 	.p-accordion .p-accordion-header .p-accordion-header-link {
 		@apply pl-0 pr-0;
 	}

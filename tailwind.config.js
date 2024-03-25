@@ -25,7 +25,7 @@ module.exports = {
 			newItems: "repeat(4, 1fr)",
 			buyImage: "1.35fr 0.55fr",
 			buyImageMobile: "1fr",
-			catalogItem: "1fr 410px",
+			catalogItem: "1fr auto",
 			catalog: "repeat(3, 1fr)",
 			aside: "275px 1fr",
 			delivery: "49% 51%",
