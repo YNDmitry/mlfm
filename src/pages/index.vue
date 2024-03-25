@@ -192,7 +192,7 @@
 			>
 				<h1
 					v-if="mainSlider"
-					class="tablet:text-2xl uppercase max-tablet:max-w-[7.563rem] max-tablet:text-right max-tablet:text-[0.625rem] max-tablet:font-light max-tablet:leading-[0.75rem] max-tablet:tracking-[2.5px] tablet:max-w-[15.625rem] tablet:text-center tablet:font-bold tablet:tracking-[0.375rem]"
+					class="tablet:text-2xl uppercase max-tablet:text-right max-tablet:font-light max-tablet:tracking-[2.5px] tablet:max-w-[15.625rem] tablet:text-center tablet:font-bold tablet:tracking-[0.375rem]"
 				>
 					Новая коллекция <br /><br />{{ mainSlider.title }}
 				</h1>
@@ -209,13 +209,13 @@
 
 		<!-- Ряд кнопок -->
 		<section
-			class="container flex max-w-[84rem] flex-wrap items-center justify-center gap-y-4 py-11 font-montserrat max-laptop:gap-x-3 max-tablet:mb-[2.5rem] max-tablet:grid max-tablet:grid-cols-[1fr_1fr] max-tablet:pb-[1.25rem] max-tablet:pt-[2rem] max-mobile:text-[0.875rem] laptop:gap-x-6"
+			class="container flex max-w-[84rem] flex-wrap items-center justify-center gap-4 gap-y-4 py-11 font-montserrat max-laptop:gap-x-3 max-tablet:mb-[2.5rem] max-tablet:pb-[1.25rem] max-tablet:pt-[2rem] max-mobile:grid max-mobile:grid-cols-[1fr_1fr] max-mobile:text-[0.875rem]"
 		>
 			<NuxtLink
 				v-for="category in categories"
 				:key="category.id"
 				:to="'/catalog'"
-				class="flex h-11 min-w-[10.625rem] items-center justify-center rounded-main border-[1px] border-black px-2 transition-colors hover:bg-black hover:text-primary max-laptop:mr-4 max-tablet:mr-[0.5rem] max-tablet:min-w-full"
+				class="flex h-11 items-center justify-center rounded-main border-[1px] border-black px-6 text-center transition-colors hover:bg-black hover:text-primary"
 			>
 				{{ category.title }}
 			</NuxtLink>
