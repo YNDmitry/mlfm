@@ -84,6 +84,7 @@ export default defineNuxtConfig({
 				'Dialog',
 				'Dropdown',
 				'Checkbox',
+				'ProgressSpinner',
 			],
 		},
 	},

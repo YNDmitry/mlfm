@@ -90,8 +90,6 @@ export const useUserStore = defineStore('userStore', {
 		async getUserInfo() {
 			const user = await useDirectusUser()
 
-			console.log(user.value)
-
 			if (!user.value) {
 				return
 			}

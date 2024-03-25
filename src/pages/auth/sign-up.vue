@@ -35,7 +35,7 @@
 		newsletter: boolean(),
 	})
 
-	const {handleSubmit, defineField} = useForm({
+	const {handleSubmit, defineField, isSubmitting} = useForm({
 		validationSchema: schema,
 	})
 
@@ -43,8 +43,8 @@
 	const [newsletter] = defineField('newsletter')
 
 	const userStore = useUserStore()
-	const onSubmit = handleSubmit((values) => {
-		const data = userStore
+	const onSubmit = handleSubmit(async (values) => {
+		await userStore
 			.create(
 				values.email,
 				values.password,
@@ -137,9 +137,19 @@
 					>
 				</div>
 				<button
+					:disabled="isSubmitting"
 					type="submit"
-					class="mt-8 w-full bg-red2 text-primary transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-75 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[45px] tablet:rounded-[1.875rem]"
+					class="relative mt-8 flex w-full items-center justify-center bg-red2 text-primary transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-70 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[45px] tablet:rounded-[1.875rem]"
 				>
+					<ProgressSpinner
+						aria-label="Loading..."
+						style="width: 20px; height: 20px"
+						:pt="{
+							root: 'mx-0 absolute left-[2rem]',
+							circle: '!stroke-[#ffffff]',
+						}"
+						v-if="isSubmitting"
+					/>
 					Зарегистрироваться
 				</button>
 				<div
