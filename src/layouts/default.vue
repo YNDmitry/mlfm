@@ -1,5 +1,5 @@
 <template>
-	<div id="page-wrapper" class="flex min-h-screen flex-col">
+	<div id="page-wrapper" class="flex min-h-screen flex-col overflow-x-clip">
 		<Header />
 		<main id="main-wrapper">
 			<slot />

@@ -2,12 +2,9 @@
 	import {object, string} from 'yup'
 	import {passwordRequest} from '@directus/sdk'
 	const {$directus} = useNuxtApp()
-
 	defineProps({
 		isPopupOpen: {
 			type: Boolean,
-			required: true,
-			default: false,
 		},
 	})
 
@@ -17,7 +14,7 @@
 			.email('Введите корректный адрес электронной почты'),
 	})
 
-	const {handleSubmit} = useForm({
+	const {handleSubmit, isSubmitting} = useForm({
 		validationSchema: schema,
 	})
 
@@ -27,20 +24,15 @@
 		const data = await $directus
 			.request(passwordRequest(values.email))
 			.then((result) => {
-				console.log(result)
 				isSubmitted.value = true
 			})
-			.catch((err) => {
-				console.log(err)
-			})
 	})
-
-	const isOpen = ref(false)
 </script>
 
 <template>
 	<Dialog
-		v-model:visible="isOpen"
+		:visible="isPopupOpen"
+		@update:visible="isPopupOpen = $event"
 		modal
 		class="w-full max-w-[450px] bg-primary"
 	>
@@ -62,9 +54,19 @@
 
 				<div class="mt-8 w-full">
 					<button
+						:disabled="isSubmitting"
 						type="submit"
-						class="w-full bg-red2 text-primary transition-colors hover:bg-red2-hover max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[45px] tablet:rounded-[1.875rem]"
+						class="relative flex w-full items-center justify-center bg-red2 text-primary transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-70 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[45px] tablet:rounded-[1.875rem]"
 					>
+						<ProgressSpinner
+							aria-label="Loading..."
+							style="width: 20px; height: 20px"
+							:pt="{
+								root: 'mx-0 absolute left-[2rem]',
+								circle: '!stroke-[#ffffff]',
+							}"
+							v-if="isSubmitting"
+						/>
 						Восстановить пароль
 					</button>
 				</div>

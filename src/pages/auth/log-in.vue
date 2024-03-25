@@ -34,7 +34,10 @@
 
 <template>
 	<AuthForm title="Войти">
-		<PopupsAuthResetPassword />
+		<PopupsAuthResetPassword
+			@update:visible="isResetPasswordPopup = $event"
+			:isPopupOpen="isResetPasswordPopup"
+		/>
 		<form @submit.prevent="onSubmit" :validationSchema="schema">
 			<TheInput
 				:isRequired="true"
