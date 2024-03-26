@@ -1,0 +1,71 @@
+<script setup>
+	import {object, string} from 'yup'
+	definePageMeta({
+		layout: 'default',
+		middleware: ['auth'],
+	})
+
+	useSeoMeta({
+		title: 'Сброс пароля | MLFM',
+		ogTitle: 'Сброс пароля | MLFM',
+		lang: 'ru',
+	})
+
+	const schema = object({
+		email: string()
+			.required('Обязательное поле')
+			.email('Введите корректный адрес электронной почты'),
+		password: string()
+			.required('Обязательное поле')
+			.min(6, 'Минимальная длина 6')
+			.max(200, 'Максимальная длина 200'),
+	})
+
+	const token = useRoute().params.token
+
+	const {handleSubmit, isSubmitting} = useForm({
+		validationSchema: schema,
+	})
+
+	const onSubmit = handleSubmit(async (values) => {
+		console.log(values)
+	})
+</script>
+
+<template>
+	<AuthForm title="Сброс пароля">
+		<form @submit.prevent="onSubmit" :validationSchema="schema">
+			<TheInput
+				:isRequired="true"
+				:inputPlaceholder="'Email'"
+				:inputType="'email'"
+				:inputName="'email'"
+			/>
+			<TheInput
+				:isRequired="true"
+				:inputPlaceholder="'Пароль'"
+				:inputType="'password'"
+				:inputName="'password'"
+				class="mt-6"
+			/>
+			<div class="mt-6 w-full">
+				<button
+					:disabled="isSubmitting"
+					type="submit"
+					class="relative flex w-full items-center justify-center bg-red2 text-primary transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-70 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[45px] tablet:rounded-[1.875rem]"
+				>
+					<ProgressSpinner
+						aria-label="Loading..."
+						style="width: 20px; height: 20px"
+						:pt="{
+							root: 'mx-0 absolute left-[2rem]',
+							circle: '!stroke-[#ffffff]',
+						}"
+						v-if="isSubmitting"
+					/>
+					Сбросить
+				</button>
+			</div>
+		</form>
+	</AuthForm>
+</template>

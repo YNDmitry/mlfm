@@ -32,14 +32,14 @@
 								<div
 									class="flex w-full items-center border-[1px] border-black font-light max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
 								>
-									{{ userStore.firstName }}
+									{{ userStore?.firstName }}
 								</div>
 							</label>
 							<label class="flex w-full cursor-pointer flex-col gap-2">
 								<div
 									class="flex w-full items-center border-[1px] border-black font-light max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
 								>
-									{{ userStore.lastName }}
+									{{ userStore?.lastName }}
 								</div>
 							</label>
 						</div>

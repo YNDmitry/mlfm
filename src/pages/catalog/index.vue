@@ -25,16 +25,51 @@
 			appConfig.public.databaseUrl + 'assets/' + page.value.og_image,
 	})
 
+	const route = useRoute()
+	const router = useRouter()
+
 	const currentPage = ref(1)
 	const totalPages = ref(0)
 	const productsPerPage = ref(!isMobile.value ? 9 : 10) // Количество продуктов на странице
-	const currentBrand = ref('')
-	const currentCollection = ref('')
-	const currentColor = ref('')
-	const currentSize = ref('')
-	const currentCategory = ref(['All'])
+	const currentBrand = ref(route.query.brand || '')
+	const currentCollection = ref(route.query.collection || '')
+	const currentColor = ref(route.query.color || '')
+	const currentSize = ref(route.query.size || '')
+	const currentCategory = ref(route.query.category || ['All'])
 	const currentMinPrice = ref()
 	const currentMaxPrice = ref()
+
+	const updateURL = () => {
+		router.push({
+			query: {
+				...route.query,
+				collection: currentCollection.value,
+				brand: currentBrand.value,
+				category: currentCategory.value,
+				color: currentColor.value,
+				size: currentSize.value,
+			},
+		})
+	}
+
+	watch(
+		[
+			currentCollection,
+			currentBrand,
+			currentCategory,
+			currentColor,
+			currentSize,
+		],
+		updateURL,
+	)
+
+	watch(route.query, (newQuery) => {
+		currentBrand.value = newQuery.brand || ''
+		currentCategory.value = newQuery.category || 'All'
+		currentColor.value = newQuery.color || ''
+		currentSize.value = newQuery.size || ''
+		currentCollection.value = newQuery.collection || ''
+	})
 
 	const {data: count} = await useAsyncData('countOfProducts', () => {
 		return $directus.request(
@@ -52,10 +87,10 @@
 			_in: currentBrand.value,
 		},
 		category: {
-			_in: currentCategory.value,
+			_in: currentCategory.value || '',
 		},
 		color: {
-			_in: currentColor.value,
+			_contains: currentColor.value,
 		},
 		size: {
 			_in: currentSize.value,
@@ -212,12 +247,12 @@
 											<input
 												type="checkbox"
 												class="absolute h-5 w-5 cursor-pointer opacity-0"
+												name="all"
 												:value="'All'"
 												:checked="
-													currentCategory.includes('All') &&
-													currentCategory.length <= 1
+													currentCategory.length <= 1 ||
+													currentCategory.length === categories.length
 												"
-												v-model="currentCategory"
 											/>
 
 											<div
@@ -237,6 +272,7 @@
 											<input
 												type="checkbox"
 												class="absolute h-5 w-5 cursor-pointer opacity-0"
+												name="category"
 												:value="category.title"
 												v-model="currentCategory"
 											/>
@@ -270,7 +306,10 @@
 								:filters="collections"
 								:title="`Коллекция`"
 								:currentFilter="currentCollection"
-								@update:currentFilter="currentCollection = $event"
+								@update:currentFilter="
+									(currentCollection = $event),
+										$router.push({query: {collection: $event}})
+								"
 							/>
 							<!-- /Коллекция -->
 
@@ -279,7 +318,10 @@
 								:filters="colors"
 								:title="`Цвет`"
 								:currentFilter="currentColor"
-								@update:currentFilter="currentColor = $event"
+								@update:currentFilter="
+									(currentColor = $event),
+										$router.push({query: {color: $event}})
+								"
 							/>
 							<!-- /Цвет -->
 
@@ -288,7 +330,9 @@
 								:filters="sizes"
 								:title="`Размер`"
 								:currentFilter="currentSize"
-								@update:currentFilter="currentSize = $event"
+								@update:currentFilter="
+									(currentSize = $event), $router.push({query: {size: $event}})
+								"
 							/>
 							<!-- /Размер -->
 
@@ -297,7 +341,10 @@
 								:filters="brands"
 								:title="`Бренд`"
 								:currentFilter="currentBrand"
-								@update:currentFilter="currentBrand = $event"
+								@update:currentFilter="
+									(currentBrand = $event),
+										$router.push({brand: {collection: $event}})
+								"
 							/>
 							<!-- /Бренды -->
 
@@ -350,6 +397,7 @@
 							</div>
 							<!-- /Цена -->
 
+							<!-- Баннер -->
 							<div class="pt-[25px]">
 								<NuxtPicture
 									provider="directus"
@@ -358,6 +406,7 @@
 									height="485"
 								/>
 							</div>
+							<!-- /Баннер -->
 						</div>
 					</aside>
 					<!-- /Боковое меню (На ПК)-->
@@ -398,7 +447,7 @@
 									class="animation-duration-2000 flex-shrink-0 transition-all"
 								/>
 
-								<!-- Вставить изображение после каждых трех продуктов -->
+								<!-- изображение -->
 								<template v-if="(index + 1) % (!isMobile ? 3 : 2) === 0">
 									<div
 										v-if="

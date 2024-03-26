@@ -1,6 +1,7 @@
 <script setup>
 	const appConfig = useRuntimeConfig()
 	const {getItems, getItemById} = useDirectusItems()
+	const {$directus, $preview} = useNuxtApp()
 
 	definePageMeta({
 		layout: 'default',
@@ -8,14 +9,23 @@
 
 	const {id} = useRoute().params
 
-	const {data: product, error} = await useAsyncData(() => {
+	if ($preview) {
+		const {data: product, error} = await useAsyncData(() => {
+			return getItemById({
+				collection: 'products',
+				id: id,
+			})
+		})
+	}
+
+	const {data: product} = await useAsyncData(() => {
 		return getItemById({
 			collection: 'products',
 			id: id,
 		})
 	})
 
-	if (!error) {
+	if (!product.value) {
 		throw createError({
 			statusCode: 404,
 			statusMessage: 'Продукт не найден',
