@@ -51,8 +51,6 @@ export default defineNuxtConfig({
 		},
 	},
 
-	plugins: ['./src/plugins/preview.client.ts'],
-
 	directus: {
 		url: process.env.DATABASE_URL,
 		autoFetch: false,

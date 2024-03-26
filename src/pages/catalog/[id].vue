@@ -1,7 +1,7 @@
 <script setup>
 	const appConfig = useRuntimeConfig()
 	const {getItems, getItemById} = useDirectusItems()
-	const {$directus, $preview} = useNuxtApp()
+	const {$preview} = useNuxtApp()
 
 	definePageMeta({
 		layout: 'default',
@@ -10,6 +10,7 @@
 	const {id} = useRoute().params
 
 	if ($preview) {
+		console.log('hello from preview')
 		const {data: product, error} = await useAsyncData(() => {
 			return getItemById({
 				collection: 'products',
