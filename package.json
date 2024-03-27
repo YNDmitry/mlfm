@@ -27,6 +27,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
     "nuxt": "^3.11.0",
+    "nuxt-build-cache": "latest",
     "nuxt-directus": "latest",
     "nuxt-link-checker": "^3.0.0-rc.6",
     "nuxt-primevue": "^0.2.2",

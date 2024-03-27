@@ -1,4 +1,5 @@
 <script setup>
+	import {object, string} from 'yup'
 	import {useTimeoutFn} from '@vueuse/core'
 
 	const websiteStore = useWebsiteStore()
@@ -18,6 +19,27 @@
 			isNewsletterPopup.value = 'false'
 		}, 10000)
 	}
+
+	const schema = object({
+		newsletterEmail: string()
+			.required('Обязательное поле')
+			.email('Некорректная почта'),
+	})
+
+	const {handleSubmit, setErrors, setFieldValue, isSubmitting} = useForm({
+		validationSchema: schema,
+	})
+
+	const onSubmit = handleSubmit(async (values) => {
+		await websiteStore.handleNewsletterSubscribe(values).catch((err) => {
+			if (err.errors[0].extensions.code === 'RECORD_NOT_UNIQUE') {
+				setErrors({
+					footerEmail: 'Пользователь с этим email уже подписан',
+				})
+				setFieldValue('newsletterEmail', '')
+			}
+		})
+	})
 </script>
 
 <template>
@@ -42,24 +64,49 @@
 			>
 				<div class="text-[1.25rem] font-medium">Присоединяйтесь к нам!</div>
 
-				<p class="">
+				<p>
 					Получите доступ к закрытым акциям и первыми узнавайте о лимитированных
 					коллекциях!
 				</p>
 
-				<Form class="flex h-[54px] w-full">
-					<input
-						placeholder="EMAIL"
-						class="w-full border-[1px] border-black px-5 font-extralight focus:outline-none"
-						type="text"
-					/>
+				<div v-if="websiteStore.isNewsletterFormSubmitted">
+					Спасибо за подписку на нашу рассылку!
+				</div>
 
-					<button
-						class="w-full max-w-[150px] bg-black font-medium text-primary max-laptop:text-[12px] laptop:text-[0.875rem]"
+				<div v-else>
+					<form
+						@submit.prevent="onSubmit"
+						class="relative flex h-[54px] w-full"
 					>
-						Подписаться
-					</button>
-				</Form>
+						<Field
+							:disabled="isSubmitting"
+							placeholder="Email"
+							class="w-full border-[1px] border-black px-5 font-extralight focus:outline-none disabled:pointer-events-none"
+							type="email"
+							name="newsletterEmail"
+						/>
+						<ErrorMessage
+							name="newsletterEmail"
+							class="absolute bottom-[-1.5rem] text-[0.625rem] text-[red]"
+						/>
+
+						<button
+							type="submit"
+							class="relative flex w-full max-w-[150px] items-center justify-center bg-black font-medium text-primary max-laptop:text-[12px] laptop:text-[0.875rem]"
+						>
+							<ProgressSpinner
+								aria-label="Loading..."
+								style="width: 20px; height: 20px"
+								:pt="{
+									root: 'mx-0 absolute',
+									circle: '!stroke-[#ffffff]',
+								}"
+								v-if="isSubmitting"
+							/>
+							<span v-else>Подписаться</span>
+						</button>
+					</form>
+				</div>
 			</div>
 		</div>
 	</Dialog>

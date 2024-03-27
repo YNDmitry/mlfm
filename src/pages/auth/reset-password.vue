@@ -34,7 +34,7 @@
 
 <template>
 	<AuthForm title="Сброс пароля">
-		<form @submit.prevent="onSubmit" :validationSchema="schema">
+		<form @submit.prevent="onSubmit">
 			<TheInput
 				:isRequired="true"
 				:inputPlaceholder="'Email'"

@@ -79,18 +79,22 @@
 		)
 	})
 
-	const filters = ref({
+	const filters = reactive({
 		collection: {
 			_in: currentCollection.value,
 		},
 		brand: {
-			_in: currentBrand.value,
+			title: {
+				_contains: currentBrand.value,
+			},
 		},
 		category: {
 			_in: currentCategory.value || '',
 		},
 		color: {
-			_contains: currentColor.value,
+			title: {
+				_in: currentColor.value,
+			},
 		},
 		size: {
 			_in: currentSize.value,
@@ -100,29 +104,34 @@
 		},
 	})
 
-	const {data: products} = await useLazyAsyncData(
-		() => {
-			return getItems({
-				collection: 'products',
-				params: {
-					fields: ['title', 'price', 'main_image', 'id'],
-					sort: ['-date_created'],
-					filters: filters.value,
-					limit: productsPerPage.value,
-					offset: currentPage.value,
-				},
-			})
-		},
-		{
-			watch: [currentPage, filters],
-		},
-	)
+	async function getProducts(filters) {
+		return await getItems({
+			collection: 'products',
+			params: {
+				fields: ['title', 'price', 'main_image', 'id'],
+				sort: ['-date_created'],
+				filters: filters,
+				limit: productsPerPage.value,
+				offset: currentPage.value,
+			},
+		})
+	}
+
+	const {data: products, refresh: productsRefresh} = await useAsyncData(() => {
+		return getProducts(filters)
+	})
+
+	// function updateQueryParams(params) {
+	// 	router.push({query: {...route.query, ...params}})
+	// }
 
 	watchEffect(() => {
+		// updateQueryParams(filters)
 		totalPages.value = Math.ceil(count.value[0].count / productsPerPage.value)
 	})
 
-	watch([currentPage], () => {
+	watch([currentPage, filters, router], () => {
+		productsRefresh()
 		window.scrollTo(0, 0)
 	})
 

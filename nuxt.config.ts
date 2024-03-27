@@ -41,6 +41,7 @@ export default defineNuxtConfig({
 		'nuxt-swiper',
 		'nuxt-lenis',
 		'@formkit/auto-animate',
+		'nuxt-build-cache',
 	],
 
 	image: {
@@ -83,6 +84,7 @@ export default defineNuxtConfig({
 				'Dropdown',
 				'Checkbox',
 				'ProgressSpinner',
+				'Toast',
 			],
 		},
 	},

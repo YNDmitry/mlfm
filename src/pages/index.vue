@@ -1,7 +1,6 @@
 <script setup>
 	const appConfig = useRuntimeConfig()
-	const {getItems} = useDirectusItems()
-	const {getItemById} = useDirectusItems()
+	const {getItems, getItemById} = useDirectusItems()
 
 	definePageMeta({
 		layout: 'default',
@@ -9,102 +8,69 @@
 
 	const config = useState('config')
 
-	const {data: page} = await useAsyncData(
-		() => {
-			return getItems({
-				collection: 'homepage',
-				params: {
-					fields: [
-						'slider_collection',
-						'new_products',
-						'look_image',
-						'look_product',
-						'uniq_product_image',
-						'uniq_product_image_2',
-						'uniq_product_id',
-					],
-				},
-			})
-		},
-		{
-			cache: true,
-		},
-	)
+	const {data: page} = await useAsyncData(() => {
+		return getItems({
+			collection: 'homepage',
+			params: {
+				fields: [
+					'slider_collection',
+					'new_products',
+					'look_image',
+					'look_product',
+					'uniq_product_image',
+					'uniq_product_image_2',
+					'uniq_product_id',
+				],
+			},
+		})
+	})
 
-	const {data: mainSlider} = await useAsyncData(
-		() => {
-			return getItemById({
-				collection: 'collection',
-				id: page.value.slider_collection,
-			})
-		},
-		{
-			cache: true,
-		},
-	)
+	const {data: mainSlider} = await useAsyncData(() => {
+		return getItemById({
+			collection: 'collection',
+			id: page.value.slider_collection,
+		})
+	})
 
-	const {data: mainSliderImages} = await useAsyncData(
-		() => {
-			return getItems({
-				collection: 'collection_files_1',
-			})
-		},
-		{
-			cache: true,
-		},
-	)
+	const {data: mainSliderImages} = await useAsyncData(() => {
+		return getItems({
+			collection: 'collection_files_1',
+		})
+	})
 
-	const {data: products} = await useAsyncData(
-		'newProducts',
-		() => {
-			return getItems({
-				collection: 'products',
-				params: {
-					fields: ['title', 'price', 'main_image', 'id'],
-					sort: ['-date_created'],
-					limit: 4,
-				},
-			})
-		},
-		{
-			cache: true,
-		},
-	)
+	const {data: products} = await useAsyncData('newProducts', () => {
+		return getItems({
+			collection: 'products',
+			params: {
+				fields: ['title', 'price', 'main_image', 'id'],
+				sort: ['-date_created'],
+				limit: 4,
+			},
+		})
+	})
 
-	const {data: lookProductsIds} = await useAsyncData(
-		'lookProductsIds',
-		() => {
-			return getItems({
-				collection: 'homepage_products_1',
-				params: {
-					fields: ['products_id'],
-				},
-			})
-		},
-		{
-			cache: true,
-		},
-	)
+	const {data: lookProductsIds} = await useAsyncData('lookProductsIds', () => {
+		return getItems({
+			collection: 'homepage_products_1',
+			params: {
+				fields: ['products_id'],
+			},
+		})
+	})
 
-	const {data: lookProducts} = await useAsyncData(
-		'lookProducts',
-		() => {
-			return getItems({
-				collection: 'products',
-				params: {
-					fields: ['title', 'price', 'main_image', 'id'],
-					filter: {
-						id: {
-							_in: lookProductsIds.value.map((item) => item.products_id),
-						},
+	const {data: lookProducts} = await useAsyncData('lookProducts', () => {
+		return getItems({
+			collection: 'products',
+			params: {
+				fields: ['title', 'price', 'main_image', 'id'],
+				filter: {
+					id: {
+						_in: lookProductsIds.value.map((item) => item.products_id),
 					},
 				},
-			})
-		},
-		{
-			cache: true,
-		},
-	)
+			},
+		})
+	})
 
 	const {data: categories} = await useAsyncData(
 		'categories',
@@ -148,8 +114,6 @@
 			appConfig.public.databaseUrl + 'assets/' + config.value.meta_thumbnail,
 		lang: 'ru',
 	})
-
-	// const route = useRoute()
 </script>
 
 <template>
@@ -214,7 +178,7 @@
 			<NuxtLink
 				v-for="category in categories"
 				:key="category.id"
-				:to="'/catalog'"
+				:to="'/catalog?category=' + category.title"
 				class="flex h-11 items-center justify-center rounded-main border-[1px] border-black px-6 text-center transition-colors hover:bg-black hover:text-primary"
 			>
 				{{ category.title }}

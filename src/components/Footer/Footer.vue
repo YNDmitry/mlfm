@@ -1,10 +1,7 @@
 <script setup>
 	import {object, string} from 'yup'
-	import {createItem} from '@directus/sdk'
 	const config = useState('config')
-	const {$directus} = useNuxtApp()
-
-	const isNewsletterFormSubmitted = ref(false)
+	const websiteConfig = useWebsiteStore()
 
 	const schema = object({
 		footerEmail: string()
@@ -17,23 +14,14 @@
 	})
 
 	const onSubmit = handleSubmit(async (values) => {
-		const data = await $directus
-			.request(
-				createItem('newsletter_list', {
-					email: values.footerEmail,
-				}),
-			)
-			.then((result) => {
-				isNewsletterFormSubmitted.value = true
-			})
-			.catch((err) => {
-				if (err.errors[0].extensions.code === 'RECORD_NOT_UNIQUE') {
-					setErrors({
-						footerEmail: 'Пользователь с этим email уже подписан',
-					})
-					setFieldValue('footerEmail', '')
-				}
-			})
+		await websiteConfig.handleNewsletterSubscribe(values).catch((err) => {
+			if (err.errors[0].extensions.code === 'RECORD_NOT_UNIQUE') {
+				setErrors({
+					footerEmail: 'Пользователь с этим email уже подписан',
+				})
+				setFieldValue('footerEmail', '')
+			}
+		})
 	})
 </script>
 <template>
@@ -80,11 +68,14 @@
 						>
 							Лучшие акции, главные новинки и персональные предложения
 						</p>
-						<div v-if="isNewsletterFormSubmitted" class="mt-5">
+						<div v-if="websiteConfig.isNewsletterFormSubmitted" class="mt-5">
 							Спасибо за подписку на нашу рассылку!
 						</div>
 						<template v-else>
-							<form @submit="onSubmit" class="relative mt-5 flex items-center">
+							<form
+								@submit.prevent="onSubmit"
+								class="relative mt-5 flex items-center"
+							>
 								<div class="relative flex w-full flex-col">
 									<Field
 										name="footerEmail"

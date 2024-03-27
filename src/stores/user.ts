@@ -8,6 +8,7 @@ interface UserState {
 	isAuthenticated: boolean
 	newsletter: boolean
 	phone: string
+	isChangeUserInfoPopup: boolean
 }
 
 interface CreateUserPayload {
@@ -19,11 +20,6 @@ interface CreateUserPayload {
 	role: string
 }
 
-interface LoginPayload {
-	email: string
-	password: string
-}
-
 export const useUserStore = defineStore('userStore', {
 	state: (): UserState => ({
 		firstName: '',
@@ -33,6 +29,7 @@ export const useUserStore = defineStore('userStore', {
 		email: '',
 		id: '',
 		isAuthenticated: false,
+		isChangeUserInfoPopup: false,
 	}),
 	actions: {
 		async create(
@@ -56,15 +53,15 @@ export const useUserStore = defineStore('userStore', {
 					return login({email: mail, password: password})
 				})
 				.then(() => {
-					this.getUserInfo().then(() => {
-						updateUser({
-							id: this.id,
-							user: {
-								first_name: firstName,
-								last_name: lastName,
-								terms: terms,
-							},
-						})
+					updateUser({
+						id: this.id,
+						user: {
+							first_name: firstName,
+							last_name: lastName,
+							terms: terms,
+						},
+					}).then(() => {
+						this.getUserInfo()
 					})
 				})
 				.then(() => {
@@ -88,19 +85,31 @@ export const useUserStore = defineStore('userStore', {
 		},
 
 		async getUserInfo() {
-			const user = await useDirectusUser()
+			const user: any = await useDirectusUser()
 
 			if (!user.value) {
 				return
 			}
 
-			this.$patch({
-				firstName: user.value.first_name,
-				lastName: user.value.last_name,
-				newsletter: user.value.newsletter,
-				email: user.value.email,
-				id: user.value.id,
-				isAuthenticated: true,
+			this.firstName = user?.value.first_name
+			this.lastName = user?.value.last_name
+			this.newsletter = user?.value.newsletter
+			this.email = user?.value.email
+			this.id = user?.value.id
+			this.isAuthenticated = true
+		},
+
+		async updateUserInfo(firstName: string, lastName: string, phone: string) {
+			const {updateUser} = useDirectusUsers()
+			await updateUser({
+				id: this.id,
+				user: {
+					first_name: firstName,
+					last_name: lastName,
+					phone: phone,
+				},
+			}).then(() => {
+				this.getUserInfo()
 			})
 		},
 
@@ -108,14 +117,12 @@ export const useUserStore = defineStore('userStore', {
 			const {logout} = useDirectusAuth()
 			logout().then(() => {
 				navigateTo('/auth/log-in')
-				this.$patch({
-					firstName: '',
-					lastName: '',
-					email: '',
-					id: '',
-					isAuthenticated: false,
-				})
 			})
+			this.$reset()
+		},
+
+		handleChangeUserDetailsPopup() {
+			this.isChangeUserInfoPopup = !this.isChangeUserInfoPopup
 		},
 	},
 })

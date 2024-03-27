@@ -63,7 +63,7 @@
 
 <template>
 	<AuthForm title="Регистрация">
-		<form @submit="onSubmit" :validationSchema="schema">
+		<form @submit="onSubmit">
 			<div class="grid grid-cols-[1fr_1fr] gap-2">
 				<TheInput
 					:isRequired="true"
@@ -100,7 +100,7 @@
 				class="mt-6"
 			/>
 			<div class="mt-6 w-full">
-				<div class="mt-2 flex flex-col gap-[0.625rem]">
+				<div class="mt-2 flex flex-col gap-[0.625rem]" v-auto-animate>
 					<div class="flex items-center gap-[0.625rem]">
 						<Checkbox
 							:binary="true"

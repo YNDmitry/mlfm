@@ -21,11 +21,9 @@
 	const isSubmitted = ref(false)
 
 	const onSubmit = handleSubmit(async (values) => {
-		const data = await $directus
-			.request(passwordRequest(values.email))
-			.then((result) => {
-				isSubmitted.value = true
-			})
+		await $directus.request(passwordRequest(values.email)).then((result) => {
+			isSubmitted.value = true
+		})
 	})
 </script>
 
