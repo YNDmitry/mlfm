@@ -8,79 +8,119 @@
 
 	const config = useState('config')
 
-	const {data: page} = await useAsyncData(() => {
-		return getItems({
-			collection: 'homepage',
-			params: {
-				fields: [
-					'slider_collection',
-					'new_products',
-					'look_image',
-					'look_product',
-					'uniq_product_image',
-					'uniq_product_image_2',
-					'uniq_product_id',
-				],
-			},
-		})
+	const {data: page} = await useAsyncData('homepage', () => {
+		const {data: cachedPage} = useNuxtData('homepage')
+		return (
+			cachedPage.value ||
+			getItems({
+				collection: 'homepage',
+				params: {
+					fields: [
+						'slider_collection',
+						'new_products',
+						'look_image',
+						'look_product',
+						'uniq_product_image',
+						'uniq_product_image_2',
+						'uniq_product_id',
+					],
+				},
+			})
+		)
 	})
 
-	const {data: mainSlider} = await useAsyncData(() => {
-		return getItemById({
-			collection: 'collection',
-			id: page.value.slider_collection,
-		})
+	const {data: mainSlider} = await useAsyncData('homepageMainSlider', () => {
+		const {data: cachedPage} = useNuxtData('homepageMainSlider')
+		return (
+			cachedPage.value ||
+			getItemById({
+				collection: 'collection',
+				id: page.value.slider_collection,
+			})
+		)
 	})
 
-	const {data: mainSliderImages} = await useAsyncData(() => {
-		return getItems({
-			collection: 'collection_files_1',
-		})
-	})
+	const {data: mainSliderImages} = await useAsyncData(
+		'homepageMainSliderImages',
+		() => {
+			const {data: cachedPage} = useNuxtData('homepageMainSliderImages')
+			return (
+				cachedPage.value ||
+				getItems({
+					collection: 'collection_files_1',
+				})
+			)
+		},
+	)
 
 	const {data: products} = await useAsyncData('newProducts', () => {
-		return getItems({
-			collection: 'products',
-			params: {
-				fields: ['title', 'price', 'main_image', 'id'],
-				sort: ['-date_created'],
-				limit: 4,
-			},
-		})
-	})
-
-	const {data: lookProductsIds} = await useAsyncData('lookProductsIds', () => {
-		return getItems({
-			collection: 'homepage_products_1',
-			params: {
-				fields: ['products_id'],
-			},
-		})
-	})
-
-	const {data: lookProducts} = await useAsyncData('lookProducts', () => {
-		return getItems({
-			collection: 'products',
-			params: {
-				fields: ['title', 'price', 'main_image', 'id'],
-				filter: {
-					id: {
-						_in: lookProductsIds.value.map((item) => item.products_id),
-					},
+		const {data: cachedPage} = useNuxtData('newProducts')
+		return (
+			cachedPage.value ||
+			getItems({
+				collection: 'products',
+				params: {
+					fields: ['title', 'price', 'main_image', 'id'],
+					sort: ['-date_created'],
+					limit: 4,
 				},
-			},
-		})
+			})
+		)
 	})
+
+	const {data: lookProductsIds} = await useLazyAsyncData(
+		'lookProductsIds',
+		() => {
+			const {data: cachedPage} = useNuxtData('lookProductsIds')
+			return (
+				cachedPage.value ||
+				getItems({
+					collection: 'homepage_products_1',
+					params: {
+						fields: ['products_id'],
+					},
+				})
+			)
+		},
+	)
+
+	const {data: lookProducts} = await useAsyncData(
+		'lookProducts',
+		() => {
+			const {data: cachedPage} = useNuxtData('lookProducts')
+			return (
+				cachedPage.value ||
+				getItems({
+					collection: 'products',
+					params: {
+						fields: ['title', 'price', 'main_image', 'id'],
+						filter: {
+							id: {
+								_in: lookProductsIds.value.map((item) => item.products_id),
+							},
+						},
+					},
+				})
+			)
+		},
+		{
+			cache: true,
+		},
+	)
 
 	const {data: categories} = await useAsyncData(
 		'categories',
 		() => {
-			return getItems({
-				collection: 'categories',
-				params: {
-					fields: ['title', 'title_eng', 'id'],
-				},
-			})
+			const {data: cachedPage} = useNuxtData('categories')
+			return (
+				cachedPage.value ||
+				getItems({
+					collection: 'categories',
+					params: {
+						fields: ['title', 'title_eng', 'id'],
+					},
+				})
+			)
 		},
 		{
 			cache: true,

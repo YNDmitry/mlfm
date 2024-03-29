@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 	import {passwordRequest} from '@directus/sdk'
 	const {$directus} = useNuxtApp()
 	definePageMeta({

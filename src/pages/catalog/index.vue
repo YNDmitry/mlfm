@@ -168,41 +168,77 @@
 	)
 
 	// Дополнительные данные для страницы (баннеры, категории, бренды, цвета, размеры и т.д.)
-	const {data: catalogBanners} = await useLazyAsyncData(() =>
-		getItems({collection: 'catalog_files'}),
+	const {data: catalogBanners} = await useLazyAsyncData(
+		'catalogBanners',
+		() => {
+			const {data: cachedPage} = useNuxtData('catalogBanners')
+			return cachedPage.value || getItems({collection: 'catalog_files'})
+		},
 	)
-	const {data: categories} = await useLazyAsyncData('categories', () =>
-		getItems({
-			collection: 'categories',
-			params: {fields: ['title', 'title_eng', 'id']},
-		}),
-	)
-	const {data: brands} = await useLazyAsyncData('catalogBrands', () =>
-		getItems({
-			collection: 'brands',
-			params: {fields: ['title', 'description', 'id']},
-		}),
-	)
-	const {data: colors} = await useLazyAsyncData('catalogColors', () =>
-		getItems({collection: 'colors', params: {fields: ['title', 'id']}}),
-	)
-	const {data: sizes} = await useLazyAsyncData('catalogSizes', () =>
-		getItems({
-			collection: 'sizes',
-			params: {fields: ['small_title', 'large_title', 'id']},
-		}),
-	)
-	const {data: collections} = await useLazyAsyncData('catalogCollections', () =>
-		getItems({collection: 'collection', params: {fields: ['title', 'id']}}),
+	const {data: categories} = await useLazyAsyncData('categories', () => {
+		const {data: cachedPage} = useNuxtData('categories')
+		return (
+			cachedPage.value ||
+			getItems({
+				collection: 'categories',
+				params: {fields: ['title', 'title_eng', 'id']},
+			})
+		)
+	})
+
+	const {data: brands} = await useLazyAsyncData('catalogBrands', () => {
+		const {data: cachedPage} = useNuxtData('catalogBrands')
+		return (
+			cachedPage.value ||
+			getItems({
+				collection: 'brands',
+				params: {fields: ['title', 'description', 'id']},
+			})
+		)
+	})
+	const {data: colors} = await useLazyAsyncData('catalogColors', () => {
+		const {data: cachedPage} = useNuxtData('catalogColors')
+		return (
+			cachedPage.value ||
+			getItems({collection: 'colors', params: {fields: ['title', 'id']}})
+		)
+	})
+	const {data: sizes} = await useLazyAsyncData('catalogSizes', () => {
+		const {data: cachedPage} = useNuxtData('catalogSizes')
+		return (
+			cachedPage.value ||
+			getItems({
+				collection: 'sizes',
+				params: {fields: ['small_title', 'large_title', 'id']},
+			})
+		)
+	})
+	const {data: collections} = await useLazyAsyncData(
+		'catalogCollections',
+		() => {
+			const {data: cachedPage} = useNuxtData('catalogCollections')
+			return (
+				cachedPage.value ||
+				getItems({collection: 'collection', params: {fields: ['title', 'id']}})
+			)
+		},
 	)
 
 	// Определение минимальной и максимальной цены для фильтра по цене
-	const {data: minPrice} = await useLazyAsyncData('minPrice', () =>
-		$directus.request(aggregate('products', {aggregate: {min: 'price'}})),
-	)
-	const {data: maxPrice} = await useLazyAsyncData('maxPrice', () =>
-		$directus.request(aggregate('products', {aggregate: {max: 'price'}})),
-	)
+	const {data: minPrice} = await useLazyAsyncData('minPrice', () => {
+		const {data: cachedPage} = useNuxtData('minPrice')
+		return (
+			cachedPage.value ||
+			$directus.request(aggregate('products', {aggregate: {min: 'price'}}))
+		)
+	})
+	const {data: maxPrice} = await useLazyAsyncData('maxPrice', () => {
+		const {data: cachedPage} = useNuxtData('maxPrice')
+		return (
+			cachedPage.value ||
+			$directus.request(aggregate('products', {aggregate: {max: 'price'}}))
+		)
+	})
 
 	// Обновляем фильтр цены в зависимости от выбранных пользователем значений
 	function updatePriceFilter(min, max) {
