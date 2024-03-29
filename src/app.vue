@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 	const LenisOptions = ref({
 		duration: 0.2,
 		lerp: 0.1,

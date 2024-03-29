@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 	const appConfig = useRuntimeConfig()
 	const {getItems} = useDirectusItems()
 	const {$directus} = useNuxtApp()
@@ -28,48 +28,47 @@
 	const route = useRoute()
 	const router = useRouter()
 
-	const currentPage = ref(1)
-	const totalPages = ref(0)
-	const productsPerPage = ref(!isMobile.value ? 9 : 10) // Количество продуктов на странице
-	const currentBrand = ref(route.query.brand || '')
-	const currentCollection = ref(route.query.collection || '')
-	const currentColor = ref(route.query.color || '')
-	const currentSize = ref(route.query.size || '')
-	const currentCategory = ref(route.query.category || ['All'])
-	const currentMinPrice = ref()
-	const currentMaxPrice = ref()
-
-	const updateURL = () => {
-		router.push({
-			query: {
-				...route.query,
-				collection: currentCollection.value,
-				brand: currentBrand.value,
-				category: currentCategory.value,
-				color: currentColor.value,
-				size: currentSize.value,
-			},
-		})
+	const initialFilters = {
+		currentPage: 1,
+		totalPages: 0,
+		productsPerPage: isMobile.value ? 10 : 9,
+		filters: {
+			brand: route.query.brand || '',
+			collection: route.query.collection || '',
+			color: route.query.color || '',
+			size: route.query.size || '',
+			category: route.query.category || [],
+		},
 	}
 
-	watch(
-		[
-			currentCollection,
-			currentBrand,
-			currentCategory,
-			currentColor,
-			currentSize,
-		],
-		updateURL,
-	)
+	// Определение начальных состояний
+	let initialState = reactive({...initialFilters})
 
-	watch(route.query, (newQuery) => {
-		currentBrand.value = newQuery.brand || ''
-		currentCategory.value = newQuery.category || 'All'
-		currentColor.value = newQuery.color || ''
-		currentSize.value = newQuery.size || ''
-		currentCollection.value = newQuery.collection || ''
-	})
+	function resetFilters() {
+		// Сброс каждого фильтра к его исходному значению
+		router.replace({query: []})
+		Object.keys(initialFilters).forEach((key) => {
+			initialState[key] = initialFilters[key]
+		})
+
+		// Сброс текущей страницы к первой
+		initialState.currentPage = 1
+
+		// Вы можете добавить дополнительные действия по сбросу здесь, например, обновление продуктов
+		updateProducts()
+	}
+
+	// Слежение за изменениями в route.query и обновление фильтров
+	watch(
+		() => route.query,
+		(newQuery) => {
+			initialState.filters.brand = newQuery.brand || ''
+			initialState.filters.collection = newQuery.collection || ''
+			initialState.filters.color = newQuery.color || ''
+			initialState.filters.size = newQuery.size || ''
+			initialState.filters.category = newQuery.category || ''
+		},
+	)
 
 	const {data: count} = await useAsyncData('countOfProducts', () => {
 		return $directus.request(
@@ -79,131 +78,137 @@
 		)
 	})
 
-	const filters = reactive({
-		collection: {
-			_in: currentCollection.value,
-		},
-		brand: {
-			title: {
-				_contains: currentBrand.value,
-			},
-		},
-		category: {
-			_in: currentCategory.value || '',
-		},
-		color: {
-			title: {
-				_in: currentColor.value,
-			},
-		},
-		size: {
-			_in: currentSize.value,
-		},
-		price: {
-			_lte: 0,
-		},
-	})
-
-	async function getProducts(filters) {
+	// Асинхронное получение продуктов с примененными фильтрами
+	async function getProducts() {
 		return await getItems({
 			collection: 'products',
 			params: {
 				fields: ['title', 'price', 'main_image', 'id'],
 				sort: ['-date_created'],
-				filters: filters,
-				limit: productsPerPage.value,
-				offset: currentPage.value,
+				filter: {
+					// Обновите логику фильтрации здесь в соответствии с ваш ими требованиями и структурой данных
+					...(initialState.filters.brand && {
+						brand: {
+							_eq: brands.value.find(
+								(el) => el.title === initialState.filters.brand,
+							).id,
+						},
+					}),
+					...(initialState.filters.collection && {
+						collection: {
+							_eq: collections.value.find(
+								(el) => el.title === initialState.filters.collection,
+							).id,
+						},
+					}),
+					...(initialState.filters.color && {
+						color: {_eq: initialState.filters.color},
+					}),
+					// ...(initialState.filters.size && {
+					// 	size: {_contains: initialState.filters.size},
+					// }),
+					...(initialState.filters.category.length > 0 && {
+						category: {_in: initialState.filters.category},
+					}),
+					// Убедитесь, что ваша логика фильтрации по цене соответствует требуемой логике
+					// ...(initialState.filters.price._lte > 0 && {
+					// 	price: {_lte: initialState.filters.price._lte},
+					// }),
+				},
+				limit: initialState.productsPerPage,
+				offset: initialState.currentPage - 1,
 			},
 		})
 	}
 
-	const {data: products, refresh: productsRefresh} = await useAsyncData(() => {
-		return getProducts(filters)
-	})
+	const {data: products, refresh: refreshProducts} =
+		await useAsyncData(getProducts)
 
-	// function updateQueryParams(params) {
-	// 	router.push({query: {...route.query, ...params}})
-	// }
+	// Функция обновления продуктов (вызывается при изменении фильтров или страницы)
+	async function updateProducts() {
+		refreshProducts()
+	}
 
-	watchEffect(() => {
-		// updateQueryParams(filters)
-		totalPages.value = Math.ceil(count.value[0].count / productsPerPage.value)
-	})
-
-	watch([currentPage, filters, router], () => {
-		productsRefresh()
-		window.scrollTo(0, 0)
-	})
-
-	const {data: catalogBanners} = await useLazyAsyncData(() => {
-		return getItems({
-			collection: 'catalog_files',
-		})
-	})
-
-	const {data: categories} = await useLazyAsyncData('categories', () => {
-		return getItems({
-			collection: 'categories',
-			params: {
-				fields: ['title', 'title_eng', 'id'],
-			},
-		})
-	})
-
-	const {data: brands} = await useLazyAsyncData('catalogBrands', () => {
-		return getItems({
-			collection: 'brands',
-			params: {
-				fields: ['title', 'description', 'id'],
-			},
-		})
-	})
-
-	const {data: colors} = await useLazyAsyncData('catalogColors', () => {
-		return getItems({
-			collection: 'colors',
-			params: {
-				fields: ['title', 'id'],
-			},
-		})
-	})
-
-	const {data: sizes} = await useLazyAsyncData('catalogSizes', () => {
-		return getItems({
-			collection: 'sizes',
-			params: {
-				fields: ['small_title', 'large_title', 'id'],
-			},
-		})
-	})
-
-	const {data: collections} = await useLazyAsyncData(
-		'catalogCollections',
+	// Наблюдение за изменениями фильтров и страницы, и обновление продуктов при их изменении
+	watch(
+		() => [initialState.currentPage, initialState.filters],
 		() => {
-			return getItems({
-				collection: 'collection',
-				params: {
-					fields: ['title', 'id'],
-				},
-			})
+			updateProducts()
+			window.scrollTo(0, 0) // Возвращаем пользователя к началу страницы при смене фильтров
 		},
+		{deep: true},
 	)
 
-	const {data: minPrice} = await useLazyAsyncData('maxPrice', () => {
-		return $directus.request(
-			aggregate('products', {
-				aggregate: {min: 'price'},
-			}),
+	// Расчет общего количества страниц для пагинации
+	watchEffect(() => {
+		initialState.totalPages = Math.ceil(
+			count.value?.[0]?.count / initialState.productsPerPage,
 		)
 	})
 
-	const {data: maxPrice} = await useLazyAsyncData('minPrice', () => {
-		return $directus.request(
-			aggregate('products', {
-				aggregate: {max: 'price'},
-			}),
-		)
-	})
+	// Обновление URL при изменении фильтров (опционально)
+	watch(
+		() => initialState.filters,
+		(newFilters) => {
+			const filteredQuery = Object.entries(newFilters).reduce(
+				(acc, [key, value]) => {
+					// Если значение не пустое, добавляем его в аккумулирующий объект
+					if (value) {
+						// Здесь можно добавить более сложные условия для "непустых" значений
+						acc[key] = value
+					}
+					return acc
+				},
+				{},
+			)
+
+			router.push({query: filteredQuery})
+		},
+		{deep: true},
+	)
+
+	// Дополнительные данные для страницы (баннеры, категории, бренды, цвета, размеры и т.д.)
+	const {data: catalogBanners} = await useLazyAsyncData(() =>
+		getItems({collection: 'catalog_files'}),
+	)
+	const {data: categories} = await useLazyAsyncData('categories', () =>
+		getItems({
+			collection: 'categories',
+			params: {fields: ['title', 'title_eng', 'id']},
+		}),
+	)
+	const {data: brands} = await useLazyAsyncData('catalogBrands', () =>
+		getItems({
+			collection: 'brands',
+			params: {fields: ['title', 'description', 'id']},
+		}),
+	)
+	const {data: colors} = await useLazyAsyncData('catalogColors', () =>
+		getItems({collection: 'colors', params: {fields: ['title', 'id']}}),
+	)
+	const {data: sizes} = await useLazyAsyncData('catalogSizes', () =>
+		getItems({
+			collection: 'sizes',
+			params: {fields: ['small_title', 'large_title', 'id']},
+		}),
+	)
+	const {data: collections} = await useLazyAsyncData('catalogCollections', () =>
+		getItems({collection: 'collection', params: {fields: ['title', 'id']}}),
+	)
+
+	// Определение минимальной и максимальной цены для фильтра по цене
+	const {data: minPrice} = await useLazyAsyncData('minPrice', () =>
+		$directus.request(aggregate('products', {aggregate: {min: 'price'}})),
+	)
+	const {data: maxPrice} = await useLazyAsyncData('maxPrice', () =>
+		$directus.request(aggregate('products', {aggregate: {max: 'price'}})),
+	)
+
+	// Обновляем фильтр цены в зависимости от выбранных пользователем значений
+	function updatePriceFilter(min, max) {
+		initialState.filters.price._lte = max
+		// Здесь может быть добавлена логика для обработки минимальной цены, если это необходимо
+	}
 </script>
 <template>
 	<div>
@@ -215,6 +220,7 @@
 						class="items-center justify-between gap-4 pb-[2.5rem] pt-[70] max-laptop:flex laptop:hidden"
 					>
 						<button
+							type="button"
 							class="flex h-[3.125rem] w-full items-center justify-center gap-[0.625rem] rounded-[12px] border-[1px] border-black text-[0.625rem] max-mobile:h-[38px]"
 						>
 							<IconsSelect />
@@ -222,6 +228,7 @@
 						</button>
 
 						<button
+							type="button"
 							class="flex h-[3.125rem] w-full items-center justify-center gap-[0.625rem] rounded-[12px] border-[1px] border-black text-[0.625rem] max-mobile:h-[38px]"
 						>
 							<IconsFilters />
@@ -256,11 +263,13 @@
 											<input
 												type="checkbox"
 												class="absolute h-5 w-5 cursor-pointer opacity-0"
-												name="all"
+												name="category"
 												:value="'All'"
+												v-model="initialState.filters.category"
 												:checked="
-													currentCategory.length <= 1 ||
-													currentCategory.length === categories.length
+													initialState.filters.category.length <= 1 ||
+													initialState.filters.category.length ===
+														categories.length
 												"
 											/>
 
@@ -283,7 +292,11 @@
 												class="absolute h-5 w-5 cursor-pointer opacity-0"
 												name="category"
 												:value="category.title"
-												v-model="currentCategory"
+												@change="
+													initialState.filters.category.push(
+														$event.target.value,
+													)
+												"
 											/>
 
 											<div
@@ -314,11 +327,8 @@
 							<CatalogFilter
 								:filters="collections"
 								:title="`Коллекция`"
-								:currentFilter="currentCollection"
-								@update:currentFilter="
-									(currentCollection = $event),
-										$router.push({query: {collection: $event}})
-								"
+								:currentFilter="initialState.filters.collection"
+								@update:currentFilter="initialState.filters.collection = $event"
 							/>
 							<!-- /Коллекция -->
 
@@ -326,11 +336,8 @@
 							<CatalogFilter
 								:filters="colors"
 								:title="`Цвет`"
-								:currentFilter="currentColor"
-								@update:currentFilter="
-									(currentColor = $event),
-										$router.push({query: {color: $event}})
-								"
+								:currentFilter="initialState.filters.color"
+								@update:currentFilter="initialState.filters.color = $event"
 							/>
 							<!-- /Цвет -->
 
@@ -338,10 +345,8 @@
 							<CatalogFilter
 								:filters="sizes"
 								:title="`Размер`"
-								:currentFilter="currentSize"
-								@update:currentFilter="
-									(currentSize = $event), $router.push({query: {size: $event}})
-								"
+								:currentFilter="initialState.filters.size"
+								@update:currentFilter="initialState.filters.size = $event"
 							/>
 							<!-- /Размер -->
 
@@ -349,11 +354,8 @@
 							<CatalogFilter
 								:filters="brands"
 								:title="`Бренд`"
-								:currentFilter="currentBrand"
-								@update:currentFilter="
-									(currentBrand = $event),
-										$router.push({brand: {collection: $event}})
-								"
+								:currentFilter="initialState.filters.brand"
+								@update:currentFilter="initialState.filters.brand = $event"
 							/>
 							<!-- /Бренды -->
 
@@ -378,7 +380,6 @@
 										<input
 											class="w-[72px] focus:outline-none"
 											type="number"
-											v-model="currentMinPrice"
 											:placeholder="minPrice[0].min.price"
 											:min="minPrice[0].min.price"
 											:max="maxPrice[0].max.price"
@@ -396,7 +397,6 @@
 										<input
 											class="w-[72px] focus:outline-none"
 											type="number"
-											v-model="currentMaxPrice"
 											:placeholder="maxPrice[0].max.price"
 											:min="minPrice[0].min.price"
 											:max="maxPrice[0].max.price"
@@ -432,12 +432,13 @@
 						<!-- О бренде -->
 						<div v-auto-animate>
 							<p
-								v-if="currentBrand"
+								v-if="initialState.filters.brand"
 								class="mb-[3.75rem] rounded-[12px] border-[1px] border-gray p-[9px] text-[0.625rem] leading-[18px] max-laptop:hidden"
 							>
 								{{
-									brands.find((el) => (el.title === currentBrand ? el : null))
-										.description
+									brands.find((el) =>
+										el.title === initialState.filters.brand ? el : null,
+									).description
 								}}
 							</p>
 						</div>
@@ -461,7 +462,8 @@
 									<div
 										v-if="
 											catalogBanners?.length >
-											((currentPage - 1) * productsPerPage) /
+											((initialState.currentPage - 1) *
+												initialState.productsPerPage) /
 												(!isMobile ? 3 : 2) +
 												index / (!isMobile ? 3 : 2)
 										"
@@ -485,10 +487,17 @@
 						<!-- /Раздел с карточками -->
 
 						<!-- Пагинация -->
-						<div class="w-ful relative border-t-[1px] border-[#AAAAAA]">
+						<div
+							class="w-ful relative border-t-[1px] border-[#AAAAAA]"
+							v-if="
+								products?.length !== 0 &&
+								products?.length >= initialState.productsPerPage &&
+								initialState.currentPage !== 0
+							"
+						>
 							<Paginator
-								v-model:first="currentPage"
-								:rows="productsPerPage"
+								v-model:first="initialState.currentPage"
+								:rows="initialState.productsPerPage"
 								:totalRecords="Number(count[0].count)"
 								template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
 								:currentPageReportTemplate="
@@ -504,6 +513,19 @@
 							/>
 						</div>
 						<!-- /Пагинация -->
+						<div
+							v-if="products?.length === 0"
+							class="mx-auto flex w-full max-w-[500px] flex-col justify-center gap-5 text-center"
+						>
+							<div>Продуктов по данным фильтрам не найдены</div>
+							<button
+								@click="resetFilters()"
+								type="button"
+								class="relative flex w-full items-center justify-center bg-red2 text-primary transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-70 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[45px] tablet:rounded-[1.875rem]"
+							>
+								Сбросить фильтры
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>

@@ -35,13 +35,13 @@ export default defineNuxtConfig({
 		'@nuxtjs/robots',
 		'@nuxtjs/sitemap',
 		'nuxt-directus',
-		'@nuxtjs/google-fonts',
 		'@vee-validate/nuxt',
 		'nuxt-primevue',
 		'nuxt-swiper',
 		'nuxt-lenis',
 		'@formkit/auto-animate',
 		'nuxt-build-cache',
+		'@nuxt/fonts',
 	],
 
 	image: {
@@ -57,15 +57,8 @@ export default defineNuxtConfig({
 		autoFetch: false,
 	},
 
-	googleFonts: {
-		families: {
-			Unbounded: {
-				wght: [300, 400, 500, 600, 700],
-			},
-			Montserrat: {
-				wght: [300, 400, 500, 600, 700],
-			},
-		},
+	robots: {
+		Sitemap: (req: string) => `https://${req.headers.host}/sitemap.xml`,
 	},
 
 	primevue: {
