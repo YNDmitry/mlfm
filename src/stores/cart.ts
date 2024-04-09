@@ -1,9 +1,24 @@
 import {defineStore} from 'pinia'
 
+interface CartItem {
+	id: number
+	price: number
+	quantity: number
+	// Add other properties as needed
+}
+
 export const useCartStore = defineStore('userCart', {
 	state: () => ({
-		items: [],
+		items: [] as CartItem[],
 	}),
+	getters: {
+		totalPrice: (state) => {
+			return state.items.reduce(
+				(total, item) => total + item.price * item.quantity,
+				0,
+			)
+		},
+	},
 	actions: {
 		// Инициализация корзины из localStorage или синхронизация с сервером
 		initCart() {
@@ -26,8 +41,8 @@ export const useCartStore = defineStore('userCart', {
 
 		async loadCartFromServer() {
 			try {
-				const response = await apiClient.get('/customer_cart')
-				this.items = response.data
+				// const response = await apiClient.get('/customer_cart')
+				// this.items = response.data
 			} catch (error) {
 				console.error('Error loading cart from server:', error)
 			}
@@ -52,7 +67,7 @@ export const useCartStore = defineStore('userCart', {
 			}
 		},
 
-		addItem(item) {
+		addItem(item: CartItem) {
 			// Логика добавления товара, затем сохраняем корзину
 			const existingItem = this.items.find((i) => i.id === item.id)
 			if (existingItem) {
@@ -63,7 +78,15 @@ export const useCartStore = defineStore('userCart', {
 			this.saveCart()
 		},
 
-		removeItem(itemId) {
+		updateItemQuantity(itemId: number, newQuantity: number) {
+			const item = this.items.find((i) => i.id === itemId)
+			if (item) {
+				item.quantity = newQuantity
+				this.saveCart()
+			}
+		},
+
+		removeItem(itemId: number) {
 			// Логика удаления товара, затем сохраняем корзину
 			const index = this.items.findIndex((i) => i.id === itemId)
 			if (index !== -1) {

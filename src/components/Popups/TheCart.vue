@@ -1,6 +1,7 @@
-<script setup>
+<script setup lang="ts">
 	const {getItems} = useDirectusItems()
 	const websiteStore = useWebsiteStore()
+	const useCart = useCartStore()
 
 	const {data: products} = await useLazyAsyncData('cartRelatedProducts', () => {
 		return getItems({
@@ -12,12 +13,13 @@
 		})
 	})
 
-	const useCart = useCartStore()
+	// useCart.initCart()
 </script>
 
 <template>
 	<Sidebar
 		v-model:visible="websiteStore.isVisibleCart"
+		@show="useCart.initCart()"
 		:modal="true"
 		position="right"
 		class="z-10 h-full w-full overflow-scroll bg-primary pb-9 pt-12 tablet:max-w-[505px]"
@@ -39,23 +41,28 @@
 						class="flex flex-col font-montserrat max-tablet:gap-[1.875rem] max-tablet:py-[1.875rem] tablet:gap-[1.25rem] tablet:pb-[55px] tablet:pt-[45px]"
 					>
 						<article
+							v-for="item in useCart.items"
+							:key="item.id"
 							class="flex max-mobile:gap-[0.625rem] mobile:gap-[0.938rem]"
 						>
 							<NuxtImg
-								src="/img/delivery/1@2x.png"
+								:src="'https://admin.mlfm.store/assets/' + item.main_image"
+								width="130"
 								class="object-cover max-mobile:h-[6.25rem] max-mobile:w-[3.813rem] mobile:h-[6.25rem]"
 							/>
 
 							<div class="flex w-full items-center justify-between">
 								<div class="flex flex-col gap-1">
-									<span class="text-[0.625rem]">Подвеска</span>
+									<span class="text-[0.625rem]">{{ item.category }}</span>
 
-									<p class="text-[0.625rem] font-medium">Undi</p>
+									<p class="text-[0.625rem] font-medium">{{ item.title }}</p>
 
-									<span class="text-[8px] opacity-50">1 шт</span>
+									<span class="text-[8px] opacity-50"
+										>{{ item.quantity }} шт</span
+									>
 								</div>
 
-								<span class="text-[0.625rem]">12,000 ₽</span>
+								<span class="text-[0.625rem]">{{ item.price }} ₽</span>
 							</div>
 						</article>
 					</div>
@@ -92,7 +99,7 @@
 						<div class="flex justify-between text-[0.625rem] font-medium">
 							<span>Итого</span>
 
-							<span>24,140₽</span>
+							<span>{{ useCart.totalPrice }} ₽</span>
 						</div>
 					</div>
 					<!--  /Скидка/Итого -->

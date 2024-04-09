@@ -5,14 +5,21 @@
 	import {aggregate} from '@directus/sdk'
 	const isMobile = useMediaQuery('(max-width: 768px)')
 
-	const {data: page} = await useAsyncData(() => {
-		return getItems({
-			collection: 'catalog',
-			params: {
-				fields: ['meta_title', 'meta_description', 'og_image', 'main_banner'],
+	const {data: page} = await useAsyncData(
+		() => {
+			return getItems({
+				collection: 'catalog',
+				params: {
+					fields: ['meta_title', 'meta_description', 'og_image', 'main_banner'],
+				},
+			})
+		},
+		{
+			getCachedData(key, nuxtApp) {
+				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
 			},
-		})
-	})
+		},
+	)
 
 	useSeoMeta({
 		title: page.value.meta_title,
@@ -70,13 +77,21 @@
 		},
 	)
 
-	const {data: count} = await useAsyncData('countOfProducts', () => {
-		return $directus.request(
-			aggregate('products', {
-				aggregate: {count: '*'},
-			}),
-		)
-	})
+	const {data: count} = await useAsyncData(
+		'countOfProducts',
+		() => {
+			return $directus.request(
+				aggregate('products', {
+					aggregate: {count: '*'},
+				}),
+			)
+		},
+		{
+			getCachedData(key, nuxtApp) {
+				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+			},
+		},
+	)
 
 	// Асинхронное получение продуктов с примененными фильтрами
 	async function getProducts() {

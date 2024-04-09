@@ -1,7 +1,9 @@
-<script setup>
+<script setup lang="ts">
 	const appConfig = useRuntimeConfig()
 	const {getItems, getItemById} = useDirectusItems()
 	const {$preview} = useNuxtApp()
+
+	const cartStore = useCartStore()
 
 	definePageMeta({
 		layout: 'default',
@@ -59,6 +61,10 @@
 			},
 		})
 	})
+
+	const handleAddToCart = () => {
+		cartStore.addItem(product.value)
+	}
 </script>
 
 <template>
@@ -175,11 +181,15 @@
 							class="flex flex-col max-tablet:my-[1.25rem] max-tablet:gap-[1rem] tablet:gap-[1.313rem]"
 						>
 							<button
-								class="w-full rounded-main bg-red2 text-primary transition-all hover:bg-red2-hover max-tablet:min-h-[2rem] max-tablet:text-[0.625rem] tablet:min-h-[3.313rem]"
+								type="button"
+								:disabled="product.quantity === 0"
+								@click="handleAddToCart"
+								class="w-full rounded-main bg-red2 text-primary transition-all hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-70 max-tablet:min-h-[2rem] max-tablet:text-[0.625rem] tablet:min-h-[3.313rem]"
 							>
 								Добавить в корзину
 							</button>
 							<button
+								type="button"
 								class="w-full rounded-main border-[1px] border-black transition-all hover:bg-black hover:text-primary max-tablet:min-h-[2rem] max-tablet:text-[0.625rem] tablet:min-h-[3.313rem]"
 							>
 								Добавить в избранное
