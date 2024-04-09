@@ -14,9 +14,17 @@
 	const cartStore = useCartStore()
 
 	const config = useState('config')
-	const {data: webConfig} = await useAsyncData('config', async () => {
-		return await websiteStore.getConfig()
-	})
+	const {data: webConfig} = await useAsyncData(
+		'config',
+		async () => {
+			return await websiteStore.getConfig()
+		},
+		{
+			getCachedData(key, nuxtApp) {
+				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+			},
+		},
+	)
 	config.value = webConfig
 
 	await callOnce(async () => {

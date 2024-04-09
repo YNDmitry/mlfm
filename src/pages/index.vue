@@ -8,11 +8,10 @@
 
 	const config = useState('config')
 
-	const {data: page} = await useAsyncData('homepage', () => {
-		const {data: cachedPage} = useNuxtData('homepage')
-		return (
-			cachedPage.value ||
-			getItems({
+	const {data: page} = await useAsyncData(
+		'homepage',
+		() => {
+			return getItems({
 				collection: 'homepage',
 				params: {
 					fields: [
@@ -26,38 +25,47 @@
 					],
 				},
 			})
-		)
-	})
+		},
+		{
+			getCachedData(key, nuxtApp) {
+				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+			},
+		},
+	)
 
-	const {data: mainSlider} = await useAsyncData('homepageMainSlider', () => {
-		const {data: cachedPage} = useNuxtData('homepageMainSlider')
-		return (
-			cachedPage.value ||
-			getItemById({
+	const {data: mainSlider} = await useAsyncData(
+		'homepageMainSlider',
+		() => {
+			return getItemById({
 				collection: 'collection',
 				id: page.value.slider_collection,
 			})
-		)
-	})
+		},
+		{
+			getCachedData(key, nuxtApp) {
+				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+			},
+		},
+	)
 
 	const {data: mainSliderImages} = await useAsyncData(
 		'homepageMainSliderImages',
 		() => {
-			const {data: cachedPage} = useNuxtData('homepageMainSliderImages')
-			return (
-				cachedPage.value ||
-				getItems({
-					collection: 'collection_files_1',
-				})
-			)
+			return getItems({
+				collection: 'collection_files_1',
+			})
+		},
+		{
+			getCachedData(key, nuxtApp) {
+				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+			},
 		},
 	)
 
-	const {data: products} = await useAsyncData('newProducts', () => {
-		const {data: cachedPage} = useNuxtData('newProducts')
-		return (
-			cachedPage.value ||
-			getItems({
+	const {data: products} = await useAsyncData(
+		'newProducts',
+		() => {
+			return getItems({
 				collection: 'products',
 				params: {
 					fields: ['title', 'price', 'main_image', 'id'],
@@ -65,65 +73,67 @@
 					limit: 4,
 				},
 			})
-		)
-	})
+		},
+		{
+			getCachedData(key, nuxtApp) {
+				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+			},
+		},
+	)
 
 	const {data: lookProductsIds} = await useLazyAsyncData(
 		'lookProductsIds',
 		() => {
-			const {data: cachedPage} = useNuxtData('lookProductsIds')
-			return (
-				cachedPage.value ||
-				getItems({
-					collection: 'homepage_products_1',
-					params: {
-						fields: ['products_id'],
-					},
-				})
-			)
+			return getItems({
+				collection: 'homepage_products_1',
+				params: {
+					fields: ['products_id'],
+				},
+			})
+		},
+		{
+			getCachedData(key, nuxtApp) {
+				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+			},
 		},
 	)
 
 	const {data: lookProducts} = await useAsyncData(
 		'lookProducts',
 		() => {
-			const {data: cachedPage} = useNuxtData('lookProducts')
-			return (
-				cachedPage.value ||
-				getItems({
-					collection: 'products',
-					params: {
-						fields: ['title', 'price', 'main_image', 'id'],
-						filter: {
-							id: {
-								_in: lookProductsIds.value.map((item) => item.products_id),
-							},
+			return getItems({
+				collection: 'products',
+				params: {
+					fields: ['title', 'price', 'main_image', 'id'],
+					filter: {
+						id: {
+							_in: lookProductsIds.value.map((item) => item.products_id),
 						},
 					},
-				})
-			)
+				},
+			})
 		},
 		{
-			cache: true,
+			getCachedData(key, nuxtApp) {
+				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+			},
 		},
 	)
 
 	const {data: categories} = await useAsyncData(
 		'categories',
 		() => {
-			const {data: cachedPage} = useNuxtData('categories')
-			return (
-				cachedPage.value ||
-				getItems({
-					collection: 'categories',
-					params: {
-						fields: ['title', 'title_eng', 'id'],
-					},
-				})
-			)
+			return getItems({
+				collection: 'categories',
+				params: {
+					fields: ['title', 'title_eng', 'id'],
+				},
+			})
 		},
 		{
-			cache: true,
+			getCachedData(key, nuxtApp) {
+				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+			},
 		},
 	)
 
@@ -146,10 +156,10 @@
 	])
 
 	useSeoMeta({
-		title: config.value.meta_title,
-		ogTitle: config.value.meta_title,
-		description: config.value.meta_description,
-		ogDescription: config.value.meta_description,
+		title: config?.value?.meta_title,
+		ogTitle: config?.value?.meta_title,
+		description: config?.value?.meta_description,
+		ogDescription: config?.value?.meta_description,
 		ogImage:
 			appConfig.public.databaseUrl + 'assets/' + config.value.meta_thumbnail,
 		lang: 'ru',

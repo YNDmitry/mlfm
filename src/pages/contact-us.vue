@@ -1,22 +1,27 @@
 <script setup lang="ts">
 	const appConfig = useRuntimeConfig()
+	const {getItems} = useDirectusItems()
 
 	definePageMeta({
 		layout: 'default',
 	})
 
-	const {data: page} = await useAsyncData('contact-us', () => {
-		const {data: cachedPage} = useNuxtData('contact-us')
-		return (
-			cachedPage.value ||
-			getItems({
+	const {data: page} = await useAsyncData(
+		'contact-us',
+		() => {
+			return getItems({
 				collection: 'contacts',
 				params: {
 					fields: ['meta_title', 'meta_description', 'og_image'],
 				},
 			})
-		)
-	})
+		},
+		{
+			getCachedData(key, nuxtApp) {
+				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+			},
+		},
+	)
 
 	useSeoMeta({
 		title: page.meta_title,
