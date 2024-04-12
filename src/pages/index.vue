@@ -213,7 +213,7 @@
 					</h2>
 
 					<div
-						class="no-scrollbar mx-[-1rem] flex scroll-px-3 gap-[45px] overflow-x-auto px-[1rem] max-tablet:gap-[20px]"
+						class="no-scrollbar mx-[-1rem] flex scroll-px-3 gap-[45px] overflow-x-auto px-[1rem] max-tablet:gap-4"
 					>
 						<template v-for="product in products" :key="product.id">
 							<ProductCard
@@ -221,25 +221,25 @@
 								:title="product.title"
 								:imgSrc="product.main_image"
 								:price="product.price"
-								class="animation-duration-2000 max-w-[18.31rem] flex-shrink-0 transition-all"
+								class="animation-duration-2000 max-w-[18.31rem] flex-shrink-0 transition-all max-tablet:w-[150px]"
 							/>
 						</template>
 					</div>
 				</div>
 
 				<div
-					class="no-scrollbar mx-[-1rem] flex scroll-px-3 gap-[8px] overflow-x-auto px-[1rem]"
+					class="no-scrollbar mx-[-1rem] flex scroll-px-3 gap-[8px] overflow-x-auto px-[1rem] max-tablet:gap-4"
 				>
 					<div
 						v-for="(slide, idx) in productsCards"
 						:key="idx"
-						class="max-w-[26.9rem] flex-shrink-0"
+						class="max-w-[26.9rem] flex-shrink-0 max-tablet:h-[165px] max-tablet:max-w-[150px]"
 					>
 						<ProductCardSmall
 							:title="slide.title"
 							:image="slide.image"
 							:link="slide.link"
-							class="transition-duration-1000 transition-ease-in-out transition-all"
+							class="transition-duration-1000 transition-ease-in-out transition-all max-tablet:h-full"
 						/>
 					</div>
 				</div>
@@ -257,7 +257,7 @@
 				</h2>
 
 				<div
-					class="relative grid grid-cols-buyImage gap-4 pt-10 max-tablet:flex max-tablet:flex-col max-tablet:gap-[20px]"
+					class="relative grid grid-cols-buyImage items-start gap-4 pt-10 max-tablet:gap-[20px]"
 				>
 					<NuxtImg
 						v-if="page.look_image"
@@ -278,7 +278,7 @@
 							disableOnInteraction: true,
 						}"
 						:loop="true"
-						class="relative w-full max-w-[300px] max-tablet:max-w-[600px]"
+						class="relative w-full max-w-[300px] max-tablet:max-w-[150px]"
 						id="look-swiper"
 					>
 						<SwiperSlide v-for="product in lookProducts" :key="product.id">
@@ -350,7 +350,7 @@
 		<!-- Выбор стилиста -->
 		<section class="pb-[55px] pt-[31px]">
 			<div class="mx-auto my-0 max-w-[955px] px-4">
-				<div class="flex justify-between gap-3 max-tablet:flex-col">
+				<div class="flex justify-between gap-3">
 					<div
 						class="flex flex-col items-center gap-[35px] max-mobile:gap-[15px] max-mobile:px-[35px]"
 					>
@@ -365,7 +365,7 @@
 
 						<NuxtLink
 							:to="'/catalog/' + page.uniq_product_id"
-							class="flex max-w-[10.625rem] items-center justify-center rounded-main bg-red2 font-montserrat text-[0.75rem] font-bold uppercase text-primary transition-colors hover:bg-red2-hover max-mobile:h-[1.125rem] max-mobile:w-[3.75rem] max-mobile:text-[0.5rem] max-mobile:font-light max-mobile:tracking-[0.5px] mobile:h-11 mobile:w-full mobile:tracking-[3px]"
+							class="flex w-full max-w-[10.625rem] items-center justify-center rounded-main bg-red2 py-2 font-montserrat text-[0.75rem] font-bold uppercase text-primary transition-colors hover:bg-red2-hover"
 						>
 							Купить
 						</NuxtLink>

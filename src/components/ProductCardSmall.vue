@@ -20,7 +20,7 @@
 	<NuxtLink :to="link" class="relative">
 		<NuxtImg
 			provider="directus"
-			class="w-full object-cover object-left max-tablet:w-[200px]"
+			class="h-full w-full object-cover object-left max-tablet:w-[200px]"
 			:src="image"
 			width="441"
 			height="355"

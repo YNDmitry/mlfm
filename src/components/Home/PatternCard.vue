@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 	defineProps({
 		image: {
 			type: String,
@@ -33,8 +33,8 @@
 			<div
 				class="flex flex-col items-center gap-[5px] font-medium text-third max-laptop:py-[10px] tablet:text-[14px] laptop:py-[20px]"
 			>
-				<p class="text-center">{{ title }}</p>
-				<span>₽ {{ price }}</span>
+				<p class="text-center max-tablet:text-[8px]">{{ title }}</p>
+				<span class="max-tablet:text-[8px]">₽ {{ price }}</span>
 			</div>
 
 			<NuxtLink

@@ -53,7 +53,7 @@
 				values.terms,
 			)
 			.then(() => {
-				console.log('done')
+				navigateTo('/profile/')
 			})
 			.catch((e) => {
 				console.log(e)

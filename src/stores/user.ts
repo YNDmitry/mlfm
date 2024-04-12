@@ -1,4 +1,6 @@
+import {updateMe} from '@directus/sdk'
 import {defineStore} from 'pinia'
+import {useNuxtApp} from '#app'
 
 interface UserState {
 	firstName: string
@@ -40,36 +42,22 @@ export const useUserStore = defineStore('userStore', {
 			terms: string,
 		) {
 			const {createUser, login} = useDirectusAuth()
-			const {updateUser} = useDirectusUsers()
+			const {$directus} = useNuxtApp()
 
 			const userPayload: CreateUserPayload = {
 				email: mail,
 				password: password,
 				role: '6ad231ba-e2d6-48ef-b692-d83625a591b8',
+				first_name: firstName,
+				last_name: lastName,
+				terms: terms,
 			}
 
 			await createUser(userPayload)
-				.then(() => {
-					return login({email: mail, password: password})
-				})
-				.then(() => {
-					updateUser({
-						id: this.id,
-						user: {
-							first_name: firstName,
-							last_name: lastName,
-							terms: terms,
-						},
-					}).then(() => {
-						this.getUserInfo()
-					})
-				})
-				.then(() => {
-					navigateTo('/profile/')
-				})
-				.catch((e) => {
-					return e.errors
-				})
+			await login({email: mail, password: password})
+
+			const user = await useDirectusUser()
+			await this.getUserInfo()
 		},
 
 		async userLogin(email: string, password: string) {
