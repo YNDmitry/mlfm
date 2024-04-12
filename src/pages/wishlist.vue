@@ -14,11 +14,11 @@
 	<section class="py-12">
 		<div class="container">
 			<h1
-				class="text-center leading-[110%] max-laptop:text-[48px] max-tablet:text-[1.25rem] max-mobile:pb-[2rem] mobile:pb-[24px] laptop:text-[55px]"
+				class="text-center text-h1 leading-[110%] max-laptop:text-[48px] max-tablet:text-[1.25rem] max-mobile:pb-[2rem] mobile:pb-[24px]"
 			>
 				Избранное
 			</h1>
-			<div class="mt-16 grid grid-cols-[1fr_1fr_1fr_1fr] gap-6"></div>
+			<div class="mt-8 grid grid-cols-[1fr_1fr_1fr_1fr] gap-6"></div>
 			<div class="mx-auto mt-16 max-w-[432px] text-center">
 				<div>Пока что ничего нет</div>
 				<div class="mt-6">

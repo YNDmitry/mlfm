@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 	import {object, string} from 'yup'
 	const config = useState('config')
 	const websiteConfig = useWebsiteStore()
@@ -48,7 +48,7 @@
 							<NuxtLink to="/profile">Личный кабинет</NuxtLink>
 						</li>
 						<li class="font-montserrat text-[14px] font-normal text-[#6C6C6C]">
-							<NuxtLink to="/gift-cards">Подарочные сертификаты</NuxtLink>
+							<NuxtLink to="/gift-card">Подарочные сертификаты</NuxtLink>
 						</li>
 						<li class="font-montserrat text-[14px] font-normal text-[#6C6C6C]">
 							<NuxtLink to="/docs/conditions">Доставка и оплата</NuxtLink>

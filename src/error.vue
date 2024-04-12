@@ -22,7 +22,7 @@
 		<NuxtLayout>
 			<div class="container">
 				<div class="py-12 text-center">
-					<h1>{{ error?.statusCode }}</h1>
+					<h1 class="text-h1">{{ error?.statusCode }}</h1>
 					<p class="mb-6 mt-2">{{ message }}</p>
 					<div class="mx-auto w-full max-w-96">
 						<button

@@ -78,6 +78,7 @@ export default defineNuxtConfig({
 				'Checkbox',
 				'ProgressSpinner',
 				'Toast',
+				'RadioButton',
 			],
 		},
 	},

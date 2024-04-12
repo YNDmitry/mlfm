@@ -48,20 +48,6 @@
 		},
 	)
 
-	const {data: mainSliderImages} = await useAsyncData(
-		'homepageMainSliderImages',
-		() => {
-			return getItems({
-				collection: 'collection_files_1',
-			})
-		},
-		{
-			getCachedData(key, nuxtApp) {
-				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
-			},
-		},
-	)
-
 	const {data: products} = await useAsyncData(
 		'newProducts',
 		() => {
@@ -81,7 +67,7 @@
 		},
 	)
 
-	const {data: lookProductsIds} = await useLazyAsyncData(
+	const {data: lookProductsIds} = await useAsyncData(
 		'lookProductsIds',
 		() => {
 			return getItems({
@@ -172,35 +158,15 @@
 		<section
 			class="relative flex h-[37.5rem] items-center justify-center max-tablet:h-[20rem] max-mobile:h-[15rem]"
 		>
-			<Swiper
-				id="collection-swiper"
-				class="swiper h-full w-full"
-				:pagination="{clickable: true}"
-				:modules="[SwiperAutoplay, SwiperEffectFade, SwiperPagination]"
-				:speed="700"
-				:autoplay="{
-					delay: 3000,
-					disableOnInteraction: true,
-				}"
-				:loop="true"
-				:effect="'fade'"
-			>
-				<SwiperSlide
-					class="h-full"
-					v-for="slide in mainSliderImages"
-					:key="slide.id"
-				>
-					<div class="relative h-full w-full">
-						<NuxtImg
-							provider="directus"
-							:src="slide.directus_files_id"
-							class="h-full w-full object-cover"
-							width="1440"
-							height="600"
-						/>
-					</div>
-				</SwiperSlide>
-			</Swiper>
+			<div class="relative h-full w-full" v-if="mainSlider.image">
+				<NuxtImg
+					provider="directus"
+					:src="mainSlider.image"
+					class="h-full w-full object-cover"
+					width="1440"
+					height="600"
+				/>
+			</div>
 			<div
 				class="absolute z-10 flex translate-y-[-50%] flex-col items-center justify-center gap-[1.5rem] text-primary max-tablet:right-[0.75rem] max-tablet:top-[40%] tablet:left-2/4 tablet:top-2/4 tablet:translate-x-[-50%]"
 			>
@@ -212,7 +178,7 @@
 				</h1>
 
 				<NuxtLink
-					to="/catalog"
+					:to="'/catalog?collection=' + mainSlider.title"
 					class="flex h-11 w-full max-w-[10.625rem] items-center justify-center rounded-main bg-red2 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] transition-colors hover:bg-red2-hover max-tablet:hidden"
 				>
 					Купить
@@ -241,9 +207,9 @@
 			<div class="container mx-auto my-0">
 				<div class="pb-[65px] max-tablet:pb-[74px]">
 					<h2
-						class="animation-duration-2000 pb-6 text-center font-bold transition-all max-tablet:text-[18px] max-mobile:text-[10px] max-mobile:tracking-[2.5px] mobile:tracking-[5.25px] tablet:text-[21px]"
+						class="animation-duration-2000 pb-6 text-center font-bold uppercase transition-all max-tablet:text-[18px] max-mobile:text-[10px] max-mobile:tracking-[2.5px] mobile:tracking-[5.25px] tablet:text-[21px]"
 					>
-						новинки
+						Новинки
 					</h2>
 
 					<div
@@ -287,13 +253,14 @@
 				<h2
 					class="text-center font-bold uppercase text-third max-tablet:text-[18px] max-mobile:text-[10px] max-mobile:tracking-[2.5px] mobile:tracking-[5.25px] tablet:text-[21px]"
 				>
-					купить образ
+					Купить образ
 				</h2>
 
 				<div
 					class="relative grid grid-cols-buyImage gap-4 pt-10 max-tablet:flex max-tablet:flex-col max-tablet:gap-[20px]"
 				>
 					<NuxtImg
+						v-if="page.look_image"
 						provider="directus"
 						class="h-full w-full object-cover"
 						:src="page.look_image"
@@ -340,7 +307,7 @@
 						<h2
 							class="font-bold uppercase text-red2 max-tablet:text-[18px] max-mobile:text-[10px] max-mobile:tracking-[2.5px] mobile:tracking-[5.25px] tablet:text-[21px]"
 						>
-							фирменный магазин
+							Фирменный магазин
 						</h2>
 
 						<p
@@ -356,9 +323,9 @@
 						<div
 							class="flex flex-col gap-[15px] font-montserrat text-[14px] leading-[20px] max-mobile:hidden max-mobile:pt-[12px] mobile:pt-[27px]"
 						>
-							<span>{{ config.current_address }}</span>
+							<span>{{ config?.current_address }}</span>
 
-							<b>{{ config.current_phone_number }}</b>
+							<b>{{ config?.current_phone_number }}</b>
 						</div>
 					</div>
 
@@ -383,11 +350,11 @@
 		<!-- Выбор стилиста -->
 		<section class="pb-[55px] pt-[31px]">
 			<div class="mx-auto my-0 max-w-[955px] px-4">
-				<div class="flex justify-between gap-3">
+				<div class="flex justify-between gap-3 max-tablet:flex-col">
 					<div
 						class="flex flex-col items-center gap-[35px] max-mobile:gap-[15px] max-mobile:px-[35px]"
 					>
-						<div class="relative">
+						<div class="relative" v-if="page.uniq_product_image">
 							<NuxtImg
 								provider="directus"
 								:src="page.uniq_product_image"
@@ -404,7 +371,7 @@
 						</NuxtLink>
 					</div>
 
-					<div>
+					<div v-if="page.uniq_product_image_2">
 						<NuxtImg
 							provider="directus"
 							:src="page.uniq_product_image_2"

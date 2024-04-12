@@ -183,7 +183,7 @@
 	)
 
 	// Дополнительные данные для страницы (баннеры, категории, бренды, цвета, размеры и т.д.)
-	const {data: catalogBanners} = await useLazyAsyncData(
+	const {data: catalogBanners} = await useAsyncData(
 		'catalogBanners',
 		() => {
 			return getItems({collection: 'catalog_files'})
@@ -194,7 +194,7 @@
 			},
 		},
 	)
-	const {data: categories} = await useLazyAsyncData(
+	const {data: categories} = await useAsyncData(
 		'categories',
 		() => {
 			return getItems({
@@ -209,7 +209,7 @@
 		},
 	)
 
-	const {data: brands} = await useLazyAsyncData(
+	const {data: brands} = await useAsyncData(
 		'catalogBrands',
 		() => {
 			return getItems({
@@ -223,7 +223,7 @@
 			},
 		},
 	)
-	const {data: colors} = await useLazyAsyncData(
+	const {data: colors} = await useAsyncData(
 		'catalogColors',
 		() => {
 			return getItems({collection: 'colors', params: {fields: ['title', 'id']}})
@@ -234,7 +234,7 @@
 			},
 		},
 	)
-	const {data: sizes} = await useLazyAsyncData(
+	const {data: sizes} = await useAsyncData(
 		'catalogSizes',
 		() => {
 			return getItems({
@@ -248,7 +248,7 @@
 			},
 		},
 	)
-	const {data: collections} = await useLazyAsyncData(
+	const {data: collections} = await useAsyncData(
 		'catalogCollections',
 		() => {
 			return getItems({
@@ -264,7 +264,7 @@
 	)
 
 	// Определение минимальной и максимальной цены для фильтра по цене
-	const {data: minPrice} = await useLazyAsyncData(
+	const {data: minPrice} = await useAsyncData(
 		'minPrice',
 		() => {
 			return $directus.request(
@@ -277,7 +277,7 @@
 			},
 		},
 	)
-	const {data: maxPrice} = await useLazyAsyncData(
+	const {data: maxPrice} = await useAsyncData(
 		'maxPrice',
 		() => {
 			return $directus.request(

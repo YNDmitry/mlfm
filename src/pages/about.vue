@@ -42,7 +42,7 @@
 
 <style>
 	.wysiwyg h1 {
-		@apply mb-8 text-[2rem] font-medium uppercase;
+		@apply mb-8 text-center text-[2rem] font-medium uppercase;
 	}
 
 	.wysiwyg img {

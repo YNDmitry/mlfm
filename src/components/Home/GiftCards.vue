@@ -2,7 +2,7 @@
 	<section class="relative w-full bg-third">
 		<div class="container max-w-[1127px] max-tablet:py-[20px] tablet:py-[50px]">
 			<div
-				class="items-center justify-items-center gap-5 max-laptop:flex laptop:grid laptop:grid-cols-giftCart"
+				class="items-center justify-items-center gap-5 max-laptop:flex max-mobile:flex-col laptop:grid laptop:grid-cols-giftCart"
 			>
 				<div>
 					<NuxtImg
@@ -13,7 +13,9 @@
 					/>
 				</div>
 
-				<div class="max-w-[245px] text-red2">
+				<div
+					class="max-w-[245px] text-red2 max-tablet:mr-auto max-tablet:max-w-none"
+				>
 					<h2
 						class="font-bold uppercase max-laptop:text-[1rem] max-laptop:tracking-[0.25rem] max-tablet:mb-[0.625rem] max-mobile:text-[0.5rem] max-mobile:tracking-[2px] tablet:mb-[1.313rem] laptop:text-[1.313rem] laptop:tracking-[5.25px]"
 					>
@@ -27,8 +29,8 @@
 					</p>
 
 					<NuxtLink
-						to="/gift-cards"
-						class="flex max-w-[10.625rem] items-center justify-center rounded-main border-red2 font-montserrat uppercase transition-colors hover:bg-red2-hover hover:text-primary max-tablet:h-[1rem] max-tablet:w-[4.5rem] max-tablet:border-[0.5px] max-tablet:text-[0.5rem] max-tablet:font-light tablet:h-11 tablet:w-full tablet:border-[1px] tablet:text-[0.75rem] tablet:font-bold tablet:tracking-[3px]"
+						to="/gift-card"
+						class="flex max-w-[10.625rem] items-center justify-center rounded-main border-red2 font-montserrat text-[1rem] uppercase transition-colors hover:bg-red2-hover hover:text-primary max-tablet:h-[1rem] max-tablet:w-[4.5rem] max-tablet:border-[0.5px] max-tablet:text-[0.5rem] max-tablet:font-light"
 					>
 						подарить
 					</NuxtLink>

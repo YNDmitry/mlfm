@@ -39,12 +39,14 @@
 	<section class="pb-[95px] pt-[95px] max-tablet:pt-[2rem]">
 		<div class="container max-w-[680px]">
 			<h1
-				class="leading-[110%] max-laptop:text-[48px] max-tablet:text-[1.25rem] max-mobile:pb-[2rem] mobile:pb-[24px] laptop:text-[55px]"
+				class="text-center text-h1 leading-[110%] max-laptop:text-[48px] max-tablet:text-[1.25rem] max-mobile:pb-[2rem]"
 			>
 				Свяжитесь с нами
 			</h1>
 
-			<p class="text-[1.25rem] max-tablet:text-[12px] max-mobile:text-[8px]">
+			<p
+				class="mt-4 text-center text-[1rem] max-tablet:text-[12px] max-mobile:text-[8px]"
+			>
 				Наша дружная команда будет рада услышать вас.
 			</p>
 

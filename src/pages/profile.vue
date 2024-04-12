@@ -55,7 +55,6 @@
 					<TheInput :inputName="'email'" :inputPlaceholder="'Email'" />
 					<TheInput :inputName="'phone'" :inputPlaceholder="'Телефон'" />
 					<button
-						:disabled="isSubmitting"
 						type="submit"
 						class="relative flex w-full items-center justify-center bg-red2 text-primary transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-70 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[45px] tablet:rounded-[1.875rem]"
 					>
@@ -66,7 +65,6 @@
 								root: 'mx-0 absolute left-[2rem]',
 								circle: '!stroke-[#ffffff]',
 							}"
-							v-if="isSubmitting"
 						/>
 						Обновить
 					</button>
@@ -83,7 +81,7 @@
 					<div
 						class="flex min-h-64 min-w-64 items-center justify-center rounded-[100%] bg-red text-h1 uppercase text-primary"
 					>
-						{{ userStore?.firstName[0] + userStore?.lastName[0] }}
+						{{ userStore?.firstName[0] + userStore?.lastName[0] || '' }}
 					</div>
 					<!-- //Аватар -->
 
@@ -97,14 +95,14 @@
 									<div
 										class="flex w-full items-center border-[1px] border-black font-light max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
 									>
-										{{ userStore?.firstName }}
+										{{ userStore?.firstName || null }}
 									</div>
 								</label>
 								<label class="flex w-full cursor-pointer flex-col gap-2">
 									<div
 										class="flex w-full items-center border-[1px] border-black font-light max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
 									>
-										{{ userStore?.lastName }}
+										{{ userStore?.lastName || null }}
 									</div>
 								</label>
 							</div>
@@ -112,7 +110,7 @@
 								<div
 									class="flex w-full items-center border-[1px] border-black font-light max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
 								>
-									{{ userStore.email }}
+									{{ userStore?.email || null }}
 								</div>
 							</label>
 							<label class="flex cursor-pointer flex-col gap-2">
@@ -144,7 +142,9 @@
 									binary
 									v-model="userStore.newsletter"
 									@change="
-										websiteStore.handleNewsletterSubscribe(userStore.email)
+										websiteStore.handleNewsletterSubscribe({
+											footerEmail: userStore.email,
+										})
 									"
 									:pt="{
 										box: 'rounded-[0] border-[1px] border-grayLight shadow-none',

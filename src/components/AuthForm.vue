@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 	defineProps({
 		title: {
 			default: () => '',
@@ -9,7 +9,7 @@
 </script>
 <template>
 	<div class="mx-auto w-[95%] max-w-[30rem] py-16">
-		<h1 class="text-center text-[3rem]">{{ title }}</h1>
+		<h1 class="text-center text-h1">{{ title }}</h1>
 		<div class="mt-8">
 			<slot />
 		</div>

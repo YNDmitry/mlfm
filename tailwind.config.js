@@ -2,10 +2,10 @@
 
 module.exports = {
 	content: [
-		'./src/components/*.{js,ts,vue}',
-		'./src/pages/*.{js,ts,vue}',
-		'./src/layouts/*.{js,ts,vue}',
-		'./src/assets/css/*.css',
+		'./src/components/**/*.{js,ts,vue}',
+		'./src/pages/**/*.{js,ts,vue}',
+		'./src/layouts/**/*.{js,ts,vue}',
+		'./src/assets/css/**/*.css',
 	],
 	theme: {
 		colors: {
@@ -45,7 +45,7 @@ module.exports = {
 			main: '2.125rem',
 		},
 		fontSize: {
-			h1: '48px',
+			h1: '2rem',
 		},
 		fontFamily: {
 			main: ['Unbounded'],
