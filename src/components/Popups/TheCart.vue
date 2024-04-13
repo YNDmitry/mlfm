@@ -105,12 +105,12 @@
 					<!--  /Скидка/Итого -->
 
 					<!--  Кнопка - Перейти к оплате -->
-					<button
+					<NuxtLink
 						to="/checkout"
-						class="w-full bg-red2 text-[0.625rem] text-primary transition-colors hover:bg-red2-hover max-tablet:mt-[1.875rem] max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] tablet:mt-[1.25rem] tablet:min-h-[37px] tablet:rounded-[1.875rem] tablet:font-medium"
+						class="flex w-full items-center justify-center bg-red2 text-[0.625rem] text-primary transition-colors hover:bg-red2-hover max-tablet:mt-[1.875rem] max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] tablet:mt-[1.25rem] tablet:min-h-[37px] tablet:rounded-[1.875rem] tablet:font-medium"
 					>
 						Перейти к оплате
-					</button>
+					</NuxtLink>
 					<!--  /Кнопка - Перейти к оплате -->
 				</div>
 

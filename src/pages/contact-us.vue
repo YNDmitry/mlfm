@@ -80,7 +80,7 @@
 			</div>
 		</div>
 
-		<div
+		<!-- <div
 			id="map"
 			class="mx-auto max-tablet:w-full max-tablet:pt-[1rem] max-mobile:h-[250px] mobile:h-[405px] tablet:w-[635px] tablet:pt-[35px]"
 		>
@@ -91,6 +91,6 @@
 				height="405"
 				class="h-full w-full object-cover"
 			/>
-		</div>
+		</div> -->
 	</section>
 </template>

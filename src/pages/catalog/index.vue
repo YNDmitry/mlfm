@@ -345,31 +345,6 @@
 									<form class="flex flex-col gap-[0.625rem] text-[0.625rem]">
 										<label
 											class="flex cursor-pointer items-center gap-[0.625rem]"
-										>
-											<input
-												type="checkbox"
-												class="absolute h-5 w-5 cursor-pointer opacity-0"
-												name="category"
-												:value="'All'"
-												v-model="initialState.filters.category"
-												:checked="
-													initialState.filters.category.length <= 1 ||
-													initialState.filters.category.length ===
-														categories.length
-												"
-											/>
-
-											<div
-												class="flex h-5 w-5 cursor-pointer items-center justify-center border-[1px] border-grayLight"
-											>
-												<IconsCheckbox />
-											</div>
-
-											<span>Все продукты</span>
-										</label>
-
-										<label
-											class="flex cursor-pointer items-center gap-[0.625rem]"
 											v-for="category in categories"
 											:key="category.id"
 										>
@@ -429,7 +404,14 @@
 
 							<!-- Размер -->
 							<CatalogFilter
-								:filters="sizes"
+								:filters="
+									sizes.map(
+										(el) =>
+											(el = {
+												title: el.small_title,
+											}),
+									)
+								"
 								:title="`Размер`"
 								:currentFilter="initialState.filters.size"
 								@update:currentFilter="initialState.filters.size = $event"

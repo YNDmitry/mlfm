@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 	defineProps({
 		title: {
 			type: String,
@@ -38,7 +38,7 @@
 		</div>
 
 		<div
-			class="flex flex-col gap-[0.5rem] pt-5 text-[14px] font-medium max-tablet:pt-[4px]"
+			class="flex flex-col gap-[0.5rem] pt-5 text-[14px] font-medium max-tablet:gap-1 max-tablet:pt-2 max-tablet:text-[10px]"
 		>
 			<div>{{ title }}</div>
 
