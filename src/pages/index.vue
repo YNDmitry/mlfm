@@ -147,8 +147,7 @@
 		description: config?.value?.meta_description,
 		ogDescription: config?.value?.meta_description,
 		ogImage:
-			appConfig.public.databaseUrl + 'assets/' + config.value.meta_thumbnail,
-		lang: 'ru',
+			appConfig.public.databaseUrl + 'assets/' + config?.value?.meta_thumbnail,
 	})
 </script>
 

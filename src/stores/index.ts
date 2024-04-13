@@ -1,4 +1,9 @@
 import {createItem} from '@directus/sdk'
+import type {Config} from '~/interfaces/config.interface'
+
+export interface INewsletterList {
+	email: string
+}
 
 export const useWebsiteStore = defineStore('websiteStore', {
 	state: () => ({
@@ -20,17 +25,19 @@ export const useWebsiteStore = defineStore('websiteStore', {
 		/**
 		 * Toggles the visibility of the cart popup.
 		 */
-		handleVisibleCart() {
+		handleVisibleCart(): void {
 			this.isVisibleCart = !this.isVisibleCart
 		},
 
-		async handleNewsletterSubscribe(values: {footerEmail: string}) {
+		async handleNewsletterSubscribe(values: {
+			footerEmail: string
+		}): Promise<void> {
 			const {$directus} = useNuxtApp()
 			await $directus
 				.request(
 					createItem('newsletter_list', {
 						email: values.footerEmail,
-					}),
+					} as INewsletterList),
 				)
 				.then((result) => {
 					this.isNewsletterFormSubmitted = true
@@ -39,7 +46,7 @@ export const useWebsiteStore = defineStore('websiteStore', {
 
 		async getConfig() {
 			const {getItems} = useDirectusItems()
-			return await getItems({
+			const response = await getItems({
 				collection: 'site',
 				params: {
 					fields: [
@@ -54,6 +61,8 @@ export const useWebsiteStore = defineStore('websiteStore', {
 					],
 				},
 			})
+			this.siteSettings = response as unknown as Config
+			return response as unknown
 		},
 	},
 })

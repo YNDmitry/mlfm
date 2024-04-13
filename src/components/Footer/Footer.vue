@@ -76,7 +76,7 @@
 								@submit.prevent="onSubmit"
 								class="relative mt-5 flex items-center"
 							>
-								<div class="relative flex w-full flex-col">
+								<div v-auto-animate class="relative flex w-full flex-col">
 									<Field
 										name="footerEmail"
 										placeholder="Введите Email"

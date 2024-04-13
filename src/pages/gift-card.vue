@@ -5,7 +5,6 @@
 	useSeoMeta({
 		title: 'Подарочная карта | MLFM',
 		ogTitle: 'Подарочная карта | MLFM',
-		lang: 'ru',
 	})
 
 	const {data: gift} = useAsyncData(

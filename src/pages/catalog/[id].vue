@@ -21,12 +21,20 @@
 		})
 	}
 
-	const {data: product} = await useAsyncData(() => {
-		return getItemById({
-			collection: 'products',
-			id: id,
-		})
-	})
+	const {data: product} = await useAsyncData(
+		`product-${id}`,
+		() => {
+			return getItemById({
+				collection: 'products',
+				id: id,
+			})
+		},
+		{
+			getCachedData(key, nuxtApp) {
+				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+			},
+		},
+	)
 
 	if (!product.value) {
 		throw createError({
@@ -44,23 +52,30 @@
 			appConfig.public.databaseUrl + 'assets/' + product.value.main_image,
 		twitterImage:
 			appConfig.public.databaseUrl + 'assets/' + product.value.main_image,
-		lang: 'ru',
 	})
 
-	const {data: randomProducts} = await useAsyncData('randomProducts', () => {
-		return getItems({
-			collection: 'products',
-			params: {
-				fields: ['title', 'price', 'main_image', 'id'],
-				filter: {
-					id: {
-						_neq: id,
+	const {data: randomProducts} = await useAsyncData(
+		`randomProducts-${id}`,
+		() => {
+			return getItems({
+				collection: 'products',
+				params: {
+					fields: ['title', 'price', 'main_image', 'id'],
+					filter: {
+						id: {
+							_neq: id,
+						},
 					},
+					limit: 4,
 				},
-				limit: 4,
+			})
+		},
+		{
+			getCachedData(key, nuxtApp) {
+				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
 			},
-		})
-	})
+		},
+	)
 
 	const handleAddToCart = () => {
 		cartStore.addItem(product.value)

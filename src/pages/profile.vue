@@ -8,7 +8,6 @@
 	useSeoMeta({
 		title: 'Профиль | MLFM',
 		ogTitle: 'Профиль | MLFM',
-		lang: 'ru',
 	})
 
 	const userStore = useUserStore()
@@ -57,7 +56,7 @@
 			<template #header>
 				<div class="text-[1rem] font-bold">Обновление данных</div>
 			</template>
-			<form @submit.prevent="userStore.updateUserInfo()">
+			<form @submit.prevent="userStore.updateUserInfo">
 				<div class="flex flex-col gap-4">
 					<div
 						class="grid grid-cols-[1fr_1fr] gap-4 max-mobile:grid-cols-[1fr]"
@@ -86,7 +85,7 @@
 		</Dialog>
 		<section class="pb-16 pt-20">
 			<div class="container">
-				<h1 class="text-h1">Мой профиль</h1>
+				<h1 class="text-center text-h1">Мой профиль</h1>
 				<div
 					class="mt-20 flex items-start justify-between gap-3 max-tablet:flex-col"
 				>
@@ -180,7 +179,7 @@
 				</div>
 			</div>
 		</section>
-		<section class="pb-44">
+		<section class="pb-44 max-tablet:hidden">
 			<div class="container">
 				<Accordion :activeIndex="[0]" :multiple="true">
 					<AccordionTab :pt="{root: 'border-b-[1px]', content: 'px-0'}">

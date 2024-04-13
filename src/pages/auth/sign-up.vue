@@ -51,6 +51,7 @@
 				values.firstName,
 				values.lastName,
 				values.terms,
+				values.newsletter,
 			)
 			.then(() => {
 				navigateTo('/profile/')

@@ -6,7 +6,6 @@
 	useSeoMeta({
 		title: 'Избранное | MLFM',
 		ogTitle: 'Избранное | MLFM',
-		lang: 'ru',
 	})
 </script>
 

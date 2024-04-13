@@ -26,7 +26,6 @@
 		ogImage: appConfig.public.databaseUrl + 'assets/' + page.value.og_image,
 		twitterImage:
 			appConfig.public.databaseUrl + 'assets/' + page.value.og_image,
-		lang: 'ru',
 	})
 </script>
 

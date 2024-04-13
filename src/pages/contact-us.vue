@@ -29,7 +29,6 @@
 		description: page.meta_description,
 		ogDescription: page.meta_description,
 		ogImage: appConfig.public.databaseUrl + 'assets/' + page.og_image,
-		lang: 'ru',
 	})
 
 	const config = useState('config')

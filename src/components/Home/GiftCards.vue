@@ -30,7 +30,7 @@
 
 					<NuxtLink
 						to="/gift-card"
-						class="flex max-w-[10.625rem] items-center justify-center rounded-main border-red2 font-montserrat text-[1rem] uppercase transition-colors hover:bg-red2-hover hover:text-primary max-tablet:h-[1rem] max-tablet:w-[4.5rem] max-tablet:border-[0.5px] max-tablet:text-[0.5rem] max-tablet:font-light"
+						class="flex max-w-[10.625rem] items-center justify-center rounded-main border border-red2 py-2 font-montserrat text-[1rem] uppercase transition-colors hover:bg-red2-hover hover:text-primary max-tablet:h-[1rem] max-tablet:w-[4.5rem] max-tablet:border-[0.5px] max-tablet:text-[0.5rem] max-tablet:font-light"
 					>
 						подарить
 					</NuxtLink>

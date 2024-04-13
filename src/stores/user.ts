@@ -40,6 +40,7 @@ export const useUserStore = defineStore('userStore', {
 			firstName: string,
 			lastName: string,
 			terms: string,
+			newsletter: string,
 		) {
 			const {createUser, login} = useDirectusAuth()
 			const {$directus} = useNuxtApp()
@@ -51,6 +52,7 @@ export const useUserStore = defineStore('userStore', {
 				first_name: firstName,
 				last_name: lastName,
 				terms: terms,
+				newsletter: newsletter,
 			}
 
 			await createUser(userPayload)

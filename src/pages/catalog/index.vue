@@ -27,7 +27,6 @@
 		description: page.value.meta_description,
 		ogDescription: page.value.meta_description,
 		ogImage: appConfig.public.databaseUrl + 'assets/' + page.value.og_image,
-		lang: 'ru',
 		twitterImage:
 			appConfig.public.databaseUrl + 'assets/' + page.value.og_image,
 	})

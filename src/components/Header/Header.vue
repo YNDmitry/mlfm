@@ -22,7 +22,6 @@
 		},
 	])
 
-	const config = useState('config')
 	const websiteStore = useWebsiteStore()
 
 	const isMobile = useMediaQuery('(max-width: 768px)')
@@ -30,7 +29,7 @@
 	const isOpen = ref(false)
 
 	const openMenu = () => {
-		if (!isMobile) return
+		if (!isMobile.value) return
 		isOpen.value = !isOpen.value
 	}
 </script>
@@ -59,7 +58,7 @@
 				<div class="mt-[5px] h-[1px] w-5 bg-black"></div>
 				<div class="mt-[5px] h-[1px] w-5 bg-black"></div>
 			</button>
-			<div class="ml-auto flex items-center gap-5" :class="{hidden: isMobile}">
+			<div class="ml-auto flex items-center gap-5 max-tablet:hidden">
 				<div class="flex items-start gap-5 max-tablet:mt-5 max-tablet:flex-col">
 					<NuxtLink to="/wishlist" @click="openMenu">
 						<IconsHearth
@@ -82,7 +81,7 @@
 			:class="{
 				'max-tablet:hidden': !isOpen,
 			}"
-			class="bg-black px-5 py-4 max-tablet:fixed max-tablet:left-0 max-tablet:right-0 max-tablet:top-0 max-tablet:z-40 max-tablet:h-screen max-tablet:bg-primary max-tablet:pt-20 max-mobile:bottom-0"
+			class="bg-black px-5 py-4 max-tablet:fixed max-tablet:left-0 max-tablet:right-0 max-tablet:top-0 max-tablet:z-40 max-tablet:h-screen max-tablet:bg-primary max-tablet:pt-28 max-mobile:bottom-0"
 		>
 			<div
 				class="flex items-center justify-center gap-4 max-tablet:flex-col max-tablet:items-start max-tablet:gap-5"
@@ -96,31 +95,34 @@
 				>
 					{{ link.title }}
 				</NuxtLink>
-				<div
-					:class="{hidden: !isMobile}"
-					class="mt-5 flex flex-col items-start gap-5"
-				>
-					<div class="ml-auto flex items-center gap-5">
-						<div
-							class="flex items-start gap-5 max-tablet:mt-5 max-tablet:flex-col"
-						>
-							<NuxtLink to="/wishlist" @click="openMenu">
-								<IconsHearth
-									class="inline-block h-5 w-5 text-primary max-tablet:mr-2"
-								/>
-								<span class="tablet:hidden">Избранное</span>
-							</NuxtLink>
-							<button @click="websiteStore.handleVisibleCart">
-								<IconsCart class="inline-block h-5 w-5 max-tablet:mr-2" />
-								<span class="tablet:hidden">Корзина</span>
-							</button>
-							<NuxtLink to="/profile" @click="openMenu">
-								<IconsProfile class="inline-block h-5 w-5 max-tablet:mr-2" />
-								<span class="tablet:hidden">Профиль</span>
-							</NuxtLink>
+				<ClientOnly>
+					<div class="mt-5 hidden flex-col items-start gap-5 max-tablet:flex">
+						<div class="ml-auto flex items-center gap-5">
+							<div
+								class="flex items-start gap-5 max-tablet:mt-5 max-tablet:flex-col"
+							>
+								<div class="flex items-center gap-2">
+									<IconsSearch />
+									<span>Поиск</span>
+								</div>
+								<NuxtLink to="/wishlist" @click="openMenu">
+									<IconsHearth
+										class="inline-block h-5 w-5 text-primary max-tablet:mr-2"
+									/>
+									<span class="tablet:hidden">Избранное</span>
+								</NuxtLink>
+								<button @click="websiteStore.handleVisibleCart">
+									<IconsCart class="inline-block h-5 w-5 max-tablet:mr-2" />
+									<span class="tablet:hidden">Корзина</span>
+								</button>
+								<NuxtLink to="/profile" @click="openMenu">
+									<IconsProfile class="inline-block h-5 w-5 max-tablet:mr-2" />
+									<span class="tablet:hidden">Профиль</span>
+								</NuxtLink>
+							</div>
 						</div>
 					</div>
-				</div>
+				</ClientOnly>
 			</div>
 		</div>
 		<PopupsTheCart />
