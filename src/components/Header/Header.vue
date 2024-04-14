@@ -37,10 +37,14 @@
 	<header class="sticky top-0 z-50">
 		<div class="relative flex items-center justify-center bg-primary px-5 py-5">
 			<div class="max-tablet:hidden">
-				<div class="flex items-center gap-2">
+				<button
+					@click="websiteStore.handleVisibleSearch"
+					type="button"
+					class="flex items-center gap-2"
+				>
 					<IconsSearch />
 					<span class="text-[0.625rem]">Поиск</span>
-				</div>
+				</button>
 			</div>
 			<NuxtLink
 				to="/"
@@ -126,6 +130,7 @@
 			</div>
 		</div>
 		<PopupsTheCart />
+		<PopupsSearch />
 	</header>
 </template>
 

@@ -45,7 +45,7 @@ module.exports = {
 			main: '2.125rem',
 		},
 		fontSize: {
-			h1: '2rem',
+			h1: '1.5rem',
 		},
 		fontFamily: {
 			main: ['Unbounded'],

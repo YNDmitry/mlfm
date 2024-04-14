@@ -173,7 +173,7 @@
 					v-if="mainSlider"
 					class="tablet:text-2xl uppercase max-tablet:text-right max-tablet:font-light max-tablet:tracking-[2.5px] tablet:max-w-[15.625rem] tablet:text-center tablet:font-bold tablet:tracking-[0.375rem]"
 				>
-					Новая коллекция <br /><br />{{ mainSlider.title }}
+					{{ mainSlider.title }}
 				</h1>
 
 				<NuxtLink

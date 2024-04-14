@@ -10,6 +10,7 @@ export const useWebsiteStore = defineStore('websiteStore', {
 		isVisibleCart: false,
 		isNewsletterPopup: false,
 		isNewsletterFormSubmitted: false,
+		isSearchPopup: false,
 		siteSettings: {
 			meta_title: '',
 			meta_description: '',
@@ -22,11 +23,14 @@ export const useWebsiteStore = defineStore('websiteStore', {
 		},
 	}),
 	actions: {
-		/**
-		 * Toggles the visibility of the cart popup.
-		 */
+		// Toggles the visibility of the cart popup.
 		handleVisibleCart(): void {
 			this.isVisibleCart = !this.isVisibleCart
+		},
+
+		// Toggles the visibility of the search popup.
+		handleVisibleSearch(): void {
+			this.isSearchPopup = !this.isSearchPopup
 		},
 
 		async handleNewsletterSubscribe(values: {
