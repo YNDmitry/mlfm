@@ -6,7 +6,7 @@
 		layout: 'default',
 	})
 
-	const config = useState('config')
+	const config = useNuxtData('config').data
 
 	const {data: page} = await useAsyncData(
 		'homepage',

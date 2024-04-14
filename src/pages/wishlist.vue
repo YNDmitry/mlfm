@@ -10,7 +10,7 @@
 </script>
 
 <template>
-	<section class="py-12">
+	<section class="py-16">
 		<div class="container">
 			<h1
 				class="text-center text-h1 leading-[110%] max-laptop:text-[48px] max-tablet:text-[1.25rem] max-mobile:pb-[2rem] mobile:pb-[24px]"

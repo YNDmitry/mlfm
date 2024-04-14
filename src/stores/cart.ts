@@ -1,3 +1,4 @@
+import {verifyHash} from '@directus/sdk'
 import {defineStore} from 'pinia'
 
 interface CartItem {
@@ -10,6 +11,7 @@ interface CartItem {
 export const useCartStore = defineStore('userCart', {
 	state: () => ({
 		items: [] as CartItem[],
+		discount: '',
 	}),
 	getters: {
 		totalPrice: (state) => {
@@ -93,6 +95,15 @@ export const useCartStore = defineStore('userCart', {
 				this.items.splice(index, 1)
 			}
 			this.saveCart()
+		},
+
+		async getDiscount(string: string, hash: string) {
+			const {$directus} = useNuxtApp()
+			try {
+				await $directus.request(verifyHash(string, hash))
+			} catch (error) {
+				console.log(error)
+			}
 		},
 	},
 })

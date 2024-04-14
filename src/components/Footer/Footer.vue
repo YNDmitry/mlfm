@@ -1,6 +1,6 @@
 <script setup lang="ts">
 	import {object, string} from 'yup'
-	const config = useState('config')
+	const config = useNuxtData('config').data
 	const websiteConfig = useWebsiteStore()
 
 	const schema = object({

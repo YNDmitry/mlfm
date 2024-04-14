@@ -31,11 +31,11 @@
 		ogImage: appConfig.public.databaseUrl + 'assets/' + page.og_image,
 	})
 
-	const config = useState('config')
+	const config = useNuxtData('config').data
 </script>
 
 <template>
-	<section class="pb-[95px] pt-[95px] max-tablet:pt-[2rem]">
+	<section class="py-16 max-tablet:pt-[2rem]">
 		<div class="container max-w-[680px]">
 			<h1
 				class="text-center text-h1 leading-[110%] max-laptop:text-[48px] max-tablet:text-[1.25rem] max-mobile:pb-[2rem]"
@@ -51,7 +51,7 @@
 
 			<div class="font-roboto flex flex-col gap-4 pt-[2rem]">
 				<div
-					class="flex items-center gap-4 font-light max-tablet:text-[12px] max-mobile:text-[0.625rem]"
+					class="flex items-center justify-center gap-4 font-light max-tablet:text-[12px] max-mobile:text-[0.625rem]"
 				>
 					<IconsEmail />
 
@@ -61,7 +61,7 @@
 				</div>
 
 				<div
-					class="flex items-center gap-4 font-light max-tablet:text-[12px] max-mobile:text-[0.625rem]"
+					class="flex items-center justify-center gap-4 font-light max-tablet:text-[12px] max-mobile:text-[0.625rem]"
 				>
 					<IconsPhone />
 
@@ -71,7 +71,7 @@
 				</div>
 
 				<div
-					class="flex items-center gap-4 font-light max-tablet:text-[12px] max-mobile:text-[0.625rem]"
+					class="flex items-center justify-center gap-4 font-light max-tablet:text-[12px] max-mobile:text-[0.625rem]"
 				>
 					<IconsMap />
 

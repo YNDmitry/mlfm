@@ -588,7 +588,7 @@
 								template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
 								:currentPageReportTemplate="
 									!isMobile
-										? 'Страница {currentPage} из {totalPages}'
+										? '{currentPage} из {totalPages}'
 										: '{currentPage} из {totalPages}'
 								"
 								:pt="{

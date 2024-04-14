@@ -11,10 +11,8 @@
 
 	const userStore = useUserStore()
 	const websiteStore = useWebsiteStore()
-	const cartStore = useCartStore()
 
-	const config = useState('config')
-	const {data: webConfig} = await useAsyncData(
+	await useAsyncData(
 		'config',
 		async () => {
 			return await websiteStore.getConfig()
@@ -25,11 +23,9 @@
 			},
 		},
 	)
-	config.value = webConfig
 
 	await callOnce(async () => {
 		await userStore.getUserInfo()
-		// await cartStore.initCart()
 	})
 </script>
 

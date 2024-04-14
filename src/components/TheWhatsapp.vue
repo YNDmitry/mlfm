@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	const config = useState('config')
+	const config = useNuxtData('config').data
 </script>
 
 <template>
@@ -8,14 +8,12 @@
 			value: 'Есть вопрос?',
 			showDelay: 300,
 			pt: {
-				text: 'text-[0.625rem] mr-2',
+				text: 'text-[0.625rem] bg-red mr-2',
 			},
 		}"
 		:to="config?.current_whatsapp"
-		class="fixed bottom-3 right-3 z-50 flex items-center gap-3 transition-all hover:scale-110"
+		class="fixed bottom-3 right-3 z-50 flex h-[3.5rem] w-[3.5rem] items-center gap-3 transition-all hover:scale-110"
 	>
-		<IconsWhatsApp
-			class="h-[3.5rem] w-[3.5rem] rounded-[100%] bg-[#25D366] p-2"
-		/>
+		<IconsWhatsApp class="h-[3rem] w-[3rem] rounded-[100%] bg-red p-2" />
 	</NuxtLink>
 </template>
