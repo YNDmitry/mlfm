@@ -10,7 +10,13 @@
 			return getItems({
 				collection: 'catalog',
 				params: {
-					fields: ['meta_title', 'meta_description', 'og_image', 'main_banner'],
+					fields: [
+						'meta_title',
+						'meta_description',
+						'og_image',
+						'main_banner',
+						'random_banners',
+					],
 				},
 			})
 		},
@@ -181,11 +187,22 @@
 		{deep: true},
 	)
 
-	// Дополнительные данные для страницы (баннеры, категории, бренды, цвета, размеры и т.д.)
+	console.log(page.value)
+
 	const {data: catalogBanners} = await useAsyncData(
 		'catalogBanners',
 		() => {
-			return getItems({collection: 'catalog_files'})
+			return getItems({
+				collection: 'catalog_files',
+				params: {
+					fields: ['*'],
+					filter: {
+						id: {
+							_in: page.value.random_banners,
+						},
+					},
+				},
+			})
 		},
 		{
 			getCachedData(key, nuxtApp) {
@@ -193,6 +210,7 @@
 			},
 		},
 	)
+
 	const {data: categories} = await useAsyncData(
 		'categories',
 		() => {

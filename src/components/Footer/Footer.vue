@@ -31,29 +31,45 @@
 				class="grid grid-cols-footer gap-8 max-laptop:grid-cols-[1fr_1fr] max-laptop:gap-11"
 			>
 				<div>
-					<div class="text-[1rem] font-bold">Информация</div>
-					<ul class="mt-[30px] flex flex-col gap-3">
-						<li class="font-montserrat text-[14px] font-normal text-[#6C6C6C]">
+					<div class="text-[1rem] font-bold max-tablet:text-[0.75rem]">
+						Информация
+					</div>
+					<ul class="mt-[30px] flex flex-col gap-3 max-tablet:mt-4">
+						<li
+							class="font-montserrat text-[14px] font-normal text-[#6C6C6C] max-tablet:text-[10px]"
+						>
 							<NuxtLink to="/about">О компании</NuxtLink>
 						</li>
-						<li class="font-montserrat text-[14px] font-normal text-[#6C6C6C]">
+						<li
+							class="font-montserrat text-[14px] font-normal text-[#6C6C6C] max-tablet:text-[10px]"
+						>
 							<NuxtLink to="/contact-us">Контакты</NuxtLink>
 						</li>
 					</ul>
 				</div>
 				<div>
-					<div class="text-[1rem] font-bold">Для покупателей</div>
-					<ul class="mt-[30px] flex flex-col gap-3">
-						<li class="font-montserrat text-[14px] font-normal text-[#6C6C6C]">
+					<div class="text-[1rem] font-bold max-tablet:text-[0.75rem]">
+						Для покупателей
+					</div>
+					<ul class="mt-[30px] flex flex-col gap-3 max-tablet:mt-4">
+						<li
+							class="font-montserrat text-[14px] font-normal text-[#6C6C6C] max-tablet:text-[10px]"
+						>
 							<NuxtLink to="/profile">Личный кабинет</NuxtLink>
 						</li>
-						<li class="font-montserrat text-[14px] font-normal text-[#6C6C6C]">
+						<li
+							class="font-montserrat text-[14px] font-normal text-[#6C6C6C] max-tablet:text-[10px]"
+						>
 							<NuxtLink to="/gift-card">Подарочные сертификаты</NuxtLink>
 						</li>
-						<li class="font-montserrat text-[14px] font-normal text-[#6C6C6C]">
+						<li
+							class="font-montserrat text-[14px] font-normal text-[#6C6C6C] max-tablet:text-[10px]"
+						>
 							<NuxtLink to="/docs/conditions">Доставка и оплата</NuxtLink>
 						</li>
-						<li class="font-montserrat text-[14px] font-normal text-[#6C6C6C]">
+						<li
+							class="font-montserrat text-[14px] font-normal text-[#6C6C6C] max-tablet:text-[10px]"
+						>
 							<NuxtLink to="/docs/conditions">Публичная оферта</NuxtLink>
 						</li>
 					</ul>
@@ -62,9 +78,11 @@
 					class="w-full max-w-[430px] max-tablet:col-span-2 max-tablet:max-w-none max-tablet:text-center"
 				>
 					<div>
-						<div class="text-[1rem] font-bold">У нас прекрасные новости</div>
+						<div class="text-[1rem] font-bold max-tablet:text-[0.75rem]">
+							У нас прекрасные новости
+						</div>
 						<p
-							class="mt-[30px] font-montserrat text-[14px] font-normal text-[#6C6C6C] max-tablet:mt-3"
+							class="mt-[30px] font-montserrat text-[14px] font-normal text-[#6C6C6C] max-tablet:mt-4 max-tablet:text-[10px]"
 						>
 							Лучшие акции, главные новинки и персональные предложения
 						</p>

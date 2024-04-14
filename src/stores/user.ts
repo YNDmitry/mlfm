@@ -1,4 +1,4 @@
-import {updateMe} from '@directus/sdk'
+import {updateMe, login} from '@directus/sdk'
 import {defineStore} from 'pinia'
 import {useNuxtApp} from '#app'
 
@@ -63,15 +63,16 @@ export const useUserStore = defineStore('userStore', {
 		},
 
 		async userLogin(email: string, password: string) {
-			const {login} = useDirectusAuth()
-			await login({email, password})
-				.then(() => {
-					navigateTo('/profile')
-					this.getUserInfo()
-				})
-				.catch((error) => {
-					console.log(error)
-				})
+			const {$directus} = useNuxtApp()
+			const err = ref('')
+			try {
+				$directus.request(login(email, password))
+				navigateTo('/profile')
+				this.getUserInfo()
+			} catch (error) {
+				err.value = error.errors
+				console.log(error.errors)
+			}
 		},
 
 		async getUserInfo() {

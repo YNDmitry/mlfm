@@ -1,10 +1,10 @@
-import { createDirectus, rest, aggregate, createItem, passwordRequest, passwordReset, updateMe } from '@directus/sdk';
+import { createDirectus, rest, aggregate, createItem, passwordRequest, passwordReset, updateMe, authentication } from '@directus/sdk';
 
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig();
 
-  const directus = createDirectus(config.public.databaseUrl).with(rest());
+  const directus = createDirectus(config.public.databaseUrl).with(rest(), authentication());
   return {
-    provide: { directus, aggregate, createItem, passwordRequest, passwordReset, updateMe },
+    provide: { directus, aggregate, createItem, passwordRequest, passwordReset, updateMe, },
   };
 });

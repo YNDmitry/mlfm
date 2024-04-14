@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 	defineProps({
 		title: {
 			type: String,
@@ -17,13 +17,14 @@
 </script>
 
 <template>
-	<NuxtLink :to="link" class="relative">
+	<NuxtLink :to="link" class="relative h-full w-full">
 		<NuxtImg
 			provider="directus"
-			class="h-full w-full object-cover object-left max-tablet:w-[200px]"
+			class="h-full w-full object-cover"
 			:src="image"
 			width="441"
-			height="355"
+			height="550"
+			fit="cover"
 		/>
 
 		<div
