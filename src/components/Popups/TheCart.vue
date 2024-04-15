@@ -92,7 +92,10 @@
 					<div
 						class="relative flex flex-col gap-[0.875rem] max-tablet:pt-[1.875rem] tablet:pt-[1rem]"
 					>
-						<div class="flex justify-between text-[0.625rem] text-darkGray">
+						<div
+							v-if="useCart.discount"
+							class="flex justify-between text-[0.625rem] text-darkGray"
+						>
 							<span>Скидка</span>
 
 							<span>-360₽</span>

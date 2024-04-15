@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	defineProps({
+	const props = defineProps({
 		image: {
 			type: String,
 			required: true,
@@ -17,6 +17,13 @@
 			required: true,
 		},
 	})
+
+	const priceFormated = computed(() =>
+		Intl.NumberFormat('ru-RU', {
+			style: 'currency',
+			currency: 'RUB',
+		}).format(props.price),
+	)
 </script>
 
 <template>
@@ -34,12 +41,12 @@
 				class="flex flex-col items-center gap-[5px] font-medium text-third max-laptop:py-[10px] tablet:text-[14px] laptop:py-[20px]"
 			>
 				<p class="text-center max-tablet:text-[8px]">{{ title }}</p>
-				<span class="max-tablet:text-[8px]">₽ {{ price }}</span>
+				<span class="max-tablet:text-[8px]">{{ priceFormated }}</span>
 			</div>
 
 			<NuxtLink
 				:to="'/catalog/' + link"
-				class="flex min-h-[2.813rem] max-w-[10.625rem] items-center justify-center rounded-main bg-third px-6 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] text-red2 transition-colors hover:bg-primary mobile:w-full"
+				class="flex min-h-[2.813rem] max-w-[10.625rem] items-center justify-center rounded-main bg-third px-6 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] text-red2 transition-colors hover:bg-primary max-tablet:min-h-[2rem] max-tablet:text-[10px] mobile:w-full"
 			>
 				купить
 			</NuxtLink>

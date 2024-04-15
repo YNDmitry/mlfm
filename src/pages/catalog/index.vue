@@ -98,57 +98,6 @@
 		},
 	)
 
-	// Асинхронное получение продуктов с примененными фильтрами
-	async function getProducts() {
-		return await getItems({
-			collection: 'products',
-			params: {
-				fields: ['title', 'price', 'main_image', 'id'],
-				sort: ['-date_created'],
-				filter: {
-					// Обновите логику фильтрации здесь в соответствии с ваш ими требованиями и структурой данных
-					...(initialState.filters.brand && {
-						brand: {
-							_eq: brands.value.find(
-								(el) => el.title === initialState.filters.brand,
-							).id,
-						},
-					}),
-					...(initialState.filters.collection && {
-						collection: {
-							_eq: collections.value.find(
-								(el) => el.title === initialState.filters.collection,
-							).id,
-						},
-					}),
-					...(initialState.filters.color && {
-						color: {_eq: initialState.filters.color},
-					}),
-					// ...(initialState.filters.size && {
-					// 	size: {_contains: initialState.filters.size},
-					// }),
-					...(initialState.filters.category.length > 0 && {
-						category: {_in: initialState.filters.category},
-					}),
-					// Убедитесь, что ваша логика фильтрации по цене соответствует требуемой логике
-					// ...(initialState.filters.price._lte > 0 && {
-					// 	price: {_lte: initialState.filters.price._lte},
-					// }),
-				},
-				limit: initialState.productsPerPage,
-				offset: initialState.currentPage - 1,
-			},
-		})
-	}
-
-	const {data: products, refresh: refreshProducts} =
-		await useAsyncData(getProducts)
-
-	// Функция обновления продуктов (вызывается при изменении фильтров или страницы)
-	async function updateProducts() {
-		refreshProducts()
-	}
-
 	// Наблюдение за изменениями фильтров и страницы, и обновление продуктов при их изменении
 	watch(
 		() => [initialState.currentPage, initialState.filters],
@@ -311,6 +260,64 @@
 		initialState.filters.price._lte = max
 		// Здесь может быть добавлена логика для обработки минимальной цены, если это необходимо
 	}
+
+	// Асинхронное получение продуктов с примененными фильтрами
+	async function getProducts() {
+		return await getItems({
+			collection: 'products',
+			params: {
+				fields: ['title', 'price', 'main_image', 'id'],
+				sort: ['-date_created'],
+				filter: {
+					...(initialState.filters.brand && {
+						brand: {
+							_eq: brands.value.find(
+								(el) => el.title === initialState.filters.brand,
+							).id,
+						},
+					}),
+					...(initialState.filters.collection && {
+						collection: {
+							_eq: collections.value.find(
+								(el) => el.title === initialState.filters.collection,
+							).id,
+						},
+					}),
+					...(initialState.filters.color && {
+						color: {_eq: initialState.filters.color},
+					}),
+					...(initialState.filters.size && {
+						size: {_contains: initialState.filters.size},
+					}),
+					...(initialState.filters.category.length > 0 && {
+						category: {
+							_eq: categories.value.find(
+								(el) => el.title === initialState.filters.category,
+							).id,
+						},
+					}),
+					// Убедитесь, что ваша логика фильтрации по цене соответствует требуемой логике
+					// ...(initialState.filters.price._lte > 0 && {
+					// 	price: {_lte: initialState.filters.price._lte},
+					// }),
+				},
+				limit: initialState.productsPerPage,
+				offset: initialState.currentPage - 1,
+			},
+		})
+	}
+
+	const {data: products, refresh: refreshProducts} = await useAsyncData(
+		'catalogProducts',
+		() => {
+			return getProducts()
+		},
+	)
+
+	// Функция обновления продуктов (вызывается при изменении фильтров или страницы)
+	async function updateProducts() {
+		refreshProducts()
+	}
 </script>
 <template>
 	<div>
@@ -358,7 +365,7 @@
 								<p class="pb-[1.25rem] text-[0.875rem]">Категория</p>
 
 								<ScrollPanel style="width: 100%; height: 140px">
-									<form class="flex flex-col gap-[0.625rem] text-[0.625rem]">
+									<div class="flex flex-col gap-[0.625rem] text-[0.625rem]">
 										<label
 											class="flex cursor-pointer items-center gap-[0.625rem]"
 											v-for="category in categories"
@@ -367,13 +374,8 @@
 											<input
 												type="checkbox"
 												class="absolute h-5 w-5 cursor-pointer opacity-0"
-												name="category"
 												:value="category.title"
-												@change="
-													initialState.filters.category.push(
-														$event.target.value,
-													)
-												"
+												v-model="initialState.filters.category"
 											/>
 
 											<div
@@ -384,7 +386,7 @@
 
 											<span>{{ category.title }}</span>
 										</label>
-									</form>
+									</div>
 								</ScrollPanel>
 
 								<!-- Reset button -->
@@ -573,23 +575,20 @@
 						<!-- Пагинация -->
 						<div
 							class="w-ful relative border-t-[1px] border-[#AAAAAA]"
-							v-if="
-								products?.length !== 0 &&
-								products?.length >= initialState.productsPerPage &&
-								initialState.currentPage !== 0
-							"
+							v-if="products?.length !== 0 && initialState.currentPage >= 0"
 						>
 							<Paginator
 								v-model:first="initialState.currentPage"
 								:rows="initialState.productsPerPage"
 								:totalRecords="Number(count[0].count)"
-								template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+								template="PrevPageLink CurrentPageReport NextPageLink"
 								:currentPageReportTemplate="
 									!isMobile
 										? '{currentPage} из {totalPages}'
 										: '{currentPage} из {totalPages}'
 								"
 								:pt="{
+									root: 'px-0',
 									paginator: 'w-full',
 									previouspagebutton: 'mr-auto',
 									nextpagebutton: 'ml-auto',
@@ -598,7 +597,7 @@
 						</div>
 						<!-- /Пагинация -->
 						<div
-							v-if="products?.length === 0"
+							v-else
 							class="mx-auto flex w-full max-w-[500px] flex-col justify-center gap-5 text-center"
 						>
 							<div>Продуктов по данным фильтрам не найдены</div>

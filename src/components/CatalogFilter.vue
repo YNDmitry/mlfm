@@ -3,9 +3,7 @@
 		filters: {
 			type: Array,
 		},
-		currentFilter: {
-			type: String,
-		},
+		currentFilter: {},
 		title: {
 			type: String,
 		},
@@ -26,16 +24,27 @@
 			:modelValue="currentFilter"
 			:options="filters.map((filter) => filter.title)"
 			:placeholder="title"
+			optionLabel="title"
 			unstyled
 			showClear
 			:pt="{
 				dropdownicon: 'w-[10px]',
 				clearicon: 'w-[10px] ml-auto mr-2',
 				wrapper: 'bg-primary py-2 ',
+				list: 'h-[140px]',
 				item: 'text-[0.625rem] flex items-center px-2 rounded-main text-black h-[2rem] w-full cursor-pointer my-[0.5rem] transition-all hover:bg-grayLight',
 				input: 'outline-none',
 			}"
 			class="flex cursor-pointer justify-between border-0 text-[0.625rem] shadow-none outline-none"
-		/>
+		>
+			<template #optiongroup="slotProps">
+				<ScrollPanel style="width: 100%; height: 140px" data-lenis-prevent>
+					<div class="align-items-center flex">
+						{{ slotProps }}
+						<div>{{ slotProps.option.title }}</div>
+					</div>
+				</ScrollPanel>
+			</template>
+		</Dropdown>
 	</div>
 </template>

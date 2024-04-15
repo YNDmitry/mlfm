@@ -12,8 +12,7 @@
 	const {id} = useRoute().params
 
 	if ($preview) {
-		console.log('hello from preview')
-		const {data: product, error} = await useAsyncData(() => {
+		const {data: product, error} = await useAsyncData(`product-${id}`, () => {
 			return getItemById({
 				collection: 'products',
 				id: id,
@@ -27,6 +26,20 @@
 			return getItemById({
 				collection: 'products',
 				id: id,
+			})
+		},
+		{
+			getCachedData(key, nuxtApp) {
+				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+			},
+		},
+	)
+	const {data: category} = await useAsyncData(
+		`product-category-${id}`,
+		() => {
+			return getItemById({
+				collection: 'categories',
+				id: product?.category,
 			})
 		},
 		{
@@ -77,13 +90,28 @@
 		},
 	)
 
+	const toast = useToast()
 	const handleAddToCart = () => {
 		cartStore.addItem(product.value)
+		toast.add({
+			severity: 'success',
+			summary: 'Успешно',
+			detail: 'Товар в корзине',
+			life: 3000,
+		})
 	}
+
+	const price = computed(() =>
+		Intl.NumberFormat('ru-RU', {
+			style: 'currency',
+			currency: 'RUB',
+		}).format(product.value.price),
+	)
 </script>
 
 <template>
 	<div>
+		<Toast :position="'top-right'" />
 		<!-- Карточка товара -->
 		<section class="pt-[78px] max-tablet:pt-0">
 			<div class="mx-auto my-0 max-w-[1189px] px-[1rem]">
@@ -124,7 +152,7 @@
 						class="flex w-full max-w-[420px] flex-col max-tablet:max-w-none max-tablet:gap-[0.75rem] tablet:gap-[2rem]"
 					>
 						<h1
-							class="max-tablet:font-light tablet:text-[2rem] tablet:font-extralight"
+							class="max-tablet:text-h1Mob text-h1 max-tablet:font-light tablet:font-extralight"
 						>
 							{{ product.title }}
 						</h1>
@@ -133,9 +161,7 @@
 							<div
 								class="flex flex-col max-tablet:gap-[0.75rem] max-tablet:text-[0.625rem] tablet:gap-4 tablet:text-[0.75rem]"
 							>
-								<span v-if="product.category"
-									>Категория: {{ product.category }}</span
-								>
+								<span v-if="product.category">Категория: {{ category }}</span>
 								<span v-if="product.colors.length > 0">Цвет: Золотой </span>
 							</div>
 
@@ -182,7 +208,7 @@
 						</div>
 
 						<span class="max-tablet:text-[0.625rem] tablet:text-[0.875rem]"
-							>Цена: ₽ {{ product.price }}</span
+							>Цена: ₽ {{ price }}</span
 						>
 
 						<!-- Кнопки "Добавить" -->

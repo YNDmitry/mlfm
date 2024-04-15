@@ -63,7 +63,7 @@
 						class="flex w-full max-w-[420px] flex-col max-tablet:max-w-none max-tablet:gap-[0.75rem] tablet:gap-[2rem]"
 					>
 						<h1
-							class="max-tablet:font-light tablet:text-[2rem] tablet:font-extralight"
+							class="max-tablet:text-h1Mob text-h1 max-tablet:font-light tablet:font-extralight"
 						>
 							{{ gift?.title }}
 						</h1>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	defineProps({
+	const props = defineProps({
 		title: {
 			type: String,
 			required: false,
@@ -17,6 +17,13 @@
 			required: false,
 		},
 	})
+
+	const priceFormated = computed(() =>
+		Intl.NumberFormat('ru-RU', {
+			style: 'currency',
+			currency: 'RUB',
+		}).format(props.price),
+	)
 </script>
 
 <template>
@@ -42,7 +49,7 @@
 		>
 			<div>{{ title }}</div>
 
-			<span>₽ {{ price }}</span>
+			<span>{{ priceFormated }}</span>
 		</div>
 	</NuxtLink>
 </template>

@@ -454,7 +454,10 @@
 				<div
 					class="relative flex flex-col gap-[0.875rem] max-laptop:pb-[1.625rem] max-laptop:pt-[1rem] max-laptop:after:absolute max-laptop:after:bottom-0 max-laptop:after:left-0 max-laptop:after:h-[2px] max-laptop:after:w-full max-laptop:after:bg-gray2 max-laptop:after:content-[''] laptop:pt-[1.25rem]"
 				>
-					<div class="flex justify-between text-[0.625rem] text-darkGray">
+					<div
+						v-if="cartStore.discount"
+						class="flex justify-between text-[0.625rem] text-darkGray"
+					>
 						<span>Скидка</span>
 
 						<span>-360₽</span>
@@ -463,7 +466,7 @@
 					<div class="flex justify-between text-[0.625rem] font-medium">
 						<span>Итого</span>
 
-						<span>24,140₽</span>
+						<span>{{ cartStore.totalPrice }}₽</span>
 					</div>
 				</div>
 				<!--  /Общая инф-ция о товарах -->

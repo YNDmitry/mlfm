@@ -177,7 +177,7 @@
 			>
 				<h1
 					v-if="mainSlider"
-					class="tablet:text-2xl uppercase max-tablet:text-right max-tablet:font-light max-tablet:tracking-[2.5px] tablet:max-w-[15.625rem] tablet:text-center tablet:font-bold tablet:tracking-[0.375rem]"
+					class="max-tablet:text-h1Mob text-center text-h1 font-bold uppercase tracking-[0.375rem] max-tablet:text-right max-tablet:font-light max-tablet:tracking-[2.5px]"
 				>
 					{{ mainSlider.title }}
 				</h1>
@@ -212,7 +212,7 @@
 			<div class="container mx-auto my-0">
 				<div class="pb-[65px] max-tablet:pb-[74px]">
 					<h2
-						class="animation-duration-2000 pb-6 text-center font-bold uppercase transition-all max-tablet:text-[18px] max-mobile:text-[10px] max-mobile:tracking-[2.5px] mobile:tracking-[5.25px] tablet:text-[21px]"
+						class="animation-duration-2000 text-h2 max-tablet:text-h2Mob pb-6 text-center font-bold uppercase transition-all max-mobile:tracking-[2.5px] mobile:tracking-[5.25px]"
 					>
 						Новинки
 					</h2>
@@ -256,7 +256,7 @@
 		<section class="bg-red pb-16 pt-10">
 			<div class="mx-auto my-0 max-w-[1095px] px-3">
 				<h2
-					class="text-center font-bold uppercase text-third max-tablet:text-[18px] max-mobile:text-[10px] max-mobile:tracking-[2.5px] mobile:tracking-[5.25px] tablet:text-[21px]"
+					class="text-h2 max-tablet:text-h2Mob text-center font-bold uppercase text-third max-mobile:tracking-[2.5px] mobile:tracking-[5.25px]"
 				>
 					Купить образ
 				</h2>
@@ -310,13 +310,13 @@
 						class="max-tablet:max-w-none max-mobile:mb-4 max-mobile:max-w-none tablet:max-w-[370px]"
 					>
 						<h2
-							class="font-bold uppercase text-red2 max-tablet:text-[18px] max-mobile:text-[10px] max-mobile:tracking-[2.5px] mobile:tracking-[5.25px] tablet:text-[21px]"
+							class="text-h2 max-tablet:text-h2Mob font-bold uppercase text-red2 max-mobile:tracking-[2.5px] mobile:tracking-[5.25px]"
 						>
 							Фирменный магазин
 						</h2>
 
 						<p
-							class="font-montserrat max-mobile:pt-[12px] max-mobile:text-[8px] max-mobile:leading-[14px] mobile:pt-[27px] mobile:text-[11px] mobile:leading-[20px]"
+							class="font-montserrat text-[0.8rem] max-mobile:pt-[12px] mobile:pt-[27px]"
 						>
 							MLFM - это эксклюзивный магазин, основанный в 2014 году, который
 							специализируется на продаже уникальных винтажных украшений и

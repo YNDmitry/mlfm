@@ -17,20 +17,20 @@
 					class="max-w-[245px] text-red2 max-tablet:mr-auto max-tablet:max-w-none"
 				>
 					<h2
-						class="font-bold uppercase max-laptop:text-[1rem] max-laptop:tracking-[0.25rem] max-tablet:mb-[0.625rem] max-mobile:text-[0.5rem] max-mobile:tracking-[2px] tablet:mb-[1.313rem] laptop:text-[1.313rem] laptop:tracking-[5.25px]"
+						class="text-h2 max-tablet:text-h2Mob font-bold uppercase max-laptop:text-[1rem] max-laptop:tracking-[0.25rem] max-tablet:mb-[0.625rem] max-mobile:tracking-[2px] tablet:mb-[1.313rem] laptop:tracking-[5.25px]"
 					>
 						Подарочные карты
 					</h2>
 
 					<p
-						class="font-montserrat max-laptop:text-[0.875rem] max-tablet:mb-[0.625rem] max-mobile:text-[0.5rem] tablet:mb-[2.5rem]"
+						class="font-montserrat text-[0.8rem] max-tablet:mb-[0.625rem] tablet:mb-[2.5rem]"
 					>
 						Идеальный подарок на любой праздник!
 					</p>
 
 					<NuxtLink
 						to="/gift-card"
-						class="flex max-w-[10.625rem] items-center justify-center rounded-main border border-red2 py-2 font-montserrat text-[1rem] uppercase transition-colors hover:bg-red2-hover hover:text-primary max-tablet:h-[1rem] max-tablet:w-[4.5rem] max-tablet:border-[0.5px] max-tablet:text-[0.5rem] max-tablet:font-light"
+						class="flex max-w-[10.625rem] items-center justify-center rounded-main border border-red2 py-2 font-montserrat text-[1rem] uppercase transition-colors hover:bg-red2-hover hover:text-primary max-tablet:h-[1.5rem] max-tablet:w-[7.5rem] max-tablet:border-[0.5px] max-tablet:text-[0.8rem] max-tablet:font-light"
 					>
 						подарить
 					</NuxtLink>
