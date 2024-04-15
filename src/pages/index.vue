@@ -177,7 +177,7 @@
 			>
 				<h1
 					v-if="mainSlider"
-					class="max-tablet:text-h1Mob text-center text-h1 font-bold uppercase tracking-[0.375rem] max-tablet:text-right max-tablet:font-light max-tablet:tracking-[2.5px]"
+					class="max-tablet:text-h1Mob text-center text-h1 uppercase tracking-[0.375rem] max-tablet:text-right max-tablet:font-light max-tablet:tracking-[2.5px]"
 				>
 					{{ mainSlider.title }}
 				</h1>

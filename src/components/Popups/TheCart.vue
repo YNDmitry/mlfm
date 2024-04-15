@@ -51,7 +51,15 @@
 								class="object-cover max-mobile:h-[6.25rem] max-mobile:w-[3.813rem] mobile:h-[6.25rem]"
 							/>
 
-							<div class="flex w-full items-center justify-between">
+							<div class="relative flex w-full items-center justify-between">
+								<button
+									@click="useCart.removeItem(item.id)"
+									type="button"
+									:aria-label="'Удалить товар ' + item.title"
+									class="absolute right-0 top-0"
+								>
+									<IconsClose class="w-2" />
+								</button>
 								<div class="flex flex-col gap-1">
 									<span class="text-[0.625rem]">{{ item.category }}</span>
 
@@ -62,9 +70,22 @@
 									>
 								</div>
 
-								<span class="text-[0.625rem]">{{ item.price }} ₽</span>
+								<span class="text-[0.625rem]">{{
+									Intl.NumberFormat('ru-RU', {
+										style: 'currency',
+										currency: 'RUB',
+									}).format(item.price)
+								}}</span>
 							</div>
 						</article>
+
+						<button
+							v-if="useCart.items.length > 0"
+							@click="useCart.removeCart()"
+							class="flex items-center gap-3 text-[1rem]"
+						>
+							Очистить корзину <IconsClose class="w-[10px]" />
+						</button>
 					</div>
 					<!--  /Товары -->
 
@@ -104,7 +125,7 @@
 						<div class="flex justify-between text-[0.625rem] font-medium">
 							<span>Итого</span>
 
-							<span>{{ useCart.totalPrice }} ₽</span>
+							<span>{{ useCart.totalPrice }}</span>
 						</div>
 					</div>
 					<!--  /Скидка/Итого -->

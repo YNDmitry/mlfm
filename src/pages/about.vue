@@ -41,7 +41,7 @@
 
 <style>
 	.wysiwyg h1 {
-		@apply mb-8 text-center text-[2rem] font-medium uppercase;
+		@apply max-tablet:text-h1Mob mb-8 text-center text-h1 font-medium uppercase;
 	}
 
 	.wysiwyg img {

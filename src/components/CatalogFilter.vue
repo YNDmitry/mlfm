@@ -24,7 +24,6 @@
 			:modelValue="currentFilter"
 			:options="filters.map((filter) => filter.title)"
 			:placeholder="title"
-			optionLabel="title"
 			unstyled
 			showClear
 			:pt="{
@@ -37,12 +36,9 @@
 			}"
 			class="flex cursor-pointer justify-between border-0 text-[0.625rem] shadow-none outline-none"
 		>
-			<template #optiongroup="slotProps">
+			<template #content>
+				<div>12</div>
 				<ScrollPanel style="width: 100%; height: 140px" data-lenis-prevent>
-					<div class="align-items-center flex">
-						{{ slotProps }}
-						<div>{{ slotProps.option.title }}</div>
-					</div>
 				</ScrollPanel>
 			</template>
 		</Dropdown>

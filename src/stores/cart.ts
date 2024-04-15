@@ -15,10 +15,14 @@ export const useCartStore = defineStore('userCart', {
 	}),
 	getters: {
 		totalPrice: (state) => {
-			return state.items.reduce(
+			const price = state.items.reduce(
 				(total, item) => total + item.price * item.quantity,
 				0,
 			)
+			return Intl.NumberFormat('ru-RU', {
+				style: 'currency',
+				currency: 'RUB',
+			}).format(price)
 		},
 	},
 	actions: {
@@ -95,6 +99,11 @@ export const useCartStore = defineStore('userCart', {
 				this.items.splice(index, 1)
 			}
 			this.saveCart()
+		},
+
+		removeCart() {
+			this.$reset()
+			localStorage.setItem('cart', JSON.stringify(this.items))
 		},
 
 		async getDiscount(string: string, hash: string) {

@@ -20,7 +20,7 @@
 					<!-- Контактная информация -->
 					<div>
 						<h1
-							class="max-tablet:pb-[24px] max-tablet:text-[0.875rem] max-tablet:font-medium tablet:pb-[3.125rem] tablet:text-[24px]"
+							class="max-tablet:text-h1Mob pb-[3.125rem] text-h1 max-tablet:pb-[24px] max-tablet:font-medium"
 						>
 							Контактная информация
 						</h1>
@@ -97,12 +97,6 @@
 							/>
 						</label>
 
-						<div class="max-tablet:pt-6 tablet:pt-3">
-							<a class="text-[0.625rem] underline" href="javascript:void(0)"
-								>Впервые у нас ?
-							</a>
-						</div>
-
 						<!-- Радио кнопки -->
 						<div
 							class="flex flex-col pt-[1.25rem] max-tablet:gap-[12px] tablet:gap-[1.25rem]"
@@ -150,11 +144,11 @@
 
 					<!-- Адрес доставки -->
 					<div class="max-tablet:pt-[2rem] tablet:pt-[3.125rem]">
-						<h3
-							class="max-tablet:pb-[24px] max-tablet:text-[0.875rem] max-tablet:font-medium tablet:pb-[3.125rem] tablet:text-[24px]"
+						<h2
+							class="text-h2 max-tablet:text-h2Mob pb-[2rem] max-tablet:pb-[24px] max-tablet:font-medium"
 						>
 							Адрес доставки
-						</h3>
+						</h2>
 
 						<div class="flex flex-col gap-5">
 							<div class="flex cursor-pointer flex-col gap-2" for="inpName">
@@ -238,11 +232,11 @@
 
 					<!-- Комментарий к заказу -->
 					<div class="max-tablet:pt-[24px] tablet:pt-[3.125rem]">
-						<h3
-							class="max-tablet:pb-[12px] max-tablet:text-[12px] tablet:pb-[3.125rem] tablet:text-[24px]"
+						<h2
+							class="text-h2 max-tablet:text-h2Mob pb-[2rem] max-tablet:pb-[24px] max-tablet:font-medium"
 						>
 							Комментарий к заказу
-						</h3>
+						</h2>
 
 						<textarea
 							placeholder="Введите текст"
@@ -253,11 +247,11 @@
 
 					<!-- Способ оплаты -->
 					<div class="max-tablet:pt-[2rem] tablet:pt-[3.125rem]">
-						<h3
-							class="max-tablet:pb-[12px] max-tablet:text-[12px] tablet:pb-[3.125rem] tablet:text-[24px]"
+						<h2
+							class="text-h2 max-tablet:text-h2Mob pb-[2rem] max-tablet:pb-[24px] max-tablet:font-medium"
 						>
 							Способ оплаты
-						</h3>
+						</h2>
 
 						<!-- Радио кнопки -->
 						<div
@@ -426,7 +420,12 @@
 								>
 							</div>
 
-							<span class="text-[0.625rem]">{{ item.price }} ₽</span>
+							<span class="text-[0.625rem]">{{
+								Intl.NumberFormat('ru-RU', {
+									style: 'currency',
+									currency: 'RUB',
+								}).format(item.price)
+							}}</span>
 						</div>
 					</article>
 				</div>
@@ -436,14 +435,6 @@
 				<div
 					class="relative flex flex-col gap-[1.875rem] max-laptop:pt-[45px] laptop:pb-[1.25rem] laptop:pt-[1.25rem] laptop:after:absolute laptop:after:bottom-0 laptop:after:left-0 laptop:after:h-[2px] laptop:after:w-full laptop:after:bg-gray2 laptop:after:content-['']"
 				>
-					<div
-						class="flex justify-between text-[12px] font-medium max-laptop:hidden"
-					>
-						<span>Стоимость товаров</span>
-
-						<span>{{ cartStore.totalPrice }}₽</span>
-					</div>
-
 					<div class="flex justify-between text-[0.625rem]">
 						<span>Доставка</span>
 
@@ -466,7 +457,7 @@
 					<div class="flex justify-between text-[0.625rem] font-medium">
 						<span>Итого</span>
 
-						<span>{{ cartStore.totalPrice }}₽</span>
+						<span>{{ cartStore.totalPrice }}</span>
 					</div>
 				</div>
 				<!--  /Общая инф-ция о товарах -->

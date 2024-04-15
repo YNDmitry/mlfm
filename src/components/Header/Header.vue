@@ -95,6 +95,7 @@
 					:key="link.href"
 					:to="link.href"
 					@click="openMenu"
+					:prefetch="true"
 					class="text-[0.625rem] font-medium uppercase text-primary max-tablet:text-[1rem] max-tablet:text-black"
 				>
 					{{ link.title }}

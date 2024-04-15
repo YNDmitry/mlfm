@@ -268,11 +268,11 @@
 			class="max-laptop:pb-[3.75rem] max-tablet:pt-[2rem] tablet:pt-[7.25rem] laptop:pb-[12.5rem]"
 		>
 			<div class="container my-0 px-3">
-				<h4
-					class="pb-[2rem] mobile:text-center mobile:font-bold mobile:tracking-[0.25rem]"
+				<h2
+					class="text-h2 max-tablet:text-h2Mob pb-[2rem] text-center font-bold uppercase tracking-[0.25rem]"
 				>
-					похожие товары
-				</h4>
+					Похожие товары
+				</h2>
 
 				<div
 					class="no-scrollbar mx-[-1rem] flex scroll-px-3 gap-[45px] overflow-x-auto px-[1rem] max-tablet:gap-[20px]"

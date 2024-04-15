@@ -1,13 +1,30 @@
 <script setup lang="ts">
+	import {aggregate} from '@directus/sdk'
 	const appConfig = useRuntimeConfig()
 	const {getItems} = useDirectusItems()
 	const {$directus} = useNuxtApp()
-	import {aggregate} from '@directus/sdk'
 	const isMobile = useMediaQuery('(max-width: 768px)')
+	const route = useRoute()
+	const router = useRouter()
+
+	const initialState = reactive({
+		currentPage: 1,
+		totalPages: 0,
+		productsPerPage: isMobile.value ? 10 : 9,
+		filters: {
+			brand: route.query.brand || '',
+			collection: route.query.collection || '',
+			color: route.query.color || '',
+			size: route.query.size || '',
+			category: route.query.category || [],
+			minPrice: route.query.minPrice || '',
+			maxPrice: route.query.maxPrice || '',
+		},
+	})
 
 	const {data: page} = await useAsyncData(
-		() => {
-			return getItems({
+		() =>
+			getItems({
 				collection: 'catalog',
 				params: {
 					fields: [
@@ -18,8 +35,7 @@
 						'random_banners',
 					],
 				},
-			})
-		},
+			}),
 		{
 			getCachedData(key, nuxtApp) {
 				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
@@ -37,36 +53,16 @@
 			appConfig.public.databaseUrl + 'assets/' + page.value.og_image,
 	})
 
-	const route = useRoute()
-	const router = useRouter()
-
-	const initialFilters = {
-		currentPage: 1,
-		totalPages: 0,
-		productsPerPage: isMobile.value ? 10 : 9,
-		filters: {
-			brand: route.query.brand || '',
-			collection: route.query.collection || '',
-			color: route.query.color || '',
-			size: route.query.size || '',
-			category: route.query.category || [],
-		},
-	}
-
-	// Определение начальных состояний
-	let initialState = reactive({...initialFilters})
-
 	function resetFilters() {
-		// Сброс каждого фильтра к его исходному значению
-		router.replace({query: []})
-		Object.keys(initialFilters).forEach((key) => {
-			initialState[key] = initialFilters[key]
+		router.replace({query: {}})
+		Object.keys(initialState.filters).forEach((key) => {
+			if (Array.isArray(initialState.filters[key])) {
+				initialState.filters[key] = []
+			} else {
+				initialState.filters[key] = ''
+			}
 		})
-
-		// Сброс текущей страницы к первой
 		initialState.currentPage = 1
-
-		// Вы можете добавить дополнительные действия по сбросу здесь, например, обновление продуктов
 		updateProducts()
 	}
 
@@ -78,19 +74,13 @@
 			initialState.filters.collection = newQuery.collection || ''
 			initialState.filters.color = newQuery.color || ''
 			initialState.filters.size = newQuery.size || ''
-			initialState.filters.category = newQuery.category || ''
+			initialState.filters.category = newQuery.category || []
 		},
 	)
 
 	const {data: count} = await useAsyncData(
 		'countOfProducts',
-		() => {
-			return $directus.request(
-				aggregate('products', {
-					aggregate: {count: '*'},
-				}),
-			)
-		},
+		() => $directus.request(aggregate('products', {aggregate: {count: '*'}})),
 		{
 			getCachedData(key, nuxtApp) {
 				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
@@ -228,7 +218,7 @@
 	)
 
 	// Определение минимальной и максимальной цены для фильтра по цене
-	const {data: minPrice} = await useAsyncData(
+	const {data: minPriceValue} = await useAsyncData(
 		'minPrice',
 		() => {
 			return $directus.request(
@@ -241,7 +231,7 @@
 			},
 		},
 	)
-	const {data: maxPrice} = await useAsyncData(
+	const {data: maxPriceValue} = await useAsyncData(
 		'maxPrice',
 		() => {
 			return $directus.request(
@@ -253,6 +243,19 @@
 				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
 			},
 		},
+	)
+
+	const minPrice = computed(() =>
+		Intl.NumberFormat('ru-RU', {
+			style: 'currency',
+			currency: 'RUB',
+		}).format(minPriceValue.value[0].min.price),
+	)
+	const maxPrice = computed(() =>
+		Intl.NumberFormat('ru-RU', {
+			style: 'currency',
+			currency: 'RUB',
+		}).format(maxPriceValue.value[0].max.price),
 	)
 
 	// Обновляем фильтр цены в зависимости от выбранных пользователем значений
@@ -273,33 +276,43 @@
 						brand: {
 							_eq: brands.value.find(
 								(el) => el.title === initialState.filters.brand,
-							).id,
+							)?.id,
 						},
 					}),
 					...(initialState.filters.collection && {
 						collection: {
 							_eq: collections.value.find(
 								(el) => el.title === initialState.filters.collection,
-							).id,
+							)?.id,
 						},
 					}),
 					...(initialState.filters.color && {
-						color: {_eq: initialState.filters.color},
-					}),
-					...(initialState.filters.size && {
-						size: {_contains: initialState.filters.size},
-					}),
-					...(initialState.filters.category.length > 0 && {
-						category: {
-							_eq: categories.value.find(
-								(el) => el.title === initialState.filters.category,
-							).id,
+						color: {
+							title: {
+								_in: initialState.filters.color,
+							},
 						},
 					}),
-					// Убедитесь, что ваша логика фильтрации по цене соответствует требуемой логике
-					// ...(initialState.filters.price._lte > 0 && {
-					// 	price: {_lte: initialState.filters.price._lte},
-					// }),
+					...(initialState.filters.size && {
+						size: {
+							small_title: {
+								_contains: initialState.filters.size,
+							},
+						},
+					}),
+					...(initialState.filters.category.length && {
+						category: {
+							title: {
+								_in: initialState.filters.category,
+							},
+						},
+					}),
+					...(initialState.filters.minPrice && {
+						price: {
+							_gte: initialState.filters.minPrice || null,
+							_lte: initialState.filters.maxPrice || null,
+						},
+					}),
 				},
 				limit: initialState.productsPerPage,
 				offset: initialState.currentPage - 1,
@@ -466,9 +479,10 @@
 										<input
 											class="w-[72px] focus:outline-none"
 											type="number"
-											:placeholder="minPrice[0].min.price"
-											:min="minPrice[0].min.price"
-											:max="maxPrice[0].max.price"
+											:placeholder="minPrice"
+											:min="minPriceValue[0].min.price"
+											:max="maxPriceValue[0].max.price"
+											v-model="initialState.filters.minPrice"
 										/>
 									</label>
 
@@ -483,12 +497,22 @@
 										<input
 											class="w-[72px] focus:outline-none"
 											type="number"
-											:placeholder="maxPrice[0].max.price"
-											:min="minPrice[0].min.price"
-											:max="maxPrice[0].max.price"
+											:placeholder="maxPrice"
+											:min="minPriceValue[0].min.price"
+											:max="maxPriceValue[0].max.price"
+											v-model="initialState.filters.maxPrice"
 										/>
 									</label>
 								</div>
+								<button
+									v-if="
+										initialState.filters.maxPrice ||
+										initialState.filters.minPrice
+									"
+									@click="console.log('hello')"
+								>
+									Приминить
+								</button>
 							</div>
 							<!-- /Цена -->
 
@@ -600,7 +624,7 @@
 							v-else
 							class="mx-auto flex w-full max-w-[500px] flex-col justify-center gap-5 text-center"
 						>
-							<div>Продуктов по данным фильтрам не найдены</div>
+							<div>Продуктов по данным фильтрам не найдено</div>
 							<button
 								@click="resetFilters()"
 								type="button"
