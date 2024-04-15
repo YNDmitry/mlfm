@@ -187,8 +187,6 @@
 		{deep: true},
 	)
 
-	console.log(page.value)
-
 	const {data: catalogBanners} = await useAsyncData(
 		'catalogBanners',
 		() => {

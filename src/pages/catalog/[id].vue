@@ -123,14 +123,6 @@
 					<div
 						class="flex w-full max-w-[420px] flex-col max-tablet:max-w-none max-tablet:gap-[0.75rem] tablet:gap-[2rem]"
 					>
-						<div
-							class="gap-2 text-[0.625rem] text-primary max-tablet:flex tablet:hidden"
-						>
-							<span class="rounded-[17px] bg-red2 px-[0.313rem] py-[0.438rem]"
-								>NEW</span
-							>
-						</div>
-
 						<h1
 							class="max-tablet:font-light tablet:text-[2rem] tablet:font-extralight"
 						>
@@ -141,8 +133,10 @@
 							<div
 								class="flex flex-col max-tablet:gap-[0.75rem] max-tablet:text-[0.625rem] tablet:gap-4 tablet:text-[0.75rem]"
 							>
-								<span>Категория: Брошь</span>
-								<span>Цвет: Золотой </span>
+								<span v-if="product.category"
+									>Категория: {{ product.category }}</span
+								>
+								<span v-if="product.colors.length > 0">Цвет: Золотой </span>
 							</div>
 
 							<div class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-2">
@@ -263,7 +257,7 @@
 							:title="product.title"
 							:imgSrc="product.main_image"
 							:price="product.price"
-							class="animation-duration-2000 max-w-[18.31rem] flex-shrink-0 transition-all"
+							class="animation-duration-2000 max-w-[18.31rem] flex-shrink-0 transition-all max-tablet:w-[150px]"
 						/>
 					</template>
 				</div>

@@ -72,8 +72,10 @@
 					:title="item.title"
 					:price="item.price"
 					:imgSrc="item.main_image"
+					:id="item.id"
 					v-for="item in currentProducts"
 					:key="item.id"
+					@click="websiteStore.isSearchPopup = false"
 				/>
 			</div>
 			<div v-if="isNothingFound" class="py-5 text-center">
