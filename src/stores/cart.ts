@@ -5,13 +5,16 @@ interface CartItem {
 	id: number
 	price: number
 	quantity: number
+	category: string
 	// Add other properties as needed
 }
 
 export const useCartStore = defineStore('userCart', {
 	state: () => ({
 		items: [] as CartItem[],
+		relatedItems: null as any,
 		discount: '',
+		isRelatedProductPending: true,
 	}),
 	getters: {
 		totalPrice: (state) => {
@@ -28,14 +31,17 @@ export const useCartStore = defineStore('userCart', {
 	actions: {
 		// Инициализация корзины из localStorage или синхронизация с сервером
 		initCart() {
-			const authStore = useUserStore()
-			if (authStore.isAuthenticated) {
+			const userStore = useUserStore()
+			if (userStore.isAuthenticated) {
 				// Загрузить корзину из сервера
 				this.loadCartFromServer()
 			} else {
 				// Загрузить корзину из localStorage
 				this.loadCartFromLocalStorage()
 			}
+			callOnce(() => {
+				this.getRelatedProducts()
+			})
 		},
 
 		loadCartFromLocalStorage() {
@@ -73,13 +79,18 @@ export const useCartStore = defineStore('userCart', {
 			}
 		},
 
-		addItem(item: CartItem) {
+		async addItem(item: CartItem) {
+			const {getItemById} = useDirectusItems()
 			// Логика добавления товара, затем сохраняем корзину
 			const existingItem = this.items.find((i) => i.id === item.id)
 			if (existingItem) {
 				existingItem.quantity += 1 // Assumes quantity field. Adjust as necessary.
 			} else {
-				this.items.push({...item, quantity: 1}) // Add new item with a quantity of 1
+				const category = await getItemById({
+					collection: 'categories',
+					id: item.category,
+				})
+				await this.items.push({...item, category: category.title, quantity: 1}) // Add new item with a quantity of 1
 			}
 			this.saveCart()
 		},
@@ -102,7 +113,8 @@ export const useCartStore = defineStore('userCart', {
 		},
 
 		removeCart() {
-			this.$reset()
+			this.items = []
+			this.discount = ''
 			localStorage.setItem('cart', JSON.stringify(this.items))
 		},
 
@@ -110,6 +122,24 @@ export const useCartStore = defineStore('userCart', {
 			const {$directus} = useNuxtApp()
 			try {
 				await $directus.request(verifyHash(string, hash))
+			} catch (error) {
+				console.log(error)
+			}
+		},
+
+		async getRelatedProducts() {
+			const {getItems} = useDirectusItems()
+			try {
+				const products = await getItems({
+					collection: 'products',
+					params: {
+						fields: ['title', 'price', 'main_image', 'id'],
+						limit: 3,
+					},
+				})
+				this.isRelatedProductPending = false
+				this.relatedItems = products
+				return products
 			} catch (error) {
 				console.log(error)
 			}

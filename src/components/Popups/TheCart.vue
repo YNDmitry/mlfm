@@ -1,17 +1,6 @@
 <script setup lang="ts">
-	const {getItems} = useDirectusItems()
 	const websiteStore = useWebsiteStore()
 	const useCart = useCartStore()
-
-	const {data: products} = await useLazyAsyncData('cartRelatedProducts', () => {
-		return getItems({
-			collection: 'products',
-			params: {
-				fields: ['title', 'price', 'main_image', 'id'],
-				limit: 3,
-			},
-		})
-	})
 
 	// useCart.initCart()
 </script>
@@ -90,7 +79,7 @@
 					<!--  /Товары -->
 
 					<!--  Промокод -->
-					<form
+					<!-- <form
 						@submit.prevent="useCart.getDiscount(useCart.discount)"
 						class="relative flex items-center gap-4 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-[''] max-tablet:pb-[1.875rem] tablet:pb-[25px]"
 					>
@@ -106,7 +95,7 @@
 						>
 							Применить
 						</button>
-					</form>
+					</form> -->
 					<!--  /Промокод -->
 
 					<!--  Скидка/Итого -->
@@ -150,12 +139,31 @@
 						Вас могут заинтересовать
 					</h4>
 
+					<div
+						class="grid grid-cols-[1fr_1fr_1fr] gap-[10px]"
+						v-if="useCart.isRelatedProductPending"
+					>
+						<div
+							class="relative flex w-full flex-col justify-center"
+							v-for="(item, idx) in 3"
+							:key="idx"
+						>
+							<Skeleton height="8rem" />
+							<Skeleton class="my-3 w-full" />
+							<Skeleton width="4rem" class="w-3" />
+						</div>
+					</div>
+
 					<Swiper
+						v-else
 						:slidesPerView="3"
 						:spaceBetween="10"
 						class="overflow-visible"
 					>
-						<SwiperSlide v-for="product in products" :key="product.id">
+						<SwiperSlide
+							v-for="product in useCart.relatedItems"
+							:key="product.id"
+						>
 							<NuxtLink
 								:to="'/catalog/' + product.id"
 								@click="websiteStore.isVisibleCart = false"

@@ -8,7 +8,6 @@
 	useSeoMeta({
 		title: 'Регистрация | MLFM',
 		ogTitle: 'Регистрация | MLFM',
-		lang: 'ru',
 	})
 
 	const schema = object({

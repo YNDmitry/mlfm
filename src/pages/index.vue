@@ -93,7 +93,7 @@
 					fields: ['title', 'price', 'main_image', 'id'],
 					filter: {
 						id: {
-							_in: lookProductsIds.value.map((item) => item.products_id),
+							_in: lookProductsIds.value.map((item: any) => item.products_id),
 						},
 					},
 				},
@@ -177,7 +177,7 @@
 			>
 				<h1
 					v-if="mainSlider"
-					class="max-tablet:text-h1Mob text-center text-h1 uppercase tracking-[0.375rem] max-tablet:text-right max-tablet:font-light max-tablet:tracking-[2.5px]"
+					class="text-center text-h1 uppercase tracking-[0.375rem] max-tablet:text-right max-tablet:text-h1Mob max-tablet:font-light max-tablet:tracking-[2.5px]"
 				>
 					{{ mainSlider.title }}
 				</h1>
@@ -212,7 +212,7 @@
 			<div class="container mx-auto my-0">
 				<div class="pb-[65px] max-tablet:pb-[74px]">
 					<h2
-						class="animation-duration-2000 text-h2 max-tablet:text-h2Mob pb-6 text-center font-bold uppercase transition-all max-mobile:tracking-[2.5px] mobile:tracking-[5.25px]"
+						class="animation-duration-2000 pb-6 text-center text-h2 font-bold uppercase transition-all max-tablet:text-h2Mob max-mobile:tracking-[2.5px] mobile:tracking-[5.25px]"
 					>
 						Новинки
 					</h2>
@@ -256,7 +256,7 @@
 		<section class="bg-red pb-16 pt-10">
 			<div class="mx-auto my-0 max-w-[1095px] px-3">
 				<h2
-					class="text-h2 max-tablet:text-h2Mob text-center font-bold uppercase text-third max-mobile:tracking-[2.5px] mobile:tracking-[5.25px]"
+					class="text-center text-h2 font-bold uppercase text-third max-tablet:text-h2Mob max-mobile:tracking-[2.5px] mobile:tracking-[5.25px]"
 				>
 					Купить образ
 				</h2>
@@ -310,7 +310,7 @@
 						class="max-tablet:max-w-none max-mobile:mb-4 max-mobile:max-w-none tablet:max-w-[370px]"
 					>
 						<h2
-							class="text-h2 max-tablet:text-h2Mob font-bold uppercase text-red2 max-mobile:tracking-[2.5px] mobile:tracking-[5.25px]"
+							class="text-h2 font-bold uppercase text-red2 max-tablet:text-h2Mob max-mobile:tracking-[2.5px] mobile:tracking-[5.25px]"
 						>
 							Фирменный магазин
 						</h2>

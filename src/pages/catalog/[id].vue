@@ -1,7 +1,6 @@
 <script setup lang="ts">
 	const appConfig = useRuntimeConfig()
 	const {getItems, getItemById} = useDirectusItems()
-	const {$preview} = useNuxtApp()
 
 	const cartStore = useCartStore()
 
@@ -10,15 +9,6 @@
 	})
 
 	const {id} = useRoute().params
-
-	if ($preview) {
-		const {data: product, error} = await useAsyncData(`product-${id}`, () => {
-			return getItemById({
-				collection: 'products',
-				id: id,
-			})
-		})
-	}
 
 	const {data: product} = await useAsyncData(
 		`product-${id}`,
@@ -34,12 +24,78 @@
 			},
 		},
 	)
+	const {data: productColors} = await useAsyncData(
+		`product-${id}-colors`,
+		() => {
+			if (product?.value?.colors?.length === 0) return null
+			return getItems({
+				collection: 'products_colors',
+				params: {
+					filter: {
+						id: {
+							_in: product.value.colors,
+						},
+					},
+				},
+			}).then((res) => {
+				return getItems({
+					collection: 'colors',
+					params: {
+						filter: {
+							id: {
+								_in: res.map((el) => (el = el.colors_id)),
+							},
+						},
+					},
+				})
+			})
+		},
+		{
+			getCachedData(key, nuxtApp) {
+				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+			},
+		},
+	)
+	const {data: productSizes} = await useAsyncData(
+		`product-${id}-sizes`,
+		() => {
+			if (product?.value?.sizes?.length === 0) return null
+			return getItems({
+				collection: 'products_sizes',
+				params: {
+					filter: {
+						id: {
+							_in: product.value.sizes,
+						},
+					},
+				},
+			}).then((res) => {
+				return getItems({
+					collection: 'sizes',
+					params: {
+						filter: {
+							id: {
+								_in: res.map((el) => (el = el.colors_id)),
+							},
+						},
+					},
+				})
+			})
+		},
+		{
+			getCachedData(key, nuxtApp) {
+				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+			},
+		},
+	)
 	const {data: category} = await useAsyncData(
 		`product-category-${id}`,
 		() => {
+			if (product?.value.category === null) return null
+
 			return getItemById({
 				collection: 'categories',
-				id: product?.category,
+				id: product?.value.category,
 			})
 		},
 		{
@@ -67,10 +123,11 @@
 			appConfig.public.databaseUrl + 'assets/' + product.value.main_image,
 	})
 
-	const {data: randomProducts} = await useAsyncData(
-		`randomProducts-${id}`,
-		() => {
-			return getItems({
+	const isRandomProductsPending = ref(true)
+	const rProducts = ref(null)
+	const initRandomProducts = async () => {
+		try {
+			const randomProducts = await getItems({
 				collection: 'products',
 				params: {
 					fields: ['title', 'price', 'main_image', 'id'],
@@ -82,13 +139,13 @@
 					limit: 4,
 				},
 			})
-		},
-		{
-			getCachedData(key, nuxtApp) {
-				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
-			},
-		},
-	)
+			isRandomProductsPending.value = false
+			return (rProducts.value = randomProducts)
+		} catch (error) {
+			console.log(error)
+		}
+	}
+	await initRandomProducts()
 
 	const toast = useToast()
 	const handleAddToCart = () => {
@@ -152,7 +209,7 @@
 						class="flex w-full max-w-[420px] flex-col max-tablet:max-w-none max-tablet:gap-[0.75rem] tablet:gap-[2rem]"
 					>
 						<h1
-							class="max-tablet:text-h1Mob text-h1 max-tablet:font-light tablet:font-extralight"
+							class="text-h1 max-tablet:text-h1Mob max-tablet:font-light tablet:font-extralight"
 						>
 							{{ product.title }}
 						</h1>
@@ -161,40 +218,62 @@
 							<div
 								class="flex flex-col max-tablet:gap-[0.75rem] max-tablet:text-[0.625rem] tablet:gap-4 tablet:text-[0.75rem]"
 							>
-								<span v-if="product.category">Категория: {{ category }}</span>
-								<span v-if="product.colors.length > 0">Цвет: Золотой </span>
+								<span v-if="product.category"
+									>Категория: {{ category.title }}</span
+								>
+								<template v-if="productColors?.length > 0">
+									<span>Цвет: </span>
+									<div class="flex max-tablet:gap-[0.75rem] tablet:gap-2">
+										<label
+											class="inline-flex cursor-pointer items-center"
+											v-for="color in productColors"
+											:key="color.id"
+										>
+											<input
+												checked
+												type="radio"
+												name="color"
+												:value="color.title"
+												class="hidden"
+											/>
+
+											<span
+												class="rounded-full bg-white flex items-center justify-center border border-black text-black max-tablet:min-h-[1.25rem] max-tablet:min-w-[3.438rem] max-tablet:text-[0.625rem] tablet:min-h-[2rem] tablet:min-w-[5.938rem]"
+												id="option-6"
+												>{{ color.title }}</span
+											>
+										</label>
+									</div>
+								</template>
 							</div>
 
-							<div class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-2">
+							<div
+								class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-2"
+								v-if="productSizes?.length > 0"
+							>
 								<span class="max-tablet:text-[0.625rem] tablet:text-[0.75rem]"
 									>Размер:</span
 								>
 
 								<!-- radio кнопки! -->
 								<div class="flex max-tablet:gap-[0.75rem] tablet:gap-2">
-									<label class="inline-flex cursor-pointer items-center">
+									<label
+										class="inline-flex cursor-pointer items-center"
+										v-for="size in productSizes"
+										:key="size.id"
+									>
 										<input
 											checked
 											type="radio"
 											name="size"
-											value="6"
+											:value="size.title"
 											class="hidden"
 										/>
 
 										<span
 											class="rounded-full bg-white flex items-center justify-center border border-black text-black max-tablet:min-h-[1.25rem] max-tablet:min-w-[3.438rem] max-tablet:text-[0.625rem] tablet:min-h-[2rem] tablet:min-w-[5.938rem]"
 											id="option-6"
-											>6</span
-										>
-									</label>
-
-									<label class="inline-flex cursor-pointer items-center">
-										<input type="radio" name="size" value="7" class="hidden" />
-
-										<span
-											class="rounded-full bg-white flex items-center justify-center border border-black text-black max-tablet:min-h-[1.25rem] max-tablet:min-w-[3.438rem] max-tablet:text-[0.625rem] tablet:min-h-[2rem] tablet:min-w-[5.938rem]"
-											id="option-7"
-											>7</span
+											>{{ size.title }}</span
 										>
 									</label>
 								</div>
@@ -269,15 +348,32 @@
 		>
 			<div class="container my-0 px-3">
 				<h2
-					class="text-h2 max-tablet:text-h2Mob pb-[2rem] text-center font-bold uppercase tracking-[0.25rem]"
+					class="pb-[2rem] text-center text-h2 font-bold uppercase tracking-[0.25rem] max-tablet:text-h2Mob"
 				>
 					Похожие товары
 				</h2>
 
 				<div
+					v-if="isRandomProductsPending"
 					class="no-scrollbar mx-[-1rem] flex scroll-px-3 gap-[45px] overflow-x-auto px-[1rem] max-tablet:gap-[20px]"
 				>
-					<template v-for="product in randomProducts" :key="product.id">
+					<div class="w-full" v-for="(item, idx) in 4" :key="idx">
+						<Skeleton width="300px" height="410px" />
+
+						<div
+							class="flex flex-col gap-[0.5rem] pt-5 text-[14px] font-normal max-tablet:gap-1 max-tablet:pt-2 max-tablet:text-[10px]"
+						>
+							<Skeleton width="10rem" />
+
+							<Skeleton width="4rem" />
+						</div>
+					</div>
+				</div>
+				<div
+					v-else
+					class="no-scrollbar mx-[-1rem] flex scroll-px-3 gap-[45px] overflow-x-auto px-[1rem] max-tablet:gap-[20px]"
+				>
+					<template v-for="product in rProducts" :key="product.id">
 						<ProductCard
 							:id="product.id"
 							:title="product.title"

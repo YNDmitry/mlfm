@@ -79,6 +79,7 @@ export default defineNuxtConfig({
 				'ProgressSpinner',
 				'Toast',
 				'RadioButton',
+				'Skeleton',
 			],
 		},
 	},

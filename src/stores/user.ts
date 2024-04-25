@@ -2,6 +2,10 @@ import {updateMe, login} from '@directus/sdk'
 import {defineStore} from 'pinia'
 import {useNuxtApp} from '#app'
 
+interface Error {
+	errors?: any
+}
+
 interface UserState {
 	firstName: string
 	lastName: string
@@ -20,6 +24,7 @@ interface CreateUserPayload {
 	last_name: string
 	terms: boolean
 	role: string
+	newsletter: boolean
 }
 
 export const useUserStore = defineStore('userStore', {
@@ -39,11 +44,10 @@ export const useUserStore = defineStore('userStore', {
 			password: string,
 			firstName: string,
 			lastName: string,
-			terms: string,
-			newsletter: string,
+			terms: boolean,
+			newsletter: boolean,
 		) {
 			const {createUser, login} = useDirectusAuth()
-			const {$directus} = useNuxtApp()
 
 			const userPayload: CreateUserPayload = {
 				email: mail,
@@ -58,19 +62,18 @@ export const useUserStore = defineStore('userStore', {
 			await createUser(userPayload)
 			await login({email: mail, password: password})
 
-			const user = await useDirectusUser()
 			await this.getUserInfo()
 		},
 
 		async userLogin(email: string, password: string) {
-			const {$directus} = useNuxtApp()
+			const {login} = useDirectusAuth()
 			const err = ref('')
 			try {
-				$directus.request(login(email, password))
-				navigateTo('/profile')
-				this.getUserInfo()
-			} catch (error) {
-				err.value = error.errors
+				await login({email: email, password: password})
+				await navigateTo('/profile')
+				await this.getUserInfo()
+			} catch (error: Error | undefined) {
+				err.value = error ?? {}
 				console.log(error.errors)
 			}
 		},
