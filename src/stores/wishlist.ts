@@ -1,75 +1,89 @@
 import {defineStore} from 'pinia'
 
-export const useWishlistStore = defineStore('userWishlist', {
+export const useWishlistStore = defineStore('wishlist', {
 	state: () => ({
-		items: [],
+		wishlist: new Set<string>(), // Using a Set to ensure unique IDs
+		productDetails: [] as any[],
 	}),
+	getters: {
+		isOnWishlist: (state) => {
+			return (productId: string) => state.wishlist.has(productId)
+		},
+	},
 	actions: {
-		// Инициализация списка желаемого из localStorage или синхронизация с сервером
-		initWishlist() {
-			const authStore = useUserStore()
-			if (authStore.isAuthenticated) {
-				// Загрузить список желаемого из сервера
-				this.loadWishlistFromServer()
-			} else {
-				// Загрузить список желаемого из localStorage
-				this.loadWishlistFromLocalStorage()
+		async initWishlist() {
+			if (typeof window === 'undefined') {
+				return // Exit if on server side
 			}
+			let sessionId = localStorage.getItem('sessionId')
+			if (!sessionId) {
+				try {
+					const res = await GqlCreateGuestSessionItem({data: {status: 'draft'}})
+					sessionId = res.create_guest_session_item?.id
+					localStorage.setItem('sessionId', sessionId)
+				} catch (error) {
+					console.error('Error during session initialization:', error)
+				}
+			}
+			await this.loadWishlistFromServer(sessionId)
 		},
 
-		loadWishlistFromLocalStorage() {
-			const wishlist = localStorage.getItem('wishlist')
-			if (wishlist) {
-				this.items = JSON.parse(wishlist)
-			}
-		},
-
-		async loadWishlistFromServer() {
+		async loadWishlistFromServer(sessionId) {
 			try {
-				const response = await apiClient.get('/customer_wishlist')
-				this.items = response.data
+				const res = await GqlGetSession({id: sessionId})
+				const items = res.guest_session_by_id.temp_wishlist || []
+				this.wishlist = new Set(items)
+				await this.loadProductDetails()
 			} catch (error) {
 				console.error('Error loading wishlist from server:', error)
 			}
 		},
 
-		saveWishlist() {
-			const authStore = useUserStore()
-			if (authStore.isAuthenticated) {
-				// Сохранить список желаемого на сервер
-				this.saveWishlistToServer()
+		async loadProductDetails() {
+			if (this.wishlist.size > 0) {
+				try {
+					const res = await GqlGetProductsByIds({
+						ids: Array.from(this.wishlist),
+					})
+					this.productDetails = res.products || []
+				} catch (error) {
+					console.error('Error loading product details:', error)
+				}
 			} else {
-				// Сохранить список желаемого в localStorage
-				localStorage.setItem('wishlist', JSON.stringify(this.items))
+				this.productDetails = [] // Clear details if wishlist is empty
 			}
 		},
 
 		async saveWishlistToServer() {
+			const sessionId = localStorage.getItem('sessionId')
+			if (!sessionId) return // Exit if no session ID available
+
 			try {
-				await apiClient.post('/customer_wishlist', this.items)
+				await GqlUpdateGuestSessionItem({
+					id: sessionId,
+					data: {
+						temp_wishlist: Array.from(this.wishlist),
+					},
+				})
 			} catch (error) {
 				console.error('Error saving wishlist to server:', error)
 			}
 		},
 
-		addItem(item) {
-			// Логика добавления товара в список желаемого
-			const existingItem = this.items.find((i) => i.id === item.id)
-			if (existingItem) {
-				existingItem.quantity += 1 // Assumes quantity field. Adjust as necessary.
-			} else {
-				this.items.push({...item, quantity: 1}) // Add new item with a quantity of 1
+		async addItemToWishlist(productId: string) {
+			const sessionId = localStorage.getItem('sessionId')
+			if (!sessionId) {
+				await this.initWishlist() // Initialize the wishlist if session is not found
+				return
 			}
-			this.saveWishlist()
+
+			this.wishlist.add(productId)
+			await this.saveWishlistToServer()
 		},
 
-		removeItem(itemId) {
-			// Логика удаления товара из списка желаемого
-			const index = this.items.findIndex((i) => i.id === itemId)
-			if (index !== -1) {
-				this.items.splice(index, 1)
-			}
-			this.saveWishlist()
+		async removeItemFromWishlist(productId: string) {
+			this.wishlist.delete(productId)
+			await this.saveWishlistToServer()
 		},
 	},
 })

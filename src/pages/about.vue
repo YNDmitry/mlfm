@@ -1,16 +1,8 @@
 <script setup lang="ts">
 	const appConfig = useRuntimeConfig()
-	const {getItems} = useDirectusItems()
-	const {data: page} = await useAsyncData(
-		'about-us',
-		async () => {
-			return getItems({
-				collection: 'about_us',
-				params: {
-					fields: ['meta_title', 'meta_description', 'og_image', 'body'],
-				},
-			})
-		},
+	const {data} = await useAsyncGql(
+		'AboutUs',
+		{},
 		{
 			getCachedData(key, nuxtApp) {
 				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
@@ -19,13 +11,18 @@
 	)
 
 	useSeoMeta({
-		title: page.value.meta_title,
-		ogTitle: page.value.meta_title,
-		description: page.value.meta_description,
-		ogDescription: page.value.meta_description,
-		ogImage: appConfig.public.databaseUrl + 'assets/' + page.value.og_image,
+		title: data.value.about_us?.meta_title,
+		ogTitle: data.value.about_us?.meta_title,
+		description: data.value.about_us?.meta_description,
+		ogDescription: data.value.about_us?.meta_description,
+		ogImage:
+			appConfig.public.databaseUrl +
+			'assets/' +
+			data.value.about_us?.og_image?.id,
 		twitterImage:
-			appConfig.public.databaseUrl + 'assets/' + page.value.og_image,
+			appConfig.public.databaseUrl +
+			'assets/' +
+			data.value.about_us?.og_image?.id,
 	})
 </script>
 
@@ -34,14 +31,14 @@
 		class="pb-[7rem] pt-16 max-laptop:pt-[6.25rem] max-tablet:pb-[6.25rem] max-tablet:pt-[3.125rem] max-mobile:pt-[2rem]"
 	>
 		<div class="container max-w-[732px]">
-			<article class="wysiwyg" v-html="page.body"></article>
+			<article class="wysiwyg" v-html="data.about_us?.body"></article>
 		</div>
 	</section>
 </template>
 
 <style>
 	.wysiwyg h1 {
-		@apply max-tablet:text-h1Mob mb-8 text-center text-h1 font-medium uppercase;
+		@apply mb-8 text-center text-h1 font-medium uppercase max-tablet:text-h1Mob;
 	}
 
 	.wysiwyg img {

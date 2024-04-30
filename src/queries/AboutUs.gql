@@ -1,0 +1,10 @@
+query AboutUs {
+	about_us {
+		meta_title
+		meta_description
+		og_image {
+			id
+		}
+		body
+	}
+}

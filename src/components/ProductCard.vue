@@ -24,6 +24,8 @@
 			currency: 'RUB',
 		}).format(props.price),
 	)
+
+	const wishlistStore = useWishlistStore()
 </script>
 
 <template>
@@ -40,7 +42,8 @@
 
 			<IconsHearth
 				class="absolute right-3 top-3 h-5 w-5 transition-all"
-				@click.prevent
+				:is-on-wishlist="wishlistStore.isOnWishlist(id)"
+				@click.prevent="wishlistStore.addItemToWishlist(id)"
 			/>
 		</div>
 

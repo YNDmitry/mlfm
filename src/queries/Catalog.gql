@@ -1,0 +1,46 @@
+query Catalog {
+	catalog {
+		meta_title
+		meta_description
+		og_image {
+			id
+		}
+		main_banner {
+			id
+		}
+		random_banners {
+			directus_files_id {
+				id
+			}
+		}
+	}
+	products_aggregated {
+		count {
+			id
+		}
+		min {
+			price
+		}
+		max {
+			price
+		}
+	}
+	brands {
+		title
+		description
+		id
+	}
+	colors {
+		title
+		id
+	}
+	sizes {
+		small_title
+		large_title
+		id
+	}
+	collection {
+		title
+		id
+	}
+}

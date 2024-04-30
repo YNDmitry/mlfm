@@ -1,0 +1,40 @@
+query Homepage {
+	homepage {
+		slider_collection {
+			title
+			image {
+				id
+			}
+		}
+		look_image {
+			id
+		}
+		look_product {
+			products_id {
+				id
+				title
+				price
+				main_image {
+					id
+				}
+			}
+		}
+		uniq_product_image {
+			id
+		}
+		uniq_product_image_2 {
+			id
+		}
+		uniq_product_id {
+			id
+		}
+	}
+	products(limit: 4, sort: "-date_created") {
+		title
+		id
+		price
+		main_image {
+			id
+		}
+	}
+}

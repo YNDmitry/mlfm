@@ -1,103 +1,20 @@
 <script setup lang="ts">
 	const appConfig = useRuntimeConfig()
-	const {getItems, getItemById} = useDirectusItems()
+	const {getItems} = useDirectusItems()
 
 	const cartStore = useCartStore()
+	const wishlistStore = useWishlistStore()
+	const {id} = useRoute().params
+
+	const isOnWishlist = wishlistStore.isOnWishlist(id)
 
 	definePageMeta({
 		layout: 'default',
 	})
 
-	const {id} = useRoute().params
-
-	const {data: product} = await useAsyncData(
-		`product-${id}`,
-		() => {
-			return getItemById({
-				collection: 'products',
-				id: id,
-			})
-		},
-		{
-			getCachedData(key, nuxtApp) {
-				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
-			},
-		},
-	)
-	const {data: productColors} = await useAsyncData(
-		`product-${id}-colors`,
-		() => {
-			if (product?.value?.colors?.length === 0) return null
-			return getItems({
-				collection: 'products_colors',
-				params: {
-					filter: {
-						id: {
-							_in: product.value.colors,
-						},
-					},
-				},
-			}).then((res) => {
-				return getItems({
-					collection: 'colors',
-					params: {
-						filter: {
-							id: {
-								_in: res.map((el) => (el = el.colors_id)),
-							},
-						},
-					},
-				})
-			})
-		},
-		{
-			getCachedData(key, nuxtApp) {
-				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
-			},
-		},
-	)
-	const {data: productSizes} = await useAsyncData(
-		`product-${id}-sizes`,
-		() => {
-			if (product?.value?.sizes?.length === 0) return null
-			return getItems({
-				collection: 'products_sizes',
-				params: {
-					filter: {
-						id: {
-							_in: product.value.sizes,
-						},
-					},
-				},
-			}).then((res) => {
-				return getItems({
-					collection: 'sizes',
-					params: {
-						filter: {
-							id: {
-								_in: res.map((el) => (el = el.colors_id)),
-							},
-						},
-					},
-				})
-			})
-		},
-		{
-			getCachedData(key, nuxtApp) {
-				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
-			},
-		},
-	)
-	const {data: category} = await useAsyncData(
-		`product-category-${id}`,
-		() => {
-			if (product?.value.category === null) return null
-
-			return getItemById({
-				collection: 'categories',
-				id: product?.value.category,
-			})
-		},
+	const {data: product} = await useAsyncGql(
+		'GetProductById',
+		{id},
 		{
 			getCachedData(key, nuxtApp) {
 				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
@@ -105,22 +22,33 @@
 		},
 	)
 
-	if (!product.value) {
+	if (!product.value.products_by_id) {
 		throw createError({
 			statusCode: 404,
 			statusMessage: 'Продукт не найден',
 		})
 	}
 
+	const currentColor = ref(
+		product.value.products_by_id.colors[0]?.colors_id?.title,
+	)
+	const currentSize = ref(
+		product?.value?.products_by_id.sizes[0]?.sizes_id?.small_title,
+	)
+
 	useSeoMeta({
-		title: product.value.title + ' | MLFM',
-		ogTitle: product.value.title + ' | MLFM',
-		description: product.value.description,
-		ogDescription: product.value.description,
+		title: product?.value.products_by_id?.title + ' | MLFM',
+		ogTitle: product?.value.products_by_id?.title + ' | MLFM',
+		description: product?.value.products_by_id?.description,
+		ogDescription: product?.value.products_by_id?.description,
 		ogImage:
-			appConfig.public.databaseUrl + 'assets/' + product.value.main_image,
+			appConfig.public.databaseUrl +
+			'assets/' +
+			product?.value.products_by_id?.main_image?.id,
 		twitterImage:
-			appConfig.public.databaseUrl + 'assets/' + product.value.main_image,
+			appConfig.public.databaseUrl +
+			'assets/' +
+			product?.value.products_by_id?.main_image?.id,
 	})
 
 	const isRandomProductsPending = ref(true)
@@ -148,8 +76,20 @@
 	await initRandomProducts()
 
 	const toast = useToast()
-	const handleAddToCart = () => {
-		cartStore.addItem(product.value)
+	const handleAddToCart = async () => {
+		const currentProduct = product?.value?.products_by_id
+		cartStore.addItem({
+			product_id: currentProduct?.id,
+			price: currentProduct?.price,
+			category: currentProduct?.category?.title,
+			size_id: currentSize.value,
+			color_id: currentColor.value,
+			quantity: 1,
+			image_id: currentProduct?.main_image?.id,
+			title: currentProduct?.title,
+		})
+
+		// cartStore.addItem(product?.value?.products_by_id)
 		toast.add({
 			severity: 'success',
 			summary: 'Успешно',
@@ -158,11 +98,20 @@
 		})
 	}
 
+	const toggleWishList = async () => {
+		if (isOnWishlist) {
+			isOnWishlist = false
+			return await wishlistStore.removeItemFromWishlist(id)
+		}
+		await wishlistStore.addItemToWishlist(id)
+		return (isOnWishlist = true)
+	}
+
 	const price = computed(() =>
 		Intl.NumberFormat('ru-RU', {
 			style: 'currency',
 			currency: 'RUB',
-		}).format(product.value.price),
+		}).format(product?.value?.products_by_id?.price),
 	)
 </script>
 
@@ -188,7 +137,7 @@
 									<NuxtImg
 										provider="directus"
 										class="h-full w-full object-cover"
-										:src="product.main_image"
+										:src="product.products_by_id?.main_image?.id"
 									/>
 								</template>
 								<template #preview="slotProps">
@@ -196,7 +145,7 @@
 										provider="directus"
 										class="h-full w-full object-cover"
 										width="720"
-										:src="product.main_image"
+										:src="product.products_by_id?.main_image?.id"
 										:style="slotProps.style"
 										@click="slotProps.onClick"
 									/>
@@ -211,36 +160,37 @@
 						<h1
 							class="text-h1 max-tablet:text-h1Mob max-tablet:font-light tablet:font-extralight"
 						>
-							{{ product.title }}
+							{{ product.products_by_id?.title }}
 						</h1>
 
 						<div class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-4">
 							<div
 								class="flex flex-col max-tablet:gap-[0.75rem] max-tablet:text-[0.625rem] tablet:gap-4 tablet:text-[0.75rem]"
 							>
-								<span v-if="product.category"
-									>Категория: {{ category.title }}</span
+								<span v-if="product.products_by_id?.category"
+									>Категория: {{ product.products_by_id.category.title }}</span
 								>
-								<template v-if="productColors?.length > 0">
+								<template v-if="product?.products_by_id?.colors?.length > 0">
 									<span>Цвет: </span>
 									<div class="flex max-tablet:gap-[0.75rem] tablet:gap-2">
 										<label
 											class="inline-flex cursor-pointer items-center"
-											v-for="color in productColors"
-											:key="color.id"
+											v-for="color in product.products_by_id?.colors"
+											:key="color"
 										>
 											<input
 												checked
 												type="radio"
 												name="color"
-												:value="color.title"
+												:value="color?.colors_id.title"
+												v-model="currentColor"
 												class="hidden"
 											/>
 
 											<span
 												class="rounded-full bg-white flex items-center justify-center border border-black text-black max-tablet:min-h-[1.25rem] max-tablet:min-w-[3.438rem] max-tablet:text-[0.625rem] tablet:min-h-[2rem] tablet:min-w-[5.938rem]"
 												id="option-6"
-												>{{ color.title }}</span
+												>{{ color?.colors_id.title }}</span
 											>
 										</label>
 									</div>
@@ -249,7 +199,7 @@
 
 							<div
 								class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-2"
-								v-if="productSizes?.length > 0"
+								v-if="product.products_by_id?.sizes?.length > 0"
 							>
 								<span class="max-tablet:text-[0.625rem] tablet:text-[0.75rem]"
 									>Размер:</span
@@ -259,22 +209,24 @@
 								<div class="flex max-tablet:gap-[0.75rem] tablet:gap-2">
 									<label
 										class="inline-flex cursor-pointer items-center"
-										v-for="size in productSizes"
-										:key="size.id"
+										v-for="size in product.products_by_id?.sizes"
+										:key="size?.sizes_id?.id"
 									>
 										<input
 											checked
 											type="radio"
 											name="size"
-											:value="size.title"
+											:value="size?.sizes_id?.small_title"
+											v-model="currentSize"
 											class="hidden"
 										/>
 
 										<span
 											class="rounded-full bg-white flex items-center justify-center border border-black text-black max-tablet:min-h-[1.25rem] max-tablet:min-w-[3.438rem] max-tablet:text-[0.625rem] tablet:min-h-[2rem] tablet:min-w-[5.938rem]"
 											id="option-6"
-											>{{ size.title }}</span
 										>
+											{{ size?.sizes_id?.small_title }}
+										</span>
 									</label>
 								</div>
 								<!-- /radio кнопки! -->
@@ -296,17 +248,26 @@
 						>
 							<button
 								type="button"
-								:disabled="product.quantity === 0"
+								:disabled="product.products_by_id?.quantity === 0"
 								@click="handleAddToCart"
 								class="w-full rounded-main bg-red2 text-primary transition-all hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-70 max-tablet:min-h-[2rem] max-tablet:text-[0.625rem] tablet:min-h-[3.313rem]"
 							>
 								Добавить в корзину
 							</button>
 							<button
+								@click="
+									isOnWishlist
+										? wishlistStore.removeItemFromWishlist(id)
+										: wishlistStore.addItemToWishlist(id)
+								"
 								type="button"
 								class="w-full rounded-main border-[1px] border-black transition-all hover:bg-black hover:text-primary max-tablet:min-h-[2rem] max-tablet:text-[0.625rem] tablet:min-h-[3.313rem]"
 							>
-								Добавить в избранное
+								{{
+									isOnWishlist
+										? 'Удалить из избранного'
+										: 'Добавить в избранное'
+								}}
 							</button>
 						</div>
 						<!-- /Кнопки "Добавить" -->
@@ -315,12 +276,15 @@
 						<div
 							class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-[1.25rem]"
 						>
-							<Accordion :multiple="true" v-if="product.description">
+							<Accordion
+								:multiple="true"
+								v-if="product.products_by_id?.description"
+							>
 								<AccordionTab class="p-0">
 									<template #header class="p-0">
 										<div class="font-normal">О продукте</div>
 									</template>
-									<p>{{ product.description }}</p>
+									<p>{{ product.products_by_id?.description }}</p>
 								</AccordionTab>
 								<AccordionTab class="p-0">
 									<template #header>

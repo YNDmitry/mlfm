@@ -1,22 +1,14 @@
 <script setup lang="ts">
 	import {object, string} from 'yup'
-	const {getItems} = useDirectusItems()
 
 	useSeoMeta({
 		title: 'Подарочная карта | MLFM',
 		ogTitle: 'Подарочная карта | MLFM',
 	})
 
-	const {data: gift} = useAsyncData(
-		'giftProduct',
-		() => {
-			return getItems({
-				collection: 'gift_card',
-				params: {
-					fields: ['title', 'description', 'image'],
-				},
-			})
-		},
+	const {data} = await useAsyncGql(
+		'Gift',
+		{},
 		{
 			getCachedData(key, nuxtApp) {
 				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
@@ -50,11 +42,11 @@
 				>
 					<div
 						class="!sticky top-40 max-w-[700px] max-laptop:!static max-laptop:w-full"
-						v-if="gift?.image"
+						v-if="data.gift_card?.image?.id"
 					>
 						<NuxtImg
 							provider="directus"
-							:src="gift?.image"
+							:src="data.gift_card?.image.id"
 							class="h-full w-full object-contain"
 						/>
 					</div>
@@ -63,9 +55,9 @@
 						class="flex w-full max-w-[420px] flex-col max-tablet:max-w-none max-tablet:gap-[0.75rem] tablet:gap-[2rem]"
 					>
 						<h1
-							class="max-tablet:text-h1Mob text-h1 max-tablet:font-light tablet:font-extralight"
+							class="text-h1 max-tablet:text-h1Mob max-tablet:font-light tablet:font-extralight"
 						>
-							{{ gift?.title }}
+							{{ data.gift_card?.title }}
 						</h1>
 
 						<form class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-4">
@@ -149,7 +141,7 @@
 									<template #header class="p-0">
 										<div class="font-normal">О продукте</div>
 									</template>
-									<div v-html="gift?.description"></div>
+									<div v-html="data.gift_card?.description"></div>
 								</AccordionTab>
 							</Accordion>
 						</div>

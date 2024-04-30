@@ -1,11 +1,14 @@
-import {verifyHash} from '@directus/sdk'
 import {defineStore} from 'pinia'
 
 interface CartItem {
-	id: number
+	product_id: string
 	price: number
 	quantity: number
 	category: string
+	color_id: string | number
+	size_id: string | number
+	image_id: string
+	title: string
 	// Add other properties as needed
 }
 
@@ -22,113 +25,110 @@ export const useCartStore = defineStore('userCart', {
 				(total, item) => total + item.price * item.quantity,
 				0,
 			)
-			return Intl.NumberFormat('ru-RU', {
+			return new Intl.NumberFormat('ru-RU', {
 				style: 'currency',
 				currency: 'RUB',
 			}).format(price)
 		},
 	},
 	actions: {
-		// Инициализация корзины из localStorage или синхронизация с сервером
-		initCart() {
-			const userStore = useUserStore()
-			if (userStore.isAuthenticated) {
-				// Загрузить корзину из сервера
-				this.loadCartFromServer()
-			} else {
-				// Загрузить корзину из localStorage
-				this.loadCartFromLocalStorage()
+		async initCart() {
+			let sessionId = localStorage.getItem('sessionId')
+			if (!sessionId) {
+				try {
+					const res = await GqlCreateGuestSessionItem({data: {status: 'draft'}})
+					sessionId = res.create_guest_session_item?.id
+					localStorage.setItem('sessionId', sessionId)
+				} catch (error) {
+					console.error('Error during session initialization:', error)
+				}
 			}
-			callOnce(() => {
+			this.loadCartFromServer(sessionId)
+			await callOnce(() => {
 				this.getRelatedProducts()
 			})
 		},
 
-		loadCartFromLocalStorage() {
-			const cart = localStorage.getItem('cart')
-			if (cart) {
-				this.items = JSON.parse(cart)
-			}
-		},
-
-		async loadCartFromServer() {
+		async loadCartFromServer(sessionId) {
 			try {
-				// const response = await apiClient.get('/customer_cart')
-				// this.items = response.data
+				const res = await GqlGetSession({id: sessionId})
+				this.items = res.guest_session_by_id.temp_order || []
 			} catch (error) {
 				console.error('Error loading cart from server:', error)
 			}
 		},
 
-		saveCart() {
-			const authStore = useUserStore()
-			if (authStore.isAuthenticated) {
-				// Сохранить корзину на сервер
-				this.saveCartToServer()
-			} else {
-				// Сохранить корзину в localStorage
-				localStorage.setItem('cart', JSON.stringify(this.items))
-			}
-		},
-
 		async saveCartToServer() {
+			const sessionId = localStorage.getItem('sessionId')
+			if (!sessionId) return // Exit if no session ID available
+
 			try {
-				// await apiClient.post('/customer_cart', this.items)
+				await GqlUpdateGuestSessionItem({
+					id: sessionId,
+					data: {
+						temp_order: this.items,
+					},
+				})
 			} catch (error) {
 				console.error('Error saving cart to server:', error)
 			}
 		},
 
 		async addItem(item: CartItem) {
-			const {getItemById} = useDirectusItems()
-			// Логика добавления товара, затем сохраняем корзину
-			const existingItem = this.items.find((i) => i.id === item.id)
-			if (existingItem) {
-				existingItem.quantity += 1 // Assumes quantity field. Adjust as necessary.
-			} else {
-				const category = await getItemById({
-					collection: 'categories',
-					id: item.category,
-				})
-				await this.items.push({...item, category: category.title, quantity: 1}) // Add new item with a quantity of 1
+			const sessionId = localStorage.getItem('sessionId')
+			if (!sessionId) {
+				await this.initCart() // Initialize the cart if session is not found
+				return
 			}
-			this.saveCart()
+
+			const existingItem = this.items.find(
+				(i) =>
+					i.product_id === item.product_id &&
+					i.color_id === item.color_id &&
+					i.size_id === item.size_id,
+			)
+			if (existingItem) {
+				existingItem.quantity += item.quantity
+			} else {
+				this.items.push(item)
+			}
+
+			await this.saveCartToServer()
 		},
 
 		updateItemQuantity(itemId: number, newQuantity: number) {
 			const item = this.items.find((i) => i.id === itemId)
 			if (item) {
 				item.quantity = newQuantity
-				this.saveCart()
+				this.saveCartToServer()
 			}
 		},
 
 		removeItem(itemId: number) {
-			// Логика удаления товара, затем сохраняем корзину
 			const index = this.items.findIndex((i) => i.id === itemId)
 			if (index !== -1) {
 				this.items.splice(index, 1)
+				this.saveCartToServer()
 			}
-			this.saveCart()
 		},
 
 		removeCart() {
 			this.items = []
 			this.discount = ''
-			localStorage.setItem('cart', JSON.stringify(this.items))
+			this.saveCartToServer()
 		},
 
 		async getDiscount(string: string, hash: string) {
 			const {$directus} = useNuxtApp()
 			try {
-				await $directus.request(verifyHash(string, hash))
+				await $directus.request('verifyHash', {string, hash})
 			} catch (error) {
-				console.log(error)
+				console.error('Error verifying discount:', error)
 			}
 		},
 
 		async getRelatedProducts() {
-			const {getItems} = useDirectusItems()
+			const {getItems} = useDirectusItems() // Assuming getItems is a method from a Directus related API
 			try {
 				const products = await getItems({
 					collection: 'products',
@@ -137,11 +137,10 @@ export const useCartStore = defineStore('userCart', {
 						limit: 3,
 					},
 				})
-				this.isRelatedProductPending = false
 				this.relatedItems = products
-				return products
+				this.isRelatedProductPending = false
 			} catch (error) {
-				console.log(error)
+				console.error('Error fetching related products:', error)
 			}
 		},
 	},

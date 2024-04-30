@@ -9,7 +9,6 @@
 		autoResize: true,
 	})
 
-	const userStore = useUserStore()
 	const websiteStore = useWebsiteStore()
 
 	await useAsyncData(
@@ -24,9 +23,12 @@
 		},
 	)
 
-	await callOnce(async () => {
-		await userStore.getUserInfo()
-	})
+	if (process.client) {
+		const userStore = useUserStore()
+		const wishlistStore = useWishlistStore()
+		wishlistStore.initWishlist()
+		userStore.getUserInfo()
+	}
 </script>
 
 <template>

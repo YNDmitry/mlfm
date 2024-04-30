@@ -35,7 +35,7 @@
 							class="flex max-mobile:gap-[0.625rem] mobile:gap-[0.938rem]"
 						>
 							<NuxtImg
-								:src="'https://admin.mlfm.store/assets/' + item.main_image"
+								:src="'https://admin.mlfm.store/assets/' + item?.image_id"
 								width="130"
 								class="object-cover max-mobile:h-[6.25rem] max-mobile:w-[3.813rem] mobile:h-[6.25rem]"
 							/>
@@ -44,7 +44,7 @@
 								<button
 									@click="useCart.removeItem(item.id)"
 									type="button"
-									:aria-label="'Удалить товар ' + item.title"
+									:aria-label="'Удалить товар ' + item?.title"
 									class="absolute right-0 top-0"
 								>
 									<IconsClose class="w-2" />
@@ -54,9 +54,19 @@
 
 									<p class="text-[0.625rem] font-medium">{{ item.title }}</p>
 
-									<span class="text-[8px] opacity-50"
-										>{{ item.quantity }} шт</span
-									>
+									<div class="flex gap-2">
+										<span class="text-[8px] opacity-50">
+											{{ item.quantity }} шт
+										</span>
+
+										<span class="text-[8px] opacity-50" v-if="item.color_id">
+											{{ item.color_id }} цвет
+										</span>
+
+										<span class="text-[8px] opacity-50" v-if="item.color_id">
+											{{ item.size_id }} размер
+										</span>
+									</div>
 								</div>
 
 								<span class="text-[0.625rem]">{{

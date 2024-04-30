@@ -1,31 +1,14 @@
 <script setup lang="ts">
 	const appConfig = useRuntimeConfig()
-	const {getItems, getItemById} = useDirectusItems()
-
 	definePageMeta({
 		layout: 'default',
 	})
 
 	const config = useNuxtData('config').data
 
-	const {data: page} = await useAsyncData(
-		'homepage',
-		() => {
-			return getItems({
-				collection: 'homepage',
-				params: {
-					fields: [
-						'slider_collection',
-						'new_products',
-						'look_image',
-						'look_product',
-						'uniq_product_image',
-						'uniq_product_image_2',
-						'uniq_product_id',
-					],
-				},
-			})
-		},
+	const {data} = await useAsyncGql(
+		'Homepage',
+		{},
 		{
 			getCachedData(key, nuxtApp) {
 				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
@@ -33,89 +16,9 @@
 		},
 	)
 
-	const {data: mainSlider} = await useAsyncData(
-		'homepageMainSlider',
-		() => {
-			return getItemById({
-				collection: 'collection',
-				id: page.value.slider_collection,
-			})
-		},
-		{
-			getCachedData(key, nuxtApp) {
-				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
-			},
-		},
-	)
-
-	const {data: products} = await useAsyncData(
-		'newProducts',
-		() => {
-			return getItems({
-				collection: 'products',
-				params: {
-					fields: ['title', 'price', 'main_image', 'id'],
-					sort: ['-date_created'],
-					limit: 4,
-				},
-			})
-		},
-		{
-			getCachedData(key, nuxtApp) {
-				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
-			},
-		},
-	)
-
-	const {data: lookProductsIds} = await useAsyncData(
-		'lookProductsIds',
-		() => {
-			return getItems({
-				collection: 'homepage_products_1',
-				params: {
-					fields: ['products_id'],
-				},
-			})
-		},
-		{
-			getCachedData(key, nuxtApp) {
-				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
-			},
-		},
-	)
-
-	const {data: lookProducts} = await useAsyncData(
-		'lookProducts',
-		() => {
-			return getItems({
-				collection: 'products',
-				params: {
-					fields: ['title', 'price', 'main_image', 'id'],
-					filter: {
-						id: {
-							_in: lookProductsIds.value.map((item: any) => item.products_id),
-						},
-					},
-				},
-			})
-		},
-		{
-			getCachedData(key, nuxtApp) {
-				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
-			},
-		},
-	)
-
-	const {data: categories} = await useAsyncData(
-		'categories',
-		() => {
-			return getItems({
-				collection: 'categories',
-				params: {
-					fields: ['title', 'title_eng', 'id'],
-				},
-			})
-		},
+	const {data: categories} = await useAsyncGql(
+		'Categories',
+		{},
 		{
 			getCachedData(key, nuxtApp) {
 				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
@@ -163,10 +66,13 @@
 		<section
 			class="relative flex h-[37.5rem] items-center justify-center max-tablet:h-[20rem] max-mobile:h-[15rem]"
 		>
-			<div class="relative h-full w-full" v-if="mainSlider.image">
+			<div
+				class="relative h-full w-full"
+				v-if="data.homepage?.slider_collection?.image?.id"
+			>
 				<NuxtImg
 					provider="directus"
-					:src="mainSlider.image"
+					:src="data.homepage?.slider_collection?.image?.id"
 					class="h-full w-full object-cover"
 					width="1440"
 					height="600"
@@ -176,14 +82,14 @@
 				class="absolute z-10 flex translate-y-[-50%] flex-col items-center justify-center gap-[1.5rem] text-primary max-tablet:right-[0.75rem] max-tablet:top-[40%] tablet:left-2/4 tablet:top-2/4 tablet:translate-x-[-50%]"
 			>
 				<h1
-					v-if="mainSlider"
+					v-if="data.homepage?.slider_collection?.title"
 					class="text-center text-h1 uppercase tracking-[0.375rem] max-tablet:text-right max-tablet:text-h1Mob max-tablet:font-light max-tablet:tracking-[2.5px]"
 				>
-					{{ mainSlider.title }}
+					{{ data.homepage?.slider_collection?.title }}
 				</h1>
 
 				<NuxtLink
-					:to="'/catalog?collection=' + mainSlider.title"
+					:to="'/catalog?collection=' + data.homepage?.slider_collection?.title"
 					class="flex h-11 w-full max-w-[10.625rem] items-center justify-center rounded-main bg-red2 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] transition-colors hover:bg-red2-hover max-tablet:hidden"
 				>
 					Купить
@@ -197,7 +103,7 @@
 			class="container flex max-w-[84rem] flex-wrap items-center justify-center gap-4 gap-y-4 py-11 font-montserrat max-laptop:gap-x-3 max-tablet:mb-[2.5rem] max-tablet:pb-[1.25rem] max-tablet:pt-[2rem] max-mobile:grid max-mobile:grid-cols-[1fr_1fr] max-mobile:text-[0.875rem]"
 		>
 			<NuxtLink
-				v-for="category in categories"
+				v-for="category in categories.categories"
 				:key="category.id"
 				:to="'/catalog?category=' + category.title"
 				class="flex h-11 items-center justify-center rounded-main border-[1px] border-black px-6 text-center transition-colors hover:bg-black hover:text-primary"
@@ -220,11 +126,11 @@
 					<div
 						class="no-scrollbar mx-[-1rem] flex scroll-px-3 gap-[45px] overflow-x-auto px-[1rem] max-tablet:gap-4"
 					>
-						<template v-for="product in products" :key="product.id">
+						<template v-for="product in data.products" :key="product.id">
 							<ProductCard
 								:id="product.id"
 								:title="product.title"
-								:imgSrc="product.main_image"
+								:imgSrc="product.main_image?.id"
 								:price="product.price"
 								class="animation-duration-2000 max-w-[18.31rem] flex-shrink-0 transition-all max-tablet:w-[150px]"
 							/>
@@ -265,10 +171,10 @@
 					class="relative grid grid-cols-buyImage items-start gap-4 pt-10 max-tablet:gap-[20px]"
 				>
 					<NuxtImg
-						v-if="page.look_image"
+						v-if="data.homepage?.look_image?.id"
 						provider="directus"
 						class="h-full w-full object-cover"
-						:src="page.look_image"
+						:src="data.homepage?.look_image?.id"
 						width="678"
 					/>
 
@@ -286,12 +192,15 @@
 						class="relative w-full max-w-[300px] max-tablet:max-w-[150px]"
 						id="look-swiper"
 					>
-						<SwiperSlide v-for="product in lookProducts" :key="product.id">
+						<SwiperSlide
+							v-for="product in data.homepage?.look_product"
+							:key="product?.products_id?.id"
+						>
 							<HomePatternCard
-								:title="product.title"
-								:price="product.price"
-								:image="product.main_image"
-								:link="product.id"
+								:title="product?.products_id?.title"
+								:price="product?.products_id?.price"
+								:image="product?.products_id?.main_image?.id"
+								:link="product?.products_id?.id"
 							/>
 						</SwiperSlide>
 					</Swiper>
@@ -359,27 +268,27 @@
 					<div
 						class="flex flex-col items-center gap-[35px] max-mobile:gap-[15px] max-mobile:px-[35px]"
 					>
-						<div class="relative" v-if="page.uniq_product_image">
+						<div class="relative" v-if="data.homepage?.uniq_product_image?.id">
 							<NuxtImg
 								provider="directus"
-								:src="page.uniq_product_image"
+								:src="data.homepage?.uniq_product_image?.id"
 								width="368"
 								height="442"
 							/>
 						</div>
 
 						<NuxtLink
-							:to="'/catalog/' + page.uniq_product_id"
+							:to="'/catalog/' + data.homepage?.uniq_product_id?.id"
 							class="flex w-full max-w-[10.625rem] items-center justify-center rounded-main bg-red2 py-2 font-montserrat text-[0.75rem] font-bold uppercase text-primary transition-colors hover:bg-red2-hover"
 						>
 							Купить
 						</NuxtLink>
 					</div>
 
-					<div v-if="page.uniq_product_image_2">
+					<div v-if="data.homepage?.uniq_product_image_2?.id">
 						<NuxtImg
 							provider="directus"
-							:src="page.uniq_product_image_2"
+							:src="data.homepage?.uniq_product_image_2?.id"
 							width="486"
 							height="602"
 						/>

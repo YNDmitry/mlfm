@@ -1,0 +1,19 @@
+mutation createGuestSessionItem($data: create_guest_session_input!) {
+	create_guest_session_item(data: $data) {
+		id
+	}
+}
+
+mutation updateGuestSessionItem($data: update_guest_session_input!, $id: ID!) {
+	update_guest_session_item(data: $data, id: $id) {
+		id
+	}
+}
+
+query getSession($id: ID!) {
+	guest_session_by_id(id: $id) {
+		id
+		temp_order
+		temp_wishlist
+	}
+}

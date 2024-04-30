@@ -1,0 +1,27 @@
+query GetProductById($id: ID!) {
+	products_by_id(id: $id) {
+		id
+		title
+		description
+		quantity
+		main_image {
+			id
+		}
+		category {
+			title
+		}
+		colors {
+			colors_id {
+				title
+				id
+			}
+		}
+		sizes {
+			sizes_id {
+				small_title
+				id
+			}
+		}
+		price
+	}
+}

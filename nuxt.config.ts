@@ -19,6 +19,7 @@ export default defineNuxtConfig({
 	runtimeConfig: {
 		public: {
 			databaseUrl: process.env.DATABASE_URL,
+			GQL_HOST: process.env.DATABASE_URL + 'graphql',
 		},
 	},
 
@@ -42,6 +43,7 @@ export default defineNuxtConfig({
 		'@formkit/auto-animate',
 		'nuxt-build-cache',
 		'@nuxt/fonts',
+		'nuxt-graphql-client',
 	],
 
 	image: {
