@@ -102,18 +102,18 @@
 			data.value?.catalog?.og_image?.id,
 	})
 
-	// function resetFilters() {
-	// 	router.replace({query: {}})
-	// 	Object.keys(initialState.filters).forEach((key) => {
-	// 		if (Array.isArray(initialState.filters[key])) {
-	// 			initialState.filters[key] = []
-	// 		} else {
-	// 			initialState.filters[key] = ''
-	// 		}
-	// 	})
-	// 	initialState.currentPage = 1
-	// 	refresh()
-	// }
+	function resetFilters() {
+		router.replace({query: {}}) // Очищаем query параметры
+		Object.keys(initialState.filter).forEach((key) => {
+			if (Array.isArray(initialState.filter[key])) {
+				initialState.filter[key] = []
+			} else {
+				initialState.filter[key] = ''
+			}
+		})
+		currentPage.value = 1 // Сброс текущей страницы на первую
+		refresh() // Вызов функции обновления данных
+	}
 
 	// Слежение за изменениями в route.query и обновление фильтров
 	// watch(
@@ -137,26 +137,35 @@
 		{deep: true},
 	)
 
-	// Обновление URL при изменении фильтров (опционально)
-	// watch(
-	// 	() => initialState.filters,
-	// 	(newFilters) => {
-	// 		const filteredQuery = Object.entries(newFilters).reduce(
-	// 			(acc, [key, value]) => {
-	// 				// Если значение не пустое, добавляем его в аккумулирующий объект
-	// 				if (value) {
-	// 					// Здесь можно добавить более сложные условия для "непустых" значений
-	// 					acc[key] = value
-	// 				}
-	// 				return acc
-	// 			},
-	// 			{},
-	// 		)
+	watch(
+		() => [initialState.filter],
+		() => {
+			currentPage.value = 0 // Сбрасываем текущую страницу
+			refresh() // Перезагрузка данных
+		},
+		{deep: true},
+	)
 
-	// 		router.push({query: filteredQuery})
-	// 	},
-	// 	{deep: true},
-	// )
+	watch(
+		() => initialState.filter,
+		(newFilters) => {
+			const filteredQuery = Object.entries(newFilters).reduce(
+				(acc, [key, value]) => {
+					if (value) {
+						if (Array.isArray(value) && value.length > 0) {
+							acc[key] = value.join(',')
+						} else if (!Array.isArray(value) && value !== '') {
+							acc[key] = value
+						}
+					}
+					return acc
+				},
+				{},
+			)
+			router.push({query: filteredQuery})
+		},
+		{deep: true},
+	)
 
 	const minPrice = computed(() =>
 		Intl.NumberFormat('ru-RU', {
@@ -170,12 +179,6 @@
 			currency: 'RUB',
 		}).format(data.value.products_aggregated[0].max.price),
 	)
-
-	// Обновляем фильтр цены в зависимости от выбранных пользователем значений
-	// function updatePriceFilter(min, max) {
-	// 	initialState.filters.price._lte = max
-	// 	// Здесь может быть добавлена логика для обработки минимальной цены, если это необходимо
-	// }
 
 	const totalProducts = data?.value?.products_aggregated[0].count?.id
 </script>
@@ -253,6 +256,7 @@
 								<div class="flex items-center gap-[5px] pt-[1.25rem]">
 									<IconsReset />
 									<button
+										@click="resetFilters"
 										class="text-[8px] leading-[1.188rem] underline hover:no-underline"
 									>
 										Сбросить параметры
@@ -443,7 +447,7 @@
 						<!-- Пагинация -->
 						<div
 							class="w-ful relative border-t-[1px] border-[#AAAAAA]"
-							v-if="data?.products?.length !== 0 && currentPage >= 0"
+							v-if="products?.products.length !== 0"
 						>
 							<Paginator
 								v-model:first="currentPage"
@@ -465,11 +469,12 @@
 						</div>
 						<!-- /Пагинация -->
 						<div
-							v-else
+							v-if="products?.products.length === 0"
 							class="mx-auto flex w-full max-w-[500px] flex-col justify-center gap-5 text-center"
 						>
 							<div>Продуктов по данным фильтрам не найдено</div>
 							<button
+								@click="resetFilters"
 								type="button"
 								class="relative flex w-full items-center justify-center bg-red2 text-primary transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-70 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[45px] tablet:rounded-[1.875rem]"
 							>
@@ -482,5 +487,3 @@
 		</section>
 	</div>
 </template>
-
-<style></style>
