@@ -21,9 +21,49 @@
 	})
 
 	const {data: products, refresh} = await useAsyncData('products', () => {
+		const {filter} = initialState
+
+		const filters = {}
+
+		// Фильтр по названию бренда
+		if (filter.brandTitle) {
+			filters.brand = {title: {_eq: filter.brandTitle}}
+		}
+
+		// Фильтр по ID коллекции
+		if (filter.collectionId) {
+			filters.collection = {title: {_eq: filter.collectionId}}
+		}
+
+		// Фильтр по цветам
+		if (filter.colors.length > 0) {
+			filters.colors = {colors_id: {title: {_eq: filter.colors}}}
+		}
+
+		// Фильтр по размеру
+		if (filter.size) {
+			filters.sizes = {sizes_id: {small_title: {_eq: filter.size}}}
+		}
+
+		// Фильтр по категориям
+		if (filter.categories.length > 0) {
+			filters.category = {title: {_in: filter.categories}}
+		}
+
+		// Фильтр по минимальной цене
+		if (filter.minPrice) {
+			filters.price = {_gte: filter.minPrice}
+		}
+
+		// Фильтр по максимальной цене
+		if (filter.maxPrice) {
+			filters.price = {...(filters.price || {}), _lte: filter.maxPrice}
+		}
+
 		return GqlProducts({
 			page: Math.ceil(currentPage.value / initialState.limit) + 1,
 			limit: initialState.limit,
+			filter: filters,
 		})
 	})
 
@@ -245,7 +285,7 @@
 							<!-- Размер -->
 							<CatalogFilter
 								:filters="
-									data?.sizes.map((el) => (el = {title: el.small_title}))
+									data?.sizes.map((el: any) => (el = {title: el.small_title}))
 								"
 								:title="`Размер`"
 								:currentFilter="initialState.filter.size"
@@ -348,7 +388,7 @@
 								class="mb-[3.75rem] rounded-[12px] border-[1px] border-gray p-[9px] text-[0.625rem] leading-[18px] max-laptop:hidden"
 							>
 								{{
-									data.brands.find((el) =>
+									data.brands.find((el: any) =>
 										el.title === initialState.filter.brandTitle ? el : null,
 									).description
 								}}
@@ -366,9 +406,9 @@
 							>
 								<ProductCard
 									:id="product.id"
-									:title="product.title"
+									:title="product.title ?? undefined"
 									:imgSrc="product.main_image?.id"
-									:price="product.price"
+									:price="product.price ?? undefined"
 									class="animation-duration-2000 flex-shrink-0 transition-all"
 								/>
 
