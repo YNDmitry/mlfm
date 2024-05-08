@@ -23,13 +23,13 @@
 			.max(200, 'Максимальная длина 200'),
 	})
 
-	const token = useRoute().params.token
+	const refresh_token = useRoute().params.token
 
 	const {handleSubmit, isSubmitting} = useForm({
 		validationSchema: schema,
 	})
 
-	const res = $directus.request(refresh(token, 'session'))
+	const res = $directus.request(refresh('session', refresh_token))
 	console.log(res)
 
 	const onSubmit = handleSubmit(async (values) => {
