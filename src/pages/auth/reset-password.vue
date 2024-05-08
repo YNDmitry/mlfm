@@ -29,7 +29,7 @@
 		validationSchema: schema,
 	})
 
-	const res = $directus.request(refresh('session', refresh_token))
+	const res = $directus.request(refresh(refresh_token))
 	console.log(res)
 
 	const onSubmit = handleSubmit(async (values) => {
