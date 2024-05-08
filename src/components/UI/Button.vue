@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 	defineProps({
 		title: {
 			type: String,
@@ -24,7 +24,7 @@
 	<component
 		:is="tag"
 		:type="type"
-		class="inline-block w-full bg-black px-4 py-3 text-center text-[1rem] font-light text-white"
+		class="flex h-11 w-full max-w-[10.625rem] items-center justify-center rounded-main bg-red2 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] text-primary transition-colors hover:bg-red2-hover"
 	>
 		{{ title }}
 	</component>

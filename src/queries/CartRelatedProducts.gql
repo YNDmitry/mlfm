@@ -1,0 +1,10 @@
+query RelatedProducts {
+	products(limit: 3) {
+		id
+		title
+		price
+		main_image {
+			id
+		}
+	}
+}

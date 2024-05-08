@@ -89,7 +89,7 @@
 					<!--  /Товары -->
 
 					<!--  Промокод -->
-					<!-- <form
+					<form
 						@submit.prevent="useCart.getDiscount(useCart.discount)"
 						class="relative flex items-center gap-4 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-[''] max-tablet:pb-[1.875rem] tablet:pb-[25px]"
 					>
@@ -101,11 +101,12 @@
 						/>
 
 						<button
+							type="submit"
 							class="border-[1px] border-black px-[1rem] transition-colors hover:bg-black hover:text-primary max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[1.875rem]"
 						>
 							Применить
 						</button>
-					</form> -->
+					</form>
 					<!--  /Промокод -->
 
 					<!--  Скидка/Итого -->
@@ -170,10 +171,7 @@
 						:spaceBetween="10"
 						class="overflow-visible"
 					>
-						<SwiperSlide
-							v-for="product in useCart.relatedItems"
-							:key="product.id"
-						>
+						<SwiperSlide v-for="product in useCart.relatedItems" :key="product">
 							<NuxtLink
 								:to="'/catalog/' + product.id"
 								@click="websiteStore.isVisibleCart = false"
@@ -182,7 +180,7 @@
 									<NuxtImg
 										provider="directus"
 										class="h-32 object-cover"
-										:src="product.main_image"
+										:src="product.main_image.id"
 										width="200"
 									/>
 									<div class="inset-0 mt-2 overflow-hidden whitespace-nowrap">

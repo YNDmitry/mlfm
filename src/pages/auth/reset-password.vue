@@ -1,5 +1,8 @@
-<script setup>
+<script setup lang="ts">
 	import {object, string} from 'yup'
+	import {refresh} from '@directus/sdk'
+	const {$directus} = useNuxtApp()
+
 	definePageMeta({
 		layout: 'default',
 		middleware: ['auth'],
@@ -8,7 +11,6 @@
 	useSeoMeta({
 		title: 'Сброс пароля | MLFM',
 		ogTitle: 'Сброс пароля | MLFM',
-		lang: 'ru',
 	})
 
 	const schema = object({
@@ -26,6 +28,9 @@
 	const {handleSubmit, isSubmitting} = useForm({
 		validationSchema: schema,
 	})
+
+	const res = $directus.request(refresh(token, 'session'))
+	console.log(res)
 
 	const onSubmit = handleSubmit(async (values) => {
 		console.log(values)

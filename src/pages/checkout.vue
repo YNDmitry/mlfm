@@ -1,6 +1,9 @@
 <script setup lang="ts">
+	import {boolean, object, string} from 'yup'
+
 	definePageMeta({
 		layout: 'checkout',
+		middleware: 'checkout',
 	})
 
 	useSeoMeta({
@@ -9,6 +12,58 @@
 	})
 
 	const cartStore = useCartStore()
+
+	const deliveryType = ref(false)
+
+	const schema = object({
+		firstName: string().required(),
+		lastName: string().required(),
+		thirdName: string(),
+		email: string().email().required(),
+		phone: string().required(),
+		deliveryType: boolean(),
+		city: string().when('deliveryType', {
+			is: true,
+			then: string().required(),
+			otherwise: string().notRequired(),
+		}),
+		street: string().when('deliveryType', {
+			is: true,
+			then: string().required(),
+			otherwise: string().notRequired(),
+		}),
+		home: string().when('deliveryType', {
+			is: true,
+			then: string().required(),
+			otherwise: string().notRequired(),
+		}),
+		entrance: string().when('deliveryType', {
+			is: true,
+			then: string().required(),
+			otherwise: string().notRequired(),
+		}),
+		apartment: string().when('deliveryType', {
+			is: true,
+			then: string().required(),
+			otherwise: string().notRequired(),
+		}),
+		postCode: string().when('deliveryType', {
+			is: true,
+			then: string().required(),
+			otherwise: string().notRequired(),
+		}),
+		comment: string(),
+		paymentMethod: string(),
+		terms: boolean(),
+	})
+
+	const {handleSubmit} = useForm({
+		validationSchema: schema,
+	})
+
+	const onSubmit = handleSubmit((values) => {
+		console.log(values)
+	})
 </script>
 
 <template>
@@ -16,7 +71,7 @@
 		<!-- Контактная информация -->
 		<div class="pb-[3.75rem]">
 			<div class="container laptop:max-w-[512px]">
-				<form class="pt-8">
+				<form class="pt-8" @submit.prevent="onSubmit">
 					<!-- Контактная информация -->
 					<div>
 						<h1
@@ -26,15 +81,39 @@
 						</h1>
 
 						<div class="flex flex-col gap-[1.25rem]">
+							<div class="grid grid-cols-[1fr_1fr] gap-[1.25rem]">
+								<label class="flex cursor-pointer flex-col gap-2" for="inpName">
+									<span class="max-tablet:text-[0.625rem] tablet:text-[12px]"
+										>Имя*</span
+									>
+
+									<input
+										class="w-full border-[1px] border-black font-light max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
+										type="text"
+										placeholder="Введите имя"
+									/>
+								</label>
+								<label class="flex cursor-pointer flex-col gap-2" for="inpName">
+									<span class="max-tablet:text-[0.625rem] tablet:text-[12px]"
+										>Фамилия*</span
+									>
+
+									<input
+										class="w-full border-[1px] border-black font-light max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
+										type="text"
+										placeholder="Введите фамилию"
+									/>
+								</label>
+							</div>
 							<label class="flex cursor-pointer flex-col gap-2" for="inpName">
 								<span class="max-tablet:text-[0.625rem] tablet:text-[12px]"
-									>Контактное лицо (ФИО)*</span
+									>Отчество</span
 								>
 
 								<input
 									class="w-full border-[1px] border-black font-light max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
 									type="text"
-									placeholder="Введите имя"
+									placeholder="Отчество (опционально)"
 								/>
 							</label>
 
@@ -44,26 +123,22 @@
 								>
 
 								<input
-									class="w-full border-[1px] border-black font-light max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
+									class="w-full border-[1px] border-black font-light focus:outline-red2-hover max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
 									type="text"
 									placeholder="user@gmail.com"
 								/>
 							</label>
 						</div>
 
-						<label
-							class="flex cursor-pointer flex-col gap-2 pt-[1.25rem]"
-							for="inpName"
-						>
+						<label class="flex cursor-pointer flex-col gap-2 pt-[1.25rem]">
 							<span class="max-tablet:text-[0.625rem] tablet:text-[12px]"
-								>Номер телефона</span
+								>Номер телефона*</span
 							>
 
-							<input
-								id="inpName"
-								class="w-full border-[1px] border-black font-light max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
-								type="text"
-								placeholder="+799999487787"
+							<InputMask
+								class="w-full border-[1px] border-black font-light focus:outline-red2-hover max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
+								mask="+7 (999) 999 99-99"
+								placeholder="+7 (999) 999 99-99"
 							/>
 						</label>
 
@@ -71,16 +146,14 @@
 						<div
 							class="flex flex-col pt-[1.25rem] max-tablet:gap-[12px] tablet:gap-[1.25rem]"
 						>
-							<label
-								id="radio-1"
-								class="flex cursor-pointer items-center gap-[0.625rem]"
-							>
+							<label class="flex cursor-pointer items-center gap-[0.625rem]">
 								<input
-									id="radio-1"
 									type="radio"
 									name="delivery"
 									class="absolute h-5 w-5 cursor-pointer opacity-0"
 									checked
+									:value="false"
+									v-model="deliveryType"
 								/>
 
 								<div
@@ -90,15 +163,13 @@
 								<span class="text-[0.625rem]">Доставка - 500Р</span>
 							</label>
 
-							<label
-								id="radio-2"
-								class="flex cursor-pointer items-center gap-[0.625rem]"
-							>
+							<label class="flex cursor-pointer items-center gap-[0.625rem]">
 								<input
-									id="radio-2"
 									type="radio"
 									name="delivery"
 									class="absolute h-5 w-5 cursor-pointer opacity-0"
+									:value="true"
+									v-model="deliveryType"
 								/>
 
 								<div
@@ -113,7 +184,10 @@
 					<!-- /Контактная информация -->
 
 					<!-- Адрес доставки -->
-					<div class="max-tablet:pt-[2rem] tablet:pt-[3.125rem]">
+					<div
+						v-if="!deliveryType"
+						class="max-tablet:pt-[2rem] tablet:pt-[3.125rem]"
+					>
 						<h2
 							class="pb-[2rem] text-h2 max-tablet:pb-[24px] max-tablet:text-h2Mob max-tablet:font-medium"
 						>
@@ -123,7 +197,7 @@
 						<div class="flex flex-col gap-5">
 							<div class="flex cursor-pointer flex-col gap-2">
 								<span class="max-tablet:text-[0.625rem] tablet:text-[12px]"
-									>Город</span
+									>Город*</span
 								>
 
 								<input
@@ -136,7 +210,7 @@
 
 							<label class="flex cursor-pointer flex-col gap-2" for="inpName">
 								<span class="max-tablet:text-[0.625rem] tablet:text-[12px]"
-									>Улица</span
+									>Улица*</span
 								>
 
 								<input
@@ -150,37 +224,40 @@
 							<div class="flex gap-[11px]">
 								<label class="flex cursor-pointer flex-col gap-2" for="inpName">
 									<span class="max-tablet:text-[0.625rem] tablet:text-[12px]"
-										>Дом</span
+										>Дом*</span
 									>
 
 									<input
 										id="inpName"
 										class="w-full border-[1px] border-black font-light max-tablet:h-[25px] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[1.875rem] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
 										type="text"
+										placeholder="3"
 									/>
 								</label>
 
 								<label class="flex cursor-pointer flex-col gap-2" for="inpName">
 									<span class="max-tablet:text-[0.625rem] tablet:text-[12px]"
-										>Подъезд</span
+										>Подъезд*</span
 									>
 
 									<input
 										id="inpName"
 										class="w-full border-[1px] border-black font-light max-tablet:h-[25px] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[1.875rem] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
 										type="text"
+										placeholder="1"
 									/>
 								</label>
 
 								<label class="flex cursor-pointer flex-col gap-2" for="inpName">
 									<span class="max-tablet:text-[0.625rem] tablet:text-[12px]"
-										>Квартира</span
+										>Квартира*</span
 									>
 
 									<input
 										id="inpName"
 										class="w-full border-[1px] border-black font-light max-tablet:h-[25px] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[1.875rem] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
 										type="text"
+										placeholder="51"
 									/>
 								</label>
 							</div>
@@ -194,6 +271,7 @@
 									id="inpName"
 									class="w-full border-[1px] border-black font-light max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
 									type="text"
+									placeholder="000000"
 								/>
 							</label>
 						</div>

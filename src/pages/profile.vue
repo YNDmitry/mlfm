@@ -1,6 +1,12 @@
 <script setup lang="ts">
 	import {passwordRequest} from '@directus/sdk'
 	const {$directus} = useNuxtApp()
+	const {updateUser} = useDirectusUsers()
+	const userStore = useUserStore()
+	const websiteStore = useWebsiteStore()
+
+	const toast = useToast()
+
 	definePageMeta({
 		middleware: ['auth'],
 	})
@@ -10,14 +16,14 @@
 		ogTitle: 'Профиль | MLFM',
 	})
 
-	const userStore = useUserStore()
-	const websiteStore = useWebsiteStore()
-
-	const toast = useToast()
-
 	const updatePassword = async () => {
 		await $directus
-			.request(passwordRequest(userStore.email))
+			.request(
+				passwordRequest(
+					userStore.email,
+					'https://mlfm.store/auth/reset-password',
+				),
+			)
 			.then(() => {
 				toast.add({
 					severity: 'success',
@@ -42,6 +48,15 @@
 		{id: 2, title: 'В дороге'},
 		{id: 3, title: 'Доставлен'},
 	])
+
+	const updateUserNewsletter = async () => {
+		await updateUser({
+			id: userStore.id,
+			user: {
+				newsletter: !userStore.newsletter,
+			},
+		})
+	}
 </script>
 <template>
 	<div>
@@ -91,10 +106,15 @@
 				>
 					<!-- Аватар -->
 					<div
-						v-if="userStore?.firstName"
 						class="flex min-h-64 min-w-64 items-center justify-center rounded-[100%] bg-red text-h1 uppercase text-primary"
 					>
-						{{ userStore?.firstName[0] + userStore?.lastName[0] || '' }}
+						<div class="flex gap-1" v-if="!userStore?.isAuthenticated">
+							<Skeleton width="25px" height="25px" />
+							<Skeleton width="25px" height="25px" />
+						</div>
+						<span v-else>
+							{{ userStore?.firstName[0] + userStore?.lastName[0] || '' }}
+						</span>
 					</div>
 					<!-- //Аватар -->
 
@@ -108,14 +128,28 @@
 									<div
 										class="flex w-full items-center border-[1px] border-black font-light max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
 									>
-										{{ userStore?.firstName || null }}
+										<Skeleton
+											v-if="!userStore?.isAuthenticated"
+											width="150px"
+											height="20px"
+										/>
+										<span v-else>
+											{{ userStore?.firstName || null }}
+										</span>
 									</div>
 								</label>
 								<label class="flex w-full cursor-pointer flex-col gap-2">
 									<div
 										class="flex w-full items-center border-[1px] border-black font-light max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
 									>
-										{{ userStore?.lastName || null }}
+										<Skeleton
+											v-if="!userStore?.isAuthenticated"
+											width="150px"
+											height="20px"
+										/>
+										<span v-if="userStore?.lastName">
+											{{ userStore?.lastName || null }}
+										</span>
 									</div>
 								</label>
 							</div>
@@ -123,14 +157,28 @@
 								<div
 									class="flex w-full items-center border-[1px] border-black font-light max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
 								>
-									{{ userStore?.email || null }}
+									<Skeleton
+										v-if="!userStore?.isAuthenticated"
+										width="150px"
+										height="20px"
+									/>
+									<span v-if="userStore?.email">
+										{{ userStore?.email || null }}
+									</span>
 								</div>
 							</label>
 							<label class="flex cursor-pointer flex-col gap-2">
 								<div
 									class="flex w-full items-center border-[1px] border-black font-light max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
 								>
-									{{ userStore.phone || 'Номер не указан' }}
+									<Skeleton
+										v-if="!userStore?.isAuthenticated"
+										width="150px"
+										height="20px"
+									/>
+									<span v-else>
+										{{ userStore.phone || 'Номер не указан' }}
+									</span>
 								</div>
 							</label>
 							<div class="flex justify-between">
@@ -154,11 +202,7 @@
 								<Checkbox
 									binary
 									v-model="userStore.newsletter"
-									@change="
-										websiteStore.handleNewsletterSubscribe({
-											footerEmail: userStore.email,
-										})
-									"
+									@change="updateUserNewsletter"
 									:pt="{
 										box: 'rounded-[0] border-[1px] border-grayLight shadow-none',
 									}"
@@ -185,16 +229,18 @@
 					<AccordionTab :pt="{root: 'border-b-[1px]', content: 'px-0'}">
 						<template #header> Активные заказы </template>
 						<div class="flex justify-between gap-5 py-6">
+							<!-- Табы -->
 							<div class="flex w-full max-w-[214px] flex-col gap-4">
 								<button
-									v-for="item in 3"
-									:key="item"
 									type="button"
 									class="flex items-center gap-3 rounded-[30px] border px-6 py-4 text-[13px]"
 								>
 									<span>Заказ №543045</span><IconsOrderArrow class="ml-auto" />
 								</button>
 							</div>
+							<!-- /Табы -->
+
+							<!-- Тело заказа -->
 							<div class="w-full max-w-[406px]">
 								<div class="flex justify-between gap-2">
 									<div
@@ -211,9 +257,6 @@
 											<span class="font-main text-[12px]">{{
 												item.title
 											}}</span>
-											<span class="font-main text-[10px] text-[#D3D5D5]"
-												>10:24</span
-											>
 										</div>
 									</div>
 								</div>
@@ -280,9 +323,25 @@
 					</AccordionTab>
 					<AccordionTab :pt="{root: 'border-b-[1px]', content: 'px-0'}">
 						<template #header> Выполненные заказы </template>
+						<div
+							class="flex flex-col items-center justify-center gap-5 py-6 text-center"
+						>
+							<span>Здесь будет список выполненных заказов</span>
+							<NuxtLink
+								to="/catalog"
+								class="flex h-11 w-full max-w-[10.625rem] items-center justify-center rounded-main bg-red2 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] text-primary transition-colors hover:bg-red2-hover"
+								>Каталог</NuxtLink
+							>
+						</div>
 					</AccordionTab>
 					<AccordionTab :pt="{root: 'border-b-[1px]', content: 'px-0'}">
-						<template #header> Адреса </template>
+						<template #header>Адреса</template>
+						<div
+							class="flex flex-col items-center justify-center gap-5 py-6 text-center"
+						>
+							<span>Пока что нет адресов</span>
+							<UIButton title="Добавить" />
+						</div>
 					</AccordionTab>
 				</Accordion>
 			</div>

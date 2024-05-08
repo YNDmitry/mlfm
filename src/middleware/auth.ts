@@ -8,8 +8,7 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
 		setUser(currentUser.value)
 	}
 
-	// Если пользователь не авторизован и пытается получить доступ к странице восстановления пароля
-	if (!currentUser.value && to.path === '/auth/reset-password') {
+	if (to.path === '/auth/reset-password' && to.query.token) {
 		// Проверяем наличие токена в query параметрах
 		const token = to.query.token
 

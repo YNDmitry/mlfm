@@ -11,18 +11,18 @@
 	)
 
 	useSeoMeta({
-		title: data.value.about_us?.meta_title,
-		ogTitle: data.value.about_us?.meta_title,
-		description: data.value.about_us?.meta_description,
-		ogDescription: data.value.about_us?.meta_description,
+		title: data.value.about_us?.SEO.meta_title,
+		ogTitle: data.value.about_us?.SEO.meta_title,
+		description: data.value.about_us?.SEO.meta_description,
+		ogDescription: data.value.about_us?.SEO.meta_description,
 		ogImage:
 			appConfig.public.databaseUrl +
 			'assets/' +
-			data.value.about_us?.og_image?.id,
+			data.value.about_us?.SEO.og_image?.id,
 		twitterImage:
 			appConfig.public.databaseUrl +
 			'assets/' +
-			data.value.about_us?.og_image?.id,
+			data.value.about_us?.SEO.og_image?.id,
 	})
 </script>
 

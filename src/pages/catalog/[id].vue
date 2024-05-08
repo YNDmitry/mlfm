@@ -1,16 +1,21 @@
 <script setup lang="ts">
 	const appConfig = useRuntimeConfig()
 	const {getItems} = useDirectusItems()
+	const {$preview} = useNuxtApp()
 
 	const cartStore = useCartStore()
 	const wishlistStore = useWishlistStore()
 	const {id} = useRoute().params
 
-	const isOnWishlist = wishlistStore.isOnWishlist(id)
-
 	definePageMeta({
 		layout: 'default',
 	})
+
+	const isOnWishlist = wishlistStore.isOnWishlist(id)
+
+	if ($preview) {
+		const {data: product} = await useAsyncGql('GetProductById', {id})
+	}
 
 	const {data: product} = await useAsyncGql(
 		'GetProductById',

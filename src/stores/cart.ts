@@ -9,7 +9,6 @@ interface CartItem {
 	size_id: string | number
 	image_id: string
 	title: string
-	// Add other properties as needed
 }
 
 export const useCartStore = defineStore('userCart', {
@@ -49,10 +48,10 @@ export const useCartStore = defineStore('userCart', {
 			})
 		},
 
-		async loadCartFromServer(sessionId) {
+		async loadCartFromServer(sessionId: string) {
 			try {
 				const res = await GqlGetSession({id: sessionId})
-				this.items = res.guest_session_by_id.temp_order || []
+				this.items = res?.guest_session_by_id?.temp_order || []
 			} catch (error) {
 				console.error('Error loading cart from server:', error)
 			}
@@ -118,26 +117,21 @@ export const useCartStore = defineStore('userCart', {
 			this.saveCartToServer()
 		},
 
-		async getDiscount(string: string, hash: string) {
-			const {$directus} = useNuxtApp()
+		async getDiscount(string: string) {
 			try {
-				await $directus.request('verifyHash', {string, hash})
+				const res = await GqlDiscount({
+					discount: string,
+				})
+				console.log(res.discounts.length)
 			} catch (error) {
 				console.error('Error verifying discount:', error)
 			}
 		},
 
 		async getRelatedProducts() {
-			const {getItems} = useDirectusItems() // Assuming getItems is a method from a Directus related API
 			try {
-				const products = await getItems({
-					collection: 'products',
-					params: {
-						fields: ['title', 'price', 'main_image', 'id'],
-						limit: 3,
-					},
-				})
-				this.relatedItems = products
+				const products = await GqlRelatedProducts()
+				this.relatedItems = products.products
 				this.isRelatedProductPending = false
 			} catch (error) {
 				console.error('Error fetching related products:', error)

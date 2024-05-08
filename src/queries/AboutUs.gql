@@ -6,5 +6,12 @@ query AboutUs {
 			id
 		}
 		body
+		SEO {
+			meta_title
+			meta_description
+			og_image {
+				id
+			}
+		}
 	}
 }
