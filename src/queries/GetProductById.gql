@@ -3,7 +3,15 @@ query GetProductById($id: ID!) {
 		id
 		title
 		description
-		quantity
+		product_variants {
+			color_id {
+				title
+			}
+			size_id {
+				small_title
+			}
+			qunatity
+		}
 		main_image {
 			id
 		}

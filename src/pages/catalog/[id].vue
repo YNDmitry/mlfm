@@ -30,10 +30,10 @@
 	}
 
 	const currentColor = ref(
-		product.value.products_by_id.colors[0]?.colors_id?.title,
+		product?.value?.products_by_id.product_variants?.at(0)?.color_id?.title,
 	)
 	const currentSize = ref(
-		product?.value?.products_by_id.sizes[0]?.sizes_id?.small_title,
+		product.value.products_by_id.product_variants?.at(0)?.size_id?.small_title,
 	)
 
 	useSeoMeta({
@@ -113,6 +113,47 @@
 			currency: 'RUB',
 		}).format(product?.value?.products_by_id?.price),
 	)
+
+	let processedData = ref({
+		products_by_id: {
+			colors: [],
+			sizes: [],
+		},
+	})
+
+	// Extract unique colors and sizes
+	const colorSet = new Set()
+	const sizeMap = new Map()
+
+	product?.value?.products_by_id?.product_variants?.forEach((item) => {
+		const {color_id, size_id} = item
+		const {title} = color_id
+		const {small_title} = size_id
+
+		if (!colorSet.has(title)) {
+			processedData.value.products_by_id.colors.push({
+				colors_id: color_id,
+			})
+			colorSet.add(title)
+		}
+
+		if (!sizeMap.has(small_title)) {
+			const id = sizeMap.size + 1
+			processedData.value.products_by_id.sizes.push({
+				sizes_id: {...size_id, id},
+			})
+			sizeMap.set(small_title, id)
+		}
+	})
+
+	const isMatching = computed(() => {
+		return product?.value?.products_by_id?.product_variants?.some(
+			(variant) =>
+				variant?.color_id?.title === currentColor.value &&
+				variant?.size_id?.small_title === currentSize.value &&
+				variant?.qunatity >= 1,
+		)
+	})
 </script>
 
 <template>
@@ -170,19 +211,23 @@
 								<span v-if="product.products_by_id?.category"
 									>Категория: {{ product.products_by_id.category.title }}</span
 								>
-								<template v-if="product?.products_by_id?.colors?.length > 0">
+
+								<template
+									v-if="processedData.products_by_id.colors?.length > 0"
+								>
 									<span>Цвет: </span>
 									<div class="flex max-tablet:gap-[0.75rem] tablet:gap-2">
 										<label
 											class="inline-flex cursor-pointer items-center"
-											v-for="color in product.products_by_id?.colors"
-											:key="color"
+											v-for="(color, idx) in processedData.products_by_id
+												.colors"
+											:key="idx"
 										>
 											<input
 												checked
 												type="radio"
 												name="color"
-												:value="color?.colors_id.title"
+												:value="color?.colors_id?.title"
 												v-model="currentColor"
 												class="hidden"
 											/>
@@ -190,7 +235,7 @@
 											<span
 												class="rounded-full bg-white flex items-center justify-center border border-black text-black max-tablet:min-h-[1.25rem] max-tablet:min-w-[3.438rem] max-tablet:text-[0.625rem] tablet:min-h-[2rem] tablet:min-w-[5.938rem]"
 												id="option-6"
-												>{{ color?.colors_id.title }}</span
+												>{{ color?.colors_id?.title }}</span
 											>
 										</label>
 									</div>
@@ -199,7 +244,7 @@
 
 							<div
 								class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-2"
-								v-if="product.products_by_id?.sizes?.length > 0"
+								v-if="processedData.products_by_id.sizes?.length > 0"
 							>
 								<span class="max-tablet:text-[0.625rem] tablet:text-[0.75rem]"
 									>Размер:</span
@@ -209,8 +254,8 @@
 								<div class="flex max-tablet:gap-[0.75rem] tablet:gap-2">
 									<label
 										class="inline-flex cursor-pointer items-center"
-										v-for="size in product.products_by_id?.sizes"
-										:key="size?.sizes_id?.id"
+										v-for="(size, idx) in processedData.products_by_id.sizes"
+										:key="idx"
 									>
 										<input
 											checked
@@ -248,7 +293,7 @@
 						>
 							<button
 								type="button"
-								:disabled="product.products_by_id?.quantity === 0"
+								:disabled="isMatching"
 								@click="handleAddToCart"
 								class="w-full rounded-main bg-red2 text-primary transition-all hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-70 max-tablet:min-h-[2rem] max-tablet:text-[0.625rem] tablet:min-h-[3.313rem]"
 							>

@@ -44,6 +44,7 @@ export default defineNuxtConfig({
 		'nuxt-build-cache',
 		'@nuxt/fonts',
 		'nuxt-graphql-client',
+		'@nuxt/test-utils/module',
 	],
 
 	image: {

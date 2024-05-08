@@ -1,10 +1,4 @@
-import {updateMe, login} from '@directus/sdk'
 import {defineStore} from 'pinia'
-import {useNuxtApp} from '#app'
-
-interface Error {
-	errors?: any
-}
 
 interface UserState {
 	firstName: string
@@ -72,7 +66,7 @@ export const useUserStore = defineStore('userStore', {
 				await login({email: email, password: password})
 				await navigateTo('/profile')
 				await this.getUserInfo()
-			} catch (error: Error | undefined) {
+			} catch (error: any) {
 				err.value = error ?? {}
 				console.log(error.errors)
 			}
