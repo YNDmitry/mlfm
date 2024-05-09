@@ -1,6 +1,7 @@
 <script setup lang="ts">
+	import {jwtPayload} from '../../utils/jwt-payload'
 	import {object, string} from 'yup'
-	import {refresh} from '@directus/sdk'
+	import {refresh, passwordReset} from '@directus/sdk'
 	const {$directus} = useNuxtApp()
 
 	definePageMeta({
@@ -23,28 +24,35 @@
 			.max(200, 'Максимальная длина 200'),
 	})
 
+	const isDone = ref(false)
+	const isError = ref(false)
 	const refresh_token = useRoute().params.token
 
-	const {handleSubmit, isSubmitting} = useForm({
-		validationSchema: schema,
-	})
+	const {handleSubmit, isSubmitting} = useForm({validationSchema: schema})
 
-	const res = $directus.request(refresh(refresh_token))
-	console.log(res)
+	const res = await $directus.request(refresh(refresh_token))
+	const email = computed(() => jwtPayload(res.refresh_token).email)
 
 	const onSubmit = handleSubmit(async (values) => {
-		console.log(values)
+		try {
+			await $directus.request(passwordReset(refresh_token, values.password))
+			isDone.value = true
+		} catch (error) {
+			isError.value = true
+		}
 	})
 </script>
 
 <template>
 	<AuthForm title="Сброс пароля">
-		<form @submit.prevent="onSubmit">
+		<form @submit.prevent="onSubmit" v-if="!isDone">
 			<TheInput
 				:isRequired="true"
 				:inputPlaceholder="'Email'"
 				:inputType="'email'"
 				:inputName="'email'"
+				:value="email"
+				:disabled="true"
 			/>
 			<TheInput
 				:isRequired="true"
@@ -70,7 +78,19 @@
 					/>
 					Сбросить
 				</button>
+				<div v-if="isError" class="text-red">
+					Что-то пошло не так. Попробуйте ещё раз позже
+				</div>
 			</div>
 		</form>
+		<div v-else>
+			<span>Успешно! Теперь можете зайти в личный кабинет!</span>
+			<NuxtLink
+				to="/profile"
+				class="relative flex w-full items-center justify-center bg-red2 text-primary transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-70 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[45px] tablet:rounded-[1.875rem]"
+			>
+				Перейти
+			</NuxtLink>
+		</div>
 	</AuthForm>
 </template>

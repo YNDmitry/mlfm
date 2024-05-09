@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 	import {object, string} from 'yup'
 	import {passwordRequest} from '@directus/sdk'
 	const {$directus} = useNuxtApp()
@@ -21,9 +21,13 @@
 	const isSubmitted = ref(false)
 
 	const onSubmit = handleSubmit(async (values) => {
-		await $directus.request(passwordRequest(values.email)).then((result) => {
-			isSubmitted.value = true
-		})
+		await $directus
+			.request(
+				passwordRequest(values.email, 'https://mlfm.store/auth/reset-password'),
+			)
+			.then((result) => {
+				isSubmitted.value = true
+			})
 	})
 </script>
 
