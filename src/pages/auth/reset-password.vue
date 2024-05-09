@@ -26,7 +26,7 @@
 
 	const isDone = ref(false)
 	const isError = ref(false)
-	const refresh_token = useRoute().params.token
+	const refresh_token = useRoute().query.token
 
 	const {handleSubmit, isSubmitting} = useForm({validationSchema: schema})
 
