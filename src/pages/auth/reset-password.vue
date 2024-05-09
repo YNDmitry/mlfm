@@ -1,7 +1,7 @@
 <script setup lang="ts">
 	import {jwtPayload} from '../../utils/jwt-payload'
 	import {object, string} from 'yup'
-	import {refresh, passwordReset} from '@directus/sdk'
+	import {passwordReset} from '@directus/sdk'
 	const {$directus} = useNuxtApp()
 
 	definePageMeta({
@@ -30,8 +30,7 @@
 
 	const {handleSubmit, isSubmitting} = useForm({validationSchema: schema})
 
-	const res = await $directus.request(refresh(refresh_token))
-	const email = computed(() => jwtPayload(res.refresh_token).email)
+	const email = computed(() => jwtPayload(refresh_token).email)
 
 	const onSubmit = handleSubmit(async (values) => {
 		try {
@@ -54,6 +53,12 @@
 				:value="email"
 				:disabled="true"
 			/>
+			<div
+				:disabled="true"
+				class="w-full border-[1px] border-black font-light focus:outline-none disabled:pointer-events-none max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
+			>
+				<span>{{ email }}</span>
+			</div>
 			<TheInput
 				:isRequired="true"
 				:inputPlaceholder="'Пароль'"

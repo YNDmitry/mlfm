@@ -2,7 +2,7 @@
 	const websiteStore = useWebsiteStore()
 	const useCart = useCartStore()
 
-	// useCart.initCart()
+	const config = useRuntimeConfig()
 </script>
 
 <template>
@@ -31,11 +31,11 @@
 					>
 						<article
 							v-for="item in useCart.items"
-							:key="item.id"
+							:key="item?.id"
 							class="flex max-mobile:gap-[0.625rem] mobile:gap-[0.938rem]"
 						>
 							<NuxtImg
-								:src="'https://admin.mlfm.store/assets/' + item?.image_id"
+								:src="config.public.databaseUrl + 'assets/' + item?.image_id"
 								width="130"
 								class="object-cover max-mobile:h-[6.25rem] max-mobile:w-[3.813rem] mobile:h-[6.25rem]"
 							/>
