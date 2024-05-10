@@ -1,13 +1,14 @@
 <script setup lang="ts">
 	const userStore = useUserStore()
+
 	const {updateUser} = useDirectusUsers()
 	const toast = useToast()
 
 	const updateUserNewsletter = async () => {
 		await updateUser({
-			id: userStore?.id,
+			id: userStore.id,
 			user: {
-				newsletter: !userStore?.newsletter,
+				newsletter: !userStore.newsletter,
 			},
 		})
 	}
@@ -124,7 +125,7 @@
 					>
 						<Checkbox
 							binary
-							v-model="userStore?.newsletter"
+							v-model="userStore.newsletter"
 							@change="updateUserNewsletter"
 							:pt="{
 								box: 'rounded-[0] border-[1px] border-grayLight shadow-none',

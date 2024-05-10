@@ -76,7 +76,7 @@ export default defineNuxtConfig({
 	},
 
 	robots: {
-		Sitemap: (req: string) => `https://${req.headers.host}/sitemap.xml`,
+		Sitemap: (req: any) => `https://${req.headers.host}/sitemap.xml`,
 	},
 
 	primevue: {
