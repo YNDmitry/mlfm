@@ -15,9 +15,6 @@
 	})
 
 	const schema = object({
-		email: string()
-			.required('Обязательное поле')
-			.email('Введите корректный адрес электронной почты'),
 		password: string()
 			.required('Обязательное поле')
 			.min(6, 'Минимальная длина 6')
