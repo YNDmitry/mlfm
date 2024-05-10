@@ -45,17 +45,9 @@
 <template>
 	<AuthForm title="Сброс пароля">
 		<form @submit.prevent="onSubmit" v-if="!isDone">
-			<TheInput
-				:isRequired="true"
-				:inputPlaceholder="'Email'"
-				:inputType="'email'"
-				:inputName="'email'"
-				:value="email"
-				:disabled="true"
-			/>
 			<div
-				:disabled="true"
-				class="w-full border-[1px] border-black font-light focus:outline-none disabled:pointer-events-none max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
+				disabled="true"
+				class="flex w-full cursor-not-allowed items-center border-[1px] border-black bg-black/10 font-light focus:outline-none disabled:pointer-events-none max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
 			>
 				<span>{{ email }}</span>
 			</div>
