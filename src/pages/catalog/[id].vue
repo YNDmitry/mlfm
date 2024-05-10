@@ -11,7 +11,7 @@
 		layout: 'default',
 	})
 
-	const isOnWishlist = wishlistStore.isOnWishlist(id)
+	// const isOnWishlist = wishlistStore.isOnWishlist(id)
 
 	if ($preview) {
 		const {data: product} = await useAsyncGql('GetProductById', {id})
@@ -103,14 +103,14 @@
 		})
 	}
 
-	const toggleWishList = async () => {
-		if (isOnWishlist) {
-			isOnWishlist = false
-			return await wishlistStore.removeItemFromWishlist(id)
-		}
-		await wishlistStore.addItemToWishlist(id)
-		return (isOnWishlist = true)
-	}
+	// const toggleWishList = async () => {
+	// 	if (isOnWishlist) {
+	// 		isOnWishlist = false
+	// 		return await wishlistStore.removeItemFromWishlist(id)
+	// 	}
+	// 	await wishlistStore.addItemToWishlist(id)
+	// 	return (isOnWishlist = true)
+	// }
 
 	const price = computed(() =>
 		Intl.NumberFormat('ru-RU', {
