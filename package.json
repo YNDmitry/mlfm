@@ -21,7 +21,6 @@
     "@nuxtjs/sitemap": "^5.1.2",
     "@pinia/nuxt": "^0.5.1",
     "@tailwindcss/typography": "^0.5.10",
-    "@types/base-64": "^1.0.2",
     "@types/yup": "^0.32.0",
     "@vee-validate/yup": "^4.12.5",
     "@vue/test-utils": "^2.4.5",
@@ -51,7 +50,6 @@
     "@nuxtjs/tailwindcss": "^6.10.4",
     "@vee-validate/nuxt": "^4.12.6",
     "jwt-decode": "^4.0.0",
-    "msw": "^2.2.14",
     "nuxt-lenis": "^1.0.8",
     "nuxt-swiper": "^1.2.2",
     "primevue": "^3.49.1"
