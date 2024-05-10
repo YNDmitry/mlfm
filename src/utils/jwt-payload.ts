@@ -1,14 +1,7 @@
-import {decode} from 'base-64'
+import {jwtDecode} from 'jwt-decode'
 
 export function jwtPayload(token: string): any {
-	const payloadBase64 = token.split('.')[1]
-
-	if (!payloadBase64) throw new Error('Invalid JWT token')
-
-	const payloadBase64Clean = payloadBase64.replace('-', '+').replace('_', '/')
-	const payloadDecoded = decode(payloadBase64Clean)
-	const payloadObject = JSON.parse(payloadDecoded)
-	console.log(payloadObject)
+	const payloadObject = jwtDecode(token)
 
 	return payloadObject
 }
