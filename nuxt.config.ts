@@ -16,6 +16,22 @@ export default defineNuxtConfig({
 		},
 	},
 
+	routeRules: {
+		'/': {prerender: true},
+		'/auth/*': {
+			ssr: false,
+		},
+		'/profile': {
+			ssr: false,
+		},
+		'/checkout': {
+			ssr: false,
+		},
+		'/wishlist': {
+			ssr: false,
+		},
+	},
+
 	runtimeConfig: {
 		public: {
 			databaseUrl: process.env.DATABASE_URL,

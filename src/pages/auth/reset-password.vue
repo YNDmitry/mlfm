@@ -78,7 +78,9 @@
 			</div>
 		</form>
 		<div v-else>
-			<span>Успешно! Теперь можете зайти в личный кабинет!</span>
+			<span class="mb-4 text-center"
+				>Успешно! Теперь можете зайти в личный кабинет!</span
+			>
 			<NuxtLink
 				to="/profile"
 				class="relative flex w-full items-center justify-center bg-red2 text-primary transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-70 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[45px] tablet:rounded-[1.875rem]"

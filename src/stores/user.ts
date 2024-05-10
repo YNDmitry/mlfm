@@ -1,4 +1,5 @@
 import {defineStore} from 'pinia'
+import {passwordRequest} from '@directus/sdk'
 
 interface UserState {
 	firstName: string
@@ -99,6 +100,17 @@ export const useUserStore = defineStore('userStore', {
 			}).then(() => {
 				this.getUserInfo()
 			})
+		},
+
+		async updatePassword() {
+			const {$directus} = useNuxtApp()
+			try {
+				await $directus.request(
+					passwordRequest(this.email, 'https://mlfm.store/auth/reset-password'),
+				)
+			} catch (error) {
+				console.error(error)
+			}
 		},
 
 		async logOut() {
