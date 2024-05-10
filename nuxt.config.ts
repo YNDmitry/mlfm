@@ -41,7 +41,6 @@ export default defineNuxtConfig({
 		'nuxt-swiper',
 		'nuxt-lenis',
 		'@formkit/auto-animate',
-		'nuxt-build-cache',
 		'@nuxt/fonts',
 		'nuxt-graphql-client',
 		'@nuxt/test-utils/module',
