@@ -25,6 +25,7 @@
 			width="441"
 			height="550"
 			fit="cover"
+			format="webp"
 		/>
 
 		<div

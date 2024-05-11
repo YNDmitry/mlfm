@@ -369,6 +369,7 @@
 									:src="data?.catalog?.main_banner?.id"
 									width="275"
 									height="485"
+									format="webp"
 								/>
 							</div>
 							<!-- /Баннер -->
@@ -437,6 +438,7 @@
 											"
 											class="h-auto max-w-full"
 											width="955"
+											format="webp"
 										/>
 									</div>
 								</template>

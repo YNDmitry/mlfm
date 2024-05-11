@@ -10,6 +10,7 @@
 						provider="directus"
 						src="c4304427-57a3-49cf-b14a-86ea7182e0c3"
 						loading="lazy"
+						format="webp"
 					/>
 				</div>
 
@@ -17,7 +18,7 @@
 					class="max-w-[245px] text-red2 max-tablet:mr-auto max-tablet:max-w-none"
 				>
 					<h2
-						class="text-h2 max-tablet:text-h2Mob font-bold uppercase max-laptop:text-[1rem] max-laptop:tracking-[0.25rem] max-tablet:mb-[0.625rem] max-mobile:tracking-[2px] tablet:mb-[1.313rem] laptop:tracking-[5.25px]"
+						class="text-h2 font-bold uppercase max-laptop:text-[1rem] max-laptop:tracking-[0.25rem] max-tablet:mb-[0.625rem] max-tablet:text-h2Mob max-mobile:tracking-[2px] tablet:mb-[1.313rem] laptop:tracking-[5.25px]"
 					>
 						Подарочные карты
 					</h2>

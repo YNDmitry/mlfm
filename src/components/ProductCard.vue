@@ -38,6 +38,7 @@
 				width="300"
 				height="410"
 				:alt="title"
+				format="webp"
 			/>
 
 			<IconsHearth

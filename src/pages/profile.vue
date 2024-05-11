@@ -25,6 +25,8 @@
 		{id: 2, title: 'В дороге'},
 		{id: 3, title: 'Доставлен'},
 	])
+
+	const isMobile = useMediaQuery('(max-width: 768px)')
 </script>
 <template>
 	<div>
@@ -66,13 +68,17 @@
 				</div>
 			</form>
 		</Dialog>
-		<section class="pb-16 pt-20">
-			<ProfileDesktopHead />
+		<section class="pb-16 pt-20 max-tablet:pt-11">
+			<ProfileDesktopHead v-if="!isMobile" />
+			<ProfileMobileHead v-else />
 		</section>
-		<section class="pb-44 max-tablet:hidden">
+		<section class="pb-44">
 			<div class="container">
 				<Accordion :activeIndex="[0]" :multiple="true">
-					<AccordionTab :pt="{root: 'border-b-[1px]', content: 'px-0'}">
+					<AccordionTab
+						:pt="{root: 'border-b-[1px]', content: 'px-0'}"
+						v-if="!isMobile"
+					>
 						<template #header> Активные заказы </template>
 						<div class="flex justify-between gap-5 py-6">
 							<!-- Табы -->

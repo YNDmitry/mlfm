@@ -76,6 +76,7 @@
 					class="h-full w-full object-cover"
 					width="1440"
 					height="600"
+					format="webp"
 				/>
 			</div>
 			<div
@@ -176,6 +177,7 @@
 						class="h-full w-full object-cover"
 						:src="data.homepage?.look_image?.id"
 						width="678"
+						format="webp"
 					/>
 
 					<Swiper
@@ -250,6 +252,7 @@
 							width="623"
 							height="461"
 							class="max-tablet:w-full"
+							format="webp"
 						/>
 					</div>
 				</div>
@@ -274,6 +277,7 @@
 								:src="data.homepage?.uniq_product_image?.id"
 								width="368"
 								height="442"
+								format="webp"
 							/>
 						</div>
 
@@ -291,6 +295,7 @@
 							:src="data.homepage?.uniq_product_image_2?.id"
 							width="486"
 							height="602"
+							format="webp"
 						/>
 					</div>
 				</div>

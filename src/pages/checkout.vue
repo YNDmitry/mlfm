@@ -478,7 +478,8 @@
 						<NuxtImg
 							provider="directus"
 							v-if="item?.main_image"
-							:src="item?.main_image"
+							:src="item?.main_image.id"
+							format="webp"
 							class="max-mobile:h-[3.75rem] max-mobile:w-[6.563rem] mobile:h-[6.25rem]"
 						/>
 
