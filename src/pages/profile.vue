@@ -1,4 +1,6 @@
 <script setup lang="ts">
+	import {object, string} from 'yup'
+
 	const userStore = useUserStore()
 	const websiteStore = useWebsiteStore()
 
@@ -27,6 +29,29 @@
 	])
 
 	const isMobile = useMediaQuery('(max-width: 768px)')
+
+	const schema = object({
+		firstName: string(),
+		lastName: string(),
+		phone: string(),
+	})
+
+	const {handleSubmit, isSubmitting} = useForm({
+		validationSchema: schema,
+	})
+
+	const isUpdateInfoDone = ref(false)
+
+	const onSubmitUpdateInfo = handleSubmit(async (values) => {
+		await userStore.updateUserInfo(
+			values.firstName,
+			values.lastName,
+			values.phone,
+		)
+		await userStore.getUserInfo()
+		isUpdateInfoDone.value = true
+		setTimeout(() => (userStore.isChangeUserInfoPopup = false), 500)
+	})
 </script>
 <template>
 	<div>
@@ -35,27 +60,40 @@
 			v-model:visible="userStore.isChangeUserInfoPopup"
 			modal
 			:pt="{
-				root: 'max-w-[500px]',
+				root: 'max-w-[500px] min-w-[500px]',
 			}"
 		>
 			<template #header>
 				<div class="text-[1rem] font-bold">Обновление данных</div>
 			</template>
-			<form @submit.prevent="userStore.updateUserInfo">
+			<form @submit.prevent="onSubmitUpdateInfo" v-if="!isUpdateInfoDone">
 				<div class="flex flex-col gap-4">
 					<div
 						class="grid grid-cols-[1fr_1fr] gap-4 max-mobile:grid-cols-[1fr]"
 					>
-						<TheInput :inputName="'firstName'" :inputPlaceholder="'Имя'" />
-						<TheInput :inputName="'lastName'" :inputPlaceholder="'Фамилия'" />
+						<TheInput
+							input-type="text"
+							:inputName="'firstName'"
+							:inputPlaceholder="userStore.firstName + ' - имя'"
+						/>
+						<TheInput
+							input-type="text"
+							:inputName="'lastName'"
+							:inputPlaceholder="userStore.lastName + ' - фамилия'"
+						/>
 					</div>
-					<TheInput :inputName="'email'" :inputPlaceholder="'Email'" />
-					<TheInput :inputName="'phone'" :inputPlaceholder="'Телефон'" />
+					<TheInput
+						input-type="text"
+						:inputName="'phone'"
+						:inputPlaceholder="userStore.phone || 'Телефон'"
+					/>
 					<button
+						:disabled="isSubmitting"
 						type="submit"
 						class="relative flex w-full items-center justify-center bg-red2 text-primary transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-70 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[45px] tablet:rounded-[1.875rem]"
 					>
 						<ProgressSpinner
+							v-if="isSubmitting"
 							aria-label="Loading..."
 							style="width: 20px; height: 20px"
 							:pt="{
@@ -67,8 +105,12 @@
 					</button>
 				</div>
 			</form>
+			<div v-else class="text-center">Успешно!</div>
 		</Dialog>
 		<section class="pb-16 pt-20 max-tablet:pt-11">
+			<div class="container mb-7 text-center" v-if="!userStore.isEmailVerify">
+				Пожалуйста, подтвердрите ваш email адресс
+			</div>
 			<ProfileDesktopHead v-if="!isMobile" />
 			<ProfileMobileHead v-else />
 		</section>

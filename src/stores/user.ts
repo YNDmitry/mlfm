@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {passwordRequest} from '@directus/sdk'
+import {passwordRequest, createUser} from '@directus/sdk'
 
 interface UserState {
 	firstName: string
@@ -10,6 +10,7 @@ interface UserState {
 	newsletter: boolean
 	phone: string
 	isChangeUserInfoPopup: boolean
+	isEmailVerify: boolean
 }
 
 interface CreateUserPayload {
@@ -20,6 +21,7 @@ interface CreateUserPayload {
 	terms: boolean
 	role: string
 	newsletter: boolean
+	is_email_verified: boolean
 }
 
 export const useUserStore = defineStore('userStore', {
@@ -32,6 +34,7 @@ export const useUserStore = defineStore('userStore', {
 		id: '',
 		isAuthenticated: false,
 		isChangeUserInfoPopup: false,
+		isEmailVerify: false,
 	}),
 	actions: {
 		async create(
@@ -42,7 +45,8 @@ export const useUserStore = defineStore('userStore', {
 			terms: boolean,
 			newsletter: boolean,
 		) {
-			const {createUser, login} = useDirectusAuth()
+			const {login} = useDirectusAuth()
+			const {$directus} = useNuxtApp()
 
 			const userPayload: CreateUserPayload = {
 				email: mail,
@@ -52,8 +56,10 @@ export const useUserStore = defineStore('userStore', {
 				last_name: lastName,
 				terms: terms,
 				newsletter: newsletter,
+				is_email_verified: false,
 			}
 
+			await $directus.request(createUser(userPayload))
 			await createUser(userPayload)
 			await login({email: mail, password: password})
 
@@ -65,8 +71,8 @@ export const useUserStore = defineStore('userStore', {
 			const err = ref('')
 			try {
 				await login({email: email, password: password})
-				await navigateTo('/profile')
 				await this.getUserInfo()
+				await navigateTo('/profile')
 			} catch (error: any) {
 				err.value = error ?? {}
 				console.log(error.errors)
@@ -86,6 +92,7 @@ export const useUserStore = defineStore('userStore', {
 			this.email = user?.value.email
 			this.id = user?.value.id
 			this.isAuthenticated = true
+			this.isEmailVerify = user?.value.is_email_verified
 		},
 
 		async updateUserInfo(firstName: string, lastName: string, phone: string) {
