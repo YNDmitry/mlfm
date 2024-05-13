@@ -1,5 +1,6 @@
 query Gift {
 	gift_card {
+		id
 		title
 		description
 		image {

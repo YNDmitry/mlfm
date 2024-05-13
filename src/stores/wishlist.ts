@@ -1,9 +1,16 @@
 import {defineStore} from 'pinia'
 
+interface ProductDetails {
+	id: string
+	name: string
+	price: number
+	// Добавьте другие необходимые поля
+}
+
 export const useWishlistStore = defineStore('wishlist', {
 	state: () => ({
-		wishlist: new Set<string>(), // Using a Set to ensure unique IDs
-		productDetails: [] as any[],
+		wishlist: new Set<string>(),
+		productDetails: [] as ProductDetails[],
 	}),
 	getters: {
 		isOnWishlist: (state) => {
@@ -11,26 +18,32 @@ export const useWishlistStore = defineStore('wishlist', {
 		},
 	},
 	actions: {
-		async initWishlist() {
-			if (typeof window === 'undefined') {
-				return // Exit if on server side
-			}
+		async checkOrCreateSession() {
 			let sessionId = localStorage.getItem('sessionId')
 			if (!sessionId) {
 				try {
 					const res = await GqlCreateGuestSessionItem({data: {status: 'draft'}})
-					sessionId = res.create_guest_session_item?.id
+					sessionId = res.create_guest_session_item?.id as string
 					localStorage.setItem('sessionId', sessionId)
 				} catch (error) {
-					console.error('Error during session initialization:', error)
+					console.error('Failed to initialize session:', error)
 				}
 			}
-			await this.loadWishlistFromServer(sessionId)
+			return sessionId
 		},
 
-		async loadWishlistFromServer(sessionId) {
+		async initWishlist() {
+			if (typeof window === 'undefined') return // Exit if on server side
+
+			const sessionId = await this.checkOrCreateSession()
+			if (sessionId) {
+				await this.loadWishlistFromServer(sessionId)
+			}
+		},
+
+		async loadWishlistFromServer(sessionId: string) {
 			try {
-				const res = await GqlGetSession({id: sessionId})
+				const res: any = await GqlGetSession({id: sessionId})
 				const items = res.guest_session_by_id.temp_wishlist || []
 				this.wishlist = new Set(items)
 				await this.loadProductDetails()
@@ -40,23 +53,22 @@ export const useWishlistStore = defineStore('wishlist', {
 		},
 
 		async loadProductDetails() {
-			if (this.wishlist.size > 0) {
+			const productIds = Array.from(this.wishlist)
+			if (productIds.length > 0) {
 				try {
-					const res = await GqlGetProductsByIds({
-						ids: Array.from(this.wishlist),
-					})
+					const res: any = await GqlGetProductsByIds({ids: productIds})
 					this.productDetails = res.products || []
 				} catch (error) {
 					console.error('Error loading product details:', error)
 				}
 			} else {
-				this.productDetails = [] // Clear details if wishlist is empty
+				this.productDetails = []
 			}
 		},
 
 		async saveWishlistToServer() {
-			const sessionId = localStorage.getItem('sessionId')
-			if (!sessionId) return // Exit if no session ID available
+			const sessionId = await this.checkOrCreateSession()
+			if (!sessionId) return
 
 			try {
 				await GqlUpdateGuestSessionItem({
@@ -71,12 +83,6 @@ export const useWishlistStore = defineStore('wishlist', {
 		},
 
 		async addItemToWishlist(productId: string) {
-			const sessionId = localStorage.getItem('sessionId')
-			if (!sessionId) {
-				await this.initWishlist() // Initialize the wishlist if session is not found
-				return
-			}
-
 			this.wishlist.add(productId)
 			await this.saveWishlistToServer()
 		},

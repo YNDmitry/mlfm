@@ -115,18 +115,6 @@
 		refresh() // Вызов функции обновления данных
 	}
 
-	// Слежение за изменениями в route.query и обновление фильтров
-	// watch(
-	// 	() => route.query,
-	// 	(newQuery) => {
-	// 		initialState.filter.brandTitle = newQuery.brand || ''
-	// 		initialState.filter.collectionId = newQuery.collection || ''
-	// 		initialState.filter.colors = newQuery.color || ''
-	// 		initialState.filter.size = newQuery.size || ''
-	// 		initialState.filter.categories = newQuery.category || []
-	// 	},
-	// )
-
 	// Наблюдение за изменениями фильтров и страницы, и обновление продуктов при их изменении
 	watch(
 		() => [currentPage, initialState.filter],

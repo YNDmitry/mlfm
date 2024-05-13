@@ -44,7 +44,11 @@
 			<IconsHearth
 				class="absolute right-3 top-3 h-5 w-5 transition-all"
 				:is-on-wishlist="wishlistStore.isOnWishlist(id)"
-				@click.prevent="wishlistStore.addItemToWishlist(id)"
+				@click.prevent="
+					!wishlistStore.isOnWishlist(id)
+						? wishlistStore.addItemToWishlist(id)
+						: wishlistStore.removeItemFromWishlist(id)
+				"
 			/>
 		</div>
 

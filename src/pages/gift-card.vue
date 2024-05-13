@@ -1,6 +1,4 @@
 <script setup lang="ts">
-	import {object, string} from 'yup'
-
 	useSeoMeta({
 		title: 'Подарочная карта | MLFM',
 		ogTitle: 'Подарочная карта | MLFM',
@@ -17,23 +15,16 @@
 	)
 
 	const type = ref('Физическая')
+	const nominal = ref(null)
 
-	const schema = object({
-		nominal: string().required(),
-		type: string().required(),
-	})
-
-	const {handleSubmit, isSubmitting} = useForm({
-		validationSchema: schema,
-	})
-
-	const onSubmit = handleSubmit(() => {})
+	const isDisabled = computed(() => (nominal.value !== null ? false : true))
 
 	const useCart = useCartStore()
 </script>
 
 <template>
 	<div>
+		<Toast />
 		<!-- Карточка товара -->
 		<section class="pb-20 pt-[78px] max-tablet:pt-0">
 			<div class="mx-auto my-0 max-w-[1189px] px-[1rem]">
@@ -63,10 +54,12 @@
 						<form class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-4">
 							<div class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-2">
 								<div class="mb-2 mt-4 font-normal">Номинал в рублях:</div>
-								<TheInput
-									input-type="number"
-									input-name="gift-nominal"
-									input-placeholder="10.000"
+								<input
+									type="number"
+									name="gift-nominal"
+									placeholder="10.000"
+									class="w-full border-[1px] border-black font-light focus:outline-none max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
+									v-model="nominal"
 								/>
 								<div>
 									<div class="mb-2 mt-4 font-normal">Тип:</div>
@@ -122,7 +115,17 @@
 								class="flex flex-col max-tablet:my-[1.25rem] max-tablet:gap-[1rem] tablet:gap-[1.313rem]"
 							>
 								<button
-									@click="useCart.addItem"
+									@click="
+										useCart.addItem({
+											product_id: data?.gift_card.id,
+											title: data?.gift_card?.title,
+											image_id: data?.gift_card?.image.id,
+											category: type,
+											price: nominal,
+											quantity: 1,
+										})
+									"
+									:disabled="isDisabled"
 									type="button"
 									class="w-full rounded-main bg-red2 text-primary transition-all hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-70 max-tablet:min-h-[2rem] max-tablet:text-[0.625rem] tablet:min-h-[3.313rem]"
 								>
