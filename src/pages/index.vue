@@ -1,10 +1,11 @@
 <script setup lang="ts">
 	const appConfig = useRuntimeConfig()
+	const isMobile = useMediaQuery('(max-width:768px)')
+	const config = useNuxtData('config').data
+
 	definePageMeta({
 		layout: 'default',
 	})
-
-	const config = useNuxtData('config').data
 
 	const {data} = await useAsyncGql(
 		'Homepage',
@@ -37,14 +38,14 @@
 			image: '566bc5b9-76ca-42a9-83f7-fd06f3134cea',
 			link: '/catalog',
 		},
-		{
-			title: 'Кольца на любой случай',
-			image: '6316da09-e197-4baf-a8dc-7e74d1cf7252',
-			link: '/catalog',
-		},
+		isMobile
+			? {
+					title: 'Кольца на любой случай',
+					image: '6316da09-e197-4baf-a8dc-7e74d1cf7252',
+					link: '/catalog',
+				}
+			: '',
 	])
-
-	const isMobile = useMediaQuery('(max-width:768px)')
 
 	if (isMobile.value) {
 		productsCards.value.splice(0, 1)

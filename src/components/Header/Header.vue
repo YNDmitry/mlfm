@@ -106,7 +106,10 @@
 							<div
 								class="flex items-start gap-5 max-tablet:mt-5 max-tablet:flex-col"
 							>
-								<div class="flex items-center gap-2">
+								<div
+									@click="websiteStore.handleVisibleSearch"
+									class="flex items-center gap-2"
+								>
 									<IconsSearch />
 									<span>Поиск</span>
 								</div>
