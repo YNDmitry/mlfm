@@ -134,7 +134,7 @@
 								:title="product.title"
 								:imgSrc="product.main_image?.id"
 								:price="product.price"
-								class="animation-duration-2000 max-w-[18.31rem] flex-shrink-0 transition-all max-tablet:w-[150px]"
+								class="animation-duration-2000 max-w-[18.31rem] flex-shrink-0 transition-all max-tablet:w-[171px]"
 							/>
 						</template>
 					</div>
@@ -213,7 +213,7 @@
 		<!-- /Купить образ -->
 
 		<!-- фирменный магазин -->
-		<section class="max-mobile:py-[58px] mobile:py-[77px]">
+		<section class="max-mobile:py-[30px] mobile:py-[77px]">
 			<div class="mx-auto my-0 max-w-[1095px] px-4">
 				<div
 					class="flex items-center justify-between max-tablet:flex-col max-mobile:gap-[8px] mobile:gap-5"

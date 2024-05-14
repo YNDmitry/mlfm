@@ -1,4 +1,6 @@
 <script setup lang="ts">
+	import {options} from './constans'
+
 	const appConfig = useRuntimeConfig()
 	const isMobile = useMediaQuery('(max-width: 768px)')
 	const route = useRoute()
@@ -6,6 +8,10 @@
 
 	const currentPage = ref(0)
 	const totalPages = ref(0)
+
+	const currentSort = ref('')
+	const sortOptions = ref(options)
+
 	const initialState = reactive({
 		offset: currentPage.value,
 		limit: isMobile.value ? 10 : 9,
@@ -63,6 +69,10 @@
 		return GqlProducts({
 			page: Math.ceil(currentPage.value / initialState.limit) + 1,
 			limit: initialState.limit,
+			sort:
+				currentSort?.value.length === 0
+					? ['-date_created']
+					: currentSort.value?.code,
 			filter: filters,
 		})
 	})
@@ -117,7 +127,7 @@
 
 	// Наблюдение за изменениями фильтров и страницы, и обновление продуктов при их изменении
 	watch(
-		() => [currentPage, initialState.filter],
+		() => [currentPage, currentSort, initialState.filter],
 		() => {
 			refresh()
 			window.scrollTo(0, 0) // Возвращаем пользователя к началу страницы при смене фильтров
@@ -170,6 +180,7 @@
 
 	const totalProducts = data?.value?.products_aggregated[0].count?.id
 </script>
+
 <template>
 	<div>
 		<section class="pt-[3.75rem]">
@@ -367,10 +378,44 @@
 
 					<div class="max-laptop:pb-[3.75rem] laptop:pb-[4.375rem]">
 						<!-- Хлебные крошки -->
-						<div class="pb-[3.125rem] pt-[8px] text-[12px] max-laptop:hidden">
-							<NuxtLink to="/">Главная</NuxtLink>
-							/
-							<NuxtLink to="/catalog">Каталог</NuxtLink>
+						<div
+							class="flex items-center justify-between pb-[3.125rem] pt-[8px] max-tablet:hidden"
+						>
+							<div class="text-[12px]">
+								<NuxtLink to="/">Главная</NuxtLink>
+								/
+								<NuxtLink to="/catalog">Каталог</NuxtLink>
+							</div>
+							<div id="sort-wrapper" class="relative">
+								<Dropdown
+									v-model="currentSort"
+									:options="sortOptions"
+									optionLabel="sort"
+									placeholder="Сортировка"
+									:pt="{
+										input: 'p-0 text-black text-[12px]',
+										root: 'shadow-none outline-none',
+										trigger: 'w-[14px] ml-[8px] text-black',
+										wrapper: '!max-h-none',
+										panel: '!left-auto !right-0 !top-[30px]',
+									}"
+									append-to="#sort-wrapper"
+								>
+									<template #value="slotProps">
+										<div v-if="slotProps.value" class="align-items-center flex">
+											<div>{{ slotProps.value.name }}</div>
+										</div>
+										<span v-else>
+											{{ slotProps.placeholder }}
+										</span>
+									</template>
+									<template #option="slotProps">
+										<div class="align-items-center flex text-[12px]">
+											<div>{{ slotProps.option.name }}</div>
+										</div>
+									</template>
+								</Dropdown>
+							</div>
 						</div>
 						<!-- /Хлебные крошки -->
 
@@ -477,3 +522,9 @@
 		</section>
 	</div>
 </template>
+
+<style>
+	.p-highlight {
+		@apply bg-red text-primary;
+	}
+</style>

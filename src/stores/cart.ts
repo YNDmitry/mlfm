@@ -59,6 +59,7 @@ export const useCartStore = defineStore('userCart', {
 			const sessionId = await this.getSessionId()
 			if (sessionId) {
 				this.loadCartFromServer(sessionId)
+				return this.getRelatedProducts()
 			}
 		},
 

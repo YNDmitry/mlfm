@@ -15,7 +15,7 @@
 				</div>
 
 				<div
-					class="max-w-[245px] text-red2 max-tablet:mr-auto max-tablet:max-w-none"
+					class="max-w-[245px] text-red2 max-tablet:mx-auto max-tablet:max-w-none max-tablet:justify-center max-tablet:text-center"
 				>
 					<h2
 						class="text-h2 font-bold uppercase max-laptop:text-[1rem] max-laptop:tracking-[0.25rem] max-tablet:mb-[0.625rem] max-tablet:text-h2Mob max-mobile:tracking-[2px] tablet:mb-[1.313rem] laptop:tracking-[5.25px]"
@@ -31,7 +31,7 @@
 
 					<NuxtLink
 						to="/gift-card"
-						class="flex max-w-[10.625rem] items-center justify-center rounded-main border border-red2 py-2 font-montserrat text-[1rem] uppercase transition-colors hover:bg-red2-hover hover:text-primary max-tablet:h-[1.5rem] max-tablet:w-[7.5rem] max-tablet:border-[0.5px] max-tablet:text-[0.8rem] max-tablet:font-light"
+						class="flex max-w-[10.625rem] items-center justify-center rounded-main border border-red2 py-2 font-montserrat text-[1rem] uppercase transition-colors hover:bg-red2-hover hover:text-primary max-tablet:mx-auto max-tablet:h-[2rem] max-tablet:w-[7.5rem] max-tablet:border-[0.5px] max-tablet:text-[0.8rem] max-tablet:font-light"
 					>
 						подарить
 					</NuxtLink>

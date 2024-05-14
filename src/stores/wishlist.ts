@@ -52,8 +52,6 @@ export const useWishlistStore = defineStore('wishlist', {
 		async loadWishlistFromServer(sessionId: string) {
 			try {
 				const res: any = await GqlGetSession({id: sessionId})
-				console.log(res)
-
 				const items = res?.guest_session_by_id?.temp_wishlist || []
 				this.wishlist = new Set(items)
 				await this.loadProductDetails()

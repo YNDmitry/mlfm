@@ -1,4 +1,10 @@
 <script setup lang="ts">
+	const useCart = useCartStore()
+	const type = ref('Физическая')
+	const nominal = ref(null)
+
+	const isDisabled = computed(() => (nominal.value !== null ? false : true))
+
 	useSeoMeta({
 		title: 'Подарочная карта | MLFM',
 		ogTitle: 'Подарочная карта | MLFM',
@@ -13,13 +19,6 @@
 			},
 		},
 	)
-
-	const type = ref('Физическая')
-	const nominal = ref(null)
-
-	const isDisabled = computed(() => (nominal.value !== null ? false : true))
-
-	const useCart = useCartStore()
 </script>
 
 <template>

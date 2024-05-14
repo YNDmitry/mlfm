@@ -1,5 +1,10 @@
-query Products($limit: Int, $page: Int, $filter: products_filter) {
-	products(filter: $filter, sort: "-date_created", limit: $limit, page: $page) {
+query Products(
+	$limit: Int
+	$sort: [String]
+	$page: Int
+	$filter: products_filter
+) {
+	products(filter: $filter, sort: $sort, limit: $limit, page: $page) {
 		id
 		title
 		price
