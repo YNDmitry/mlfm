@@ -523,7 +523,7 @@
 	</div>
 </template>
 
-<style>
+<style scoped>
 	.p-highlight {
 		@apply bg-red text-primary;
 	}
