@@ -23,11 +23,11 @@
 		},
 	)
 
+	const userStore = useUserStore()
+	const wishlistStore = useWishlistStore()
 	if (process.client) {
-		const userStore = useUserStore()
-		const wishlistStore = useWishlistStore()
+		await userStore.getUserInfo()
 		wishlistStore.initWishlist()
-		userStore.getUserInfo()
 	}
 </script>
 

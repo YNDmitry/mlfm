@@ -6,55 +6,64 @@
 	const cartStore = useCartStore()
 	const wishlistStore = useWishlistStore()
 	const {id} = useRoute().params
+	const isOnWishlist = computed(() => wishlistStore.isOnWishlist(id as string))
+
+	interface GetProductByIdQuery {
+		products_by_id: Product
+	}
 
 	definePageMeta({
 		layout: 'default',
 	})
 
-	// const isOnWishlist = wishlistStore.isOnWishlist(id)
+	const product = ref<Product | null>(null)
 
-	if ($preview) {
-		const {data: product} = await useAsyncGql('GetProductById', {id})
+	const fetchProduct = async () => {
+		try {
+			const response = await useAsyncGql(
+				'GetProductById',
+				{id},
+				{
+					getCachedData(key, nuxtApp) {
+						return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+					},
+				},
+			)
+			product.value = response.data?.value.products_by_id || null
+
+			if (!product.value) {
+				throw createError({
+					statusCode: 404,
+					statusMessage: 'Продукт не найден',
+				})
+			}
+		} catch (error) {
+			console.error('Error fetching product:', error)
+			throw createError({
+				statusCode: 404,
+				statusMessage: 'Продукт не найден',
+			})
+		}
 	}
-
-	const {data: product} = await useAsyncGql(
-		'GetProductById',
-		{id},
-		{
-			getCachedData(key, nuxtApp) {
-				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
-			},
-		},
-	)
-
-	if (!product.value.products_by_id) {
-		throw createError({
-			statusCode: 404,
-			statusMessage: 'Продукт не найден',
-		})
-	}
-
-	const currentColor = ref(
-		product?.value?.products_by_id.product_variants?.at(0)?.color_id?.title,
-	)
-	const currentSize = ref(
-		product.value.products_by_id.product_variants?.at(0)?.size_id?.small_title,
-	)
+	await fetchProduct()
 
 	useSeoMeta({
-		title: product?.value.products_by_id?.title + ' | MLFM',
-		ogTitle: product?.value.products_by_id?.title + ' | MLFM',
-		description: product?.value.products_by_id?.description,
-		ogDescription: product?.value.products_by_id?.description,
+		title: product?.value?.title + ' | MLFM',
+		ogTitle: product?.value?.title + ' | MLFM',
+		description: product?.value?.description,
+		ogDescription: product?.value?.description,
 		ogImage:
-			appConfig.public.databaseUrl +
-			'assets/' +
-			product?.value.products_by_id?.main_image?.id,
+			appConfig.public.databaseUrl + 'assets/' + product?.value?.main_image?.id,
 		twitterImage:
-			appConfig.public.databaseUrl +
-			'assets/' +
-			product?.value.products_by_id?.main_image?.id,
+			appConfig.public.databaseUrl + 'assets/' + product?.value?.main_image?.id,
 	})
+
+	const currentColor = ref(
+		product?.value?.product_variants?.at(0)?.color_id?.title,
+	)
+	const currentSize = ref(
+		product?.value?.product_variants?.at(0)?.size_id?.small_title,
+	)
 
 	const isRandomProductsPending = ref(true)
 	const rProducts = ref(null)
@@ -82,7 +91,7 @@
 
 	const toast = useToast()
 	const handleAddToCart = async () => {
-		const currentProduct = product?.value?.products_by_id
+		const currentProduct = product?.value
 		cartStore.addItem({
 			product_id: currentProduct?.id,
 			price: currentProduct?.price,
@@ -94,7 +103,6 @@
 			title: currentProduct?.title,
 		})
 
-		// cartStore.addItem(product?.value?.products_by_id)
 		toast.add({
 			severity: 'success',
 			summary: 'Успешно',
@@ -103,20 +111,11 @@
 		})
 	}
 
-	// const toggleWishList = async () => {
-	// 	if (isOnWishlist) {
-	// 		isOnWishlist = false
-	// 		return await wishlistStore.removeItemFromWishlist(id)
-	// 	}
-	// 	await wishlistStore.addItemToWishlist(id)
-	// 	return (isOnWishlist = true)
-	// }
-
 	const price = computed(() =>
 		Intl.NumberFormat('ru-RU', {
 			style: 'currency',
 			currency: 'RUB',
-		}).format(product?.value?.products_by_id?.price),
+		}).format(product?.value?.price as number),
 	)
 
 	let processedData = ref({
@@ -130,34 +129,36 @@
 	const colorSet = new Set()
 	const sizeMap = new Map()
 
-	product?.value?.products_by_id?.product_variants?.forEach((item) => {
-		const {color_id, size_id} = item
-		const {title} = color_id
-		const {small_title} = size_id
+	if (product.value) {
+		product.value.product_variants.forEach((item) => {
+			const {color_id, size_id} = item
+			const {title} = color_id
+			const {small_title} = size_id
 
-		if (!colorSet.has(title)) {
-			processedData.value.products_by_id.colors.push({
-				colors_id: color_id,
-			})
-			colorSet.add(title)
-		}
+			if (!colorSet.has(title)) {
+				processedData.value.products_by_id.colors.push({colors_id: color_id})
+				colorSet.add(title)
+			}
 
-		if (!sizeMap.has(small_title)) {
-			const id = sizeMap.size + 1
-			processedData.value.products_by_id.sizes.push({
-				sizes_id: {...size_id, id},
-			})
-			sizeMap.set(small_title, id)
-		}
-	})
+			if (!sizeMap.has(small_title)) {
+				const id = sizeMap.size + 1
+				processedData.value.products_by_id.sizes.push({
+					sizes_id: {...size_id, id},
+				})
+				sizeMap.set(small_title, id)
+			}
+		})
+	}
 
 	const isMatching = computed(() => {
-		return product?.value?.products_by_id?.product_variants?.some(
-			(variant) =>
-				variant?.color_id?.title === currentColor.value &&
-				variant?.size_id?.small_title === currentSize.value &&
-				variant?.qunatity >= 1,
-		)
+		return product.value
+			? product.value.product_variants.some(
+					(variant) =>
+						variant.color_id.title === currentColor.value &&
+						variant.size_id.small_title === currentSize.value &&
+						variant.quantity >= 1,
+				)
+			: false
 	})
 </script>
 
@@ -183,7 +184,7 @@
 									<NuxtImg
 										provider="directus"
 										class="h-full w-full object-cover"
-										:src="product.products_by_id?.main_image?.id"
+										:src="product.main_image?.id"
 									/>
 								</template>
 								<template #preview="slotProps">
@@ -191,7 +192,7 @@
 										provider="directus"
 										class="h-full w-full object-cover"
 										width="720"
-										:src="product.products_by_id?.main_image?.id"
+										:src="product.main_image?.id"
 										:style="slotProps.style"
 										@click="slotProps.onClick"
 									/>
@@ -206,15 +207,15 @@
 						<h1
 							class="text-h1 max-tablet:text-h1Mob max-tablet:font-light tablet:font-extralight"
 						>
-							{{ product.products_by_id?.title }}
+							{{ product?.title }}
 						</h1>
 
 						<div class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-4">
 							<div
 								class="flex flex-col max-tablet:gap-[0.75rem] max-tablet:text-[0.625rem] tablet:gap-4 tablet:text-[0.75rem]"
 							>
-								<span v-if="product.products_by_id?.category"
-									>Категория: {{ product.products_by_id.category.title }}</span
+								<span v-if="product?.category"
+									>Категория: {{ product?.category?.title }}</span
 								>
 
 								<template
@@ -304,21 +305,23 @@
 							>
 								Добавить в корзину
 							</button>
-							<button
-								@click="
-									isOnWishlist
-										? wishlistStore.removeItemFromWishlist(id)
-										: wishlistStore.addItemToWishlist(id)
-								"
-								type="button"
-								class="w-full rounded-main border-[1px] border-black transition-all hover:bg-black hover:text-primary max-tablet:min-h-[2rem] max-tablet:text-[0.625rem] tablet:min-h-[3.313rem]"
-							>
-								{{
-									isOnWishlist
-										? 'Удалить из избранного'
-										: 'Добавить в избранное'
-								}}
-							</button>
+							<ClientOnly>
+								<button
+									@click="
+										isOnWishlist
+											? wishlistStore.removeItemFromWishlist(id as string)
+											: wishlistStore.addItemToWishlist(id as string)
+									"
+									type="button"
+									class="w-full rounded-main border-[1px] border-black transition-all hover:bg-black hover:text-primary max-tablet:min-h-[2rem] max-tablet:text-[0.625rem] tablet:min-h-[3.313rem]"
+								>
+									{{
+										isOnWishlist
+											? 'Удалить из избранного'
+											: 'Добавить в избранное'
+									}}
+								</button>
+							</ClientOnly>
 						</div>
 						<!-- /Кнопки "Добавить" -->
 
@@ -326,15 +329,12 @@
 						<div
 							class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-[1.25rem]"
 						>
-							<Accordion
-								:multiple="true"
-								v-if="product.products_by_id?.description"
-							>
+							<Accordion :multiple="true" v-if="product?.description">
 								<AccordionTab class="p-0">
 									<template #header class="p-0">
 										<div class="font-normal">О продукте</div>
 									</template>
-									<p>{{ product.products_by_id?.description }}</p>
+									<p>{{ product?.description }}</p>
 								</AccordionTab>
 								<AccordionTab class="p-0">
 									<template #header>
@@ -389,10 +389,10 @@
 				>
 					<template v-for="product in rProducts" :key="product.id">
 						<ProductCard
-							:id="product.id"
-							:title="product.title"
-							:imgSrc="product.main_image"
-							:price="product.price"
+							:id="product?.id"
+							:title="product?.title"
+							:imgSrc="product?.main_image"
+							:price="product?.price"
 							class="animation-duration-2000 max-w-[18.31rem] flex-shrink-0 transition-all max-tablet:w-[150px]"
 						/>
 					</template>

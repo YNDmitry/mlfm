@@ -8,7 +8,7 @@
 <template>
 	<Sidebar
 		v-model:visible="websiteStore.isVisibleCart"
-		@show="useCart.initCart()"
+		@show.once="useCart.initCart()"
 		:modal="true"
 		position="right"
 		class="z-10 h-full w-full overflow-scroll bg-primary pb-9 pt-12 tablet:max-w-[505px]"

@@ -9,8 +9,6 @@
 	})
 
 	const wishlistStore = useWishlistStore()
-
-	// wishlistStore.initWishlist()
 </script>
 
 <template>
@@ -21,7 +19,7 @@
 			>
 				Избранное
 			</h1>
-			<div class="mx-auto mt-8 text-center">
+			<div class="mx-auto mt-8">
 				<div
 					v-if="wishlistStore.productDetails.length > 0"
 					class="grid grid-cols-newItems gap-6"
@@ -35,7 +33,7 @@
 						:imgSrc="product.main_image.id"
 					/>
 				</div>
-				<div v-else class="mx-auto max-w-[430px]">
+				<div v-else class="mx-auto max-w-[430px] text-center">
 					<span>Пока что ничего нет</span>
 					<div class="mt-6">
 						<NuxtLink
