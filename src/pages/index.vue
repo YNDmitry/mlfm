@@ -41,7 +41,7 @@
 	<div>
 		<!-- Главный банер - слайдер -->
 		<HomeHero
-			:title="data.homepage?.slider_collection?.title"
+			:title="data.homepage?.slider_collection?.big_title"
 			:image="data.homepage?.slider_collection?.image?.id"
 		/>
 		<!-- /Главный банер - слайдер -->

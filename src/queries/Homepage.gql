@@ -2,6 +2,7 @@ query Homepage {
 	homepage {
 		slider_collection {
 			title
+			big_title
 			image {
 				id
 			}
