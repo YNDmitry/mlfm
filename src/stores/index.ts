@@ -1,5 +1,5 @@
 import {createItem} from '@directus/sdk'
-import type {Config} from '~/interfaces/config.interface'
+import type {Config} from '~/types/config.interface'
 
 export interface INewsletterList {
 	email: string

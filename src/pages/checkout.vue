@@ -119,7 +119,7 @@
 
 							<label class="flex cursor-pointer flex-col gap-2" for="inpName">
 								<span class="max-tablet:text-[0.625rem] tablet:text-[12px]"
-									>Электронный адрес (Email)*</span
+									>Электронная почта (Email)*</span
 								>
 
 								<input

@@ -8,10 +8,6 @@
 	const {id} = useRoute().params
 	const isOnWishlist = computed(() => wishlistStore.isOnWishlist(id as string))
 
-	interface GetProductByIdQuery {
-		products_by_id: Product
-	}
-
 	definePageMeta({
 		layout: 'default',
 	})

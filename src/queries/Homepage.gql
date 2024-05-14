@@ -37,4 +37,18 @@ query Homepage {
 			id
 		}
 	}
+	homepage_banners {
+		title
+		image {
+			id
+		}
+		collection {
+			id
+			title
+		}
+		category {
+			id
+			title
+		}
+	}
 }

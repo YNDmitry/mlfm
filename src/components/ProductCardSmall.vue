@@ -1,23 +1,24 @@
 <script setup lang="ts">
-	defineProps({
-		title: {
-			type: String,
-			required: true,
-			default: () => '',
-		},
-		image: {
-			type: String,
-			required: true,
-		},
-		link: {
-			type: String,
-			required: true,
-		},
-	})
+	interface Props {
+		title: string
+		image: string
+		collection: {title: string; id: string} | null
+		category: {title: string; id: string} | null
+	}
+	defineProps<Props>()
 </script>
 
 <template>
-	<NuxtLink :to="link" class="relative h-full w-full">
+	<NuxtLink
+		:to="
+			collection
+				? `/catalog?collection=${collection.title}`
+				: category
+					? `/catalog?category=${category.title}`
+					: '/catalog'
+		"
+		class="relative h-full w-full"
+	>
 		<NuxtImg
 			provider="directus"
 			class="h-full w-full object-cover"
