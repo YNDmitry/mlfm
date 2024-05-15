@@ -34,7 +34,9 @@
 	}
 </script>
 <template>
-	<header class="sticky top-0 z-50">
+	<header
+		class="sticky top-0 z-[1002] translate-y-0 transition-all duration-500"
+	>
 		<div class="relative flex items-center justify-center bg-primary px-5 py-5">
 			<div class="max-tablet:hidden">
 				<button

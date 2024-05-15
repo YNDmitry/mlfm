@@ -50,7 +50,7 @@
 				}"
 				@change="handleChange"
 				@blur="handleBlur"
-				:value="value"
+				:value.trim="value"
 				:type="inputType"
 				:placeholder="inputPlaceholder"
 				:name="inputName"

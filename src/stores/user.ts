@@ -10,7 +10,10 @@ interface UserState {
 	newsletter: boolean
 	phone: string
 	isChangeUserInfoPopup: boolean
+	isChangeAddressesPopup: boolean
 	isEmailVerify: boolean
+	currentOrders: []
+	completedOrders: []
 }
 
 interface CreateUserPayload {
@@ -32,8 +35,11 @@ export const useUserStore = defineStore('userStore', {
 		phone: '',
 		email: '',
 		id: '',
+		currentOrders: [],
+		completedOrders: [],
 		isAuthenticated: false,
 		isChangeUserInfoPopup: false,
+		isChangeAddressesPopup: false,
 		isEmailVerify: false,
 	}),
 	actions: {
@@ -122,14 +128,19 @@ export const useUserStore = defineStore('userStore', {
 
 		async logOut() {
 			const {logout} = useDirectusAuth()
-			logout().then(() => {
-				navigateTo('/auth/log-in')
-			})
-			this.$reset()
+			logout()
+				.then(() => {
+					navigateTo('/auth/log-in')
+				})
+				.then(() => this.$reset())
 		},
 
 		handleChangeUserDetailsPopup() {
 			this.isChangeUserInfoPopup = !this.isChangeUserInfoPopup
+		},
+
+		handleChangeAddressesPopup() {
+			this.isChangeAddressesPopup = !this.isChangeAddressesPopup
 		},
 	},
 })

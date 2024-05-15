@@ -22,7 +22,7 @@
 		Intl.NumberFormat('ru-RU', {
 			style: 'currency',
 			currency: 'RUB',
-		}).format(props.price),
+		}).format(props.price as number),
 	)
 
 	const wishlistStore = useWishlistStore()
@@ -41,15 +41,17 @@
 				format="webp"
 			/>
 
-			<IconsHearth
-				class="absolute right-3 top-3 h-5 w-5 transition-all"
-				:is-on-wishlist="wishlistStore.isOnWishlist(id)"
-				@click.prevent="
-					!wishlistStore.isOnWishlist(id)
-						? wishlistStore.addItemToWishlist(id)
-						: wishlistStore.removeItemFromWishlist(id)
-				"
-			/>
+			<ClientOnly>
+				<IconsHearth
+					class="absolute right-3 top-3 h-5 w-5 transition-all"
+					:is-on-wishlist="wishlistStore.isOnWishlist(id)"
+					@click.prevent="
+						!wishlistStore.isOnWishlist(id)
+							? wishlistStore.addItemToWishlist(id)
+							: wishlistStore.removeItemFromWishlist(id)
+					"
+				/>
+			</ClientOnly>
 		</div>
 
 		<div
