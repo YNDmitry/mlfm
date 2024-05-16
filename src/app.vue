@@ -51,28 +51,26 @@
 		await fetchUserInfo()
 		initWishlist()
 
-		const {scrollState, lenis, setScrollState} = useLenis()
-
-		useRouter().afterEach(() => {
-			return setScrollState(0, 0)
-		})
+		const {scrollState, lenis} = useLenis()
 
 		const header = ref<HTMLElement | null>(null)
 		const lastScrollY = ref(0)
 
 		watch(
-			lenis.value,
+			scrollState,
 			(currentScrollY) => {
-				console.log(currentScrollY)
 				if (header.value) {
-					// if (currentScrollY > lastScrollY.value && currentScrollY > 200) {
-					// 	// Scrolling down
-					// 	header.value.classList.add('translate-y-[-100%]')
-					// } else if (currentScrollY < lastScrollY.value) {
-					// 	// Scrolling up
-					// 	header.value.classList.remove('translate-y-[-100%]')
-					// }
-					// lastScrollY.value = currentScrollY
+					if (
+						currentScrollY.animate.to > lastScrollY.value &&
+						currentScrollY.animate.to > 200
+					) {
+						// Scrolling down
+						header.value.classList.add('translate-y-[-100%]')
+					} else if (currentScrollY.animate.to < lastScrollY.value) {
+						// Scrolling up
+						header.value.classList.remove('translate-y-[-100%]')
+					}
+					lastScrollY.value = currentScrollY.animate.to
 				}
 			},
 			{deep: true},

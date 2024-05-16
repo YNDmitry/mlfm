@@ -5,7 +5,7 @@
 				title: string
 			},
 		]
-		currentFilter: string
+		currentFilter: any
 		title: string
 	}
 	defineProps<Props>()
