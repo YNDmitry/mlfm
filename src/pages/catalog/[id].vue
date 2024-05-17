@@ -18,7 +18,7 @@
 		try {
 			const response = await useAsyncGql(
 				'GetProductById',
-				{id},
+				{id: id as string},
 				{
 					getCachedData(key, nuxtApp) {
 						return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
@@ -125,26 +125,26 @@
 	const colorSet = new Set()
 	const sizeMap = new Map()
 
-	if (product.value) {
-		product.value.product_variants.forEach((item) => {
-			const {color_id, size_id} = item
-			const {title} = color_id
-			const {small_title} = size_id
+	watch(product, (newValue) => {
+		if (newValue) {
+			newValue.product_variants.forEach((item) => {
+				const {color_id, size_id} = item
 
-			if (!colorSet.has(title)) {
-				processedData.value.products_by_id.colors.push({colors_id: color_id})
-				colorSet.add(title)
-			}
+				if (!colorSet.has(color_id?.title || null)) {
+					processedData.value.products_by_id.colors.push({colors_id: color_id})
+					colorSet.add(color_id?.title)
+				}
 
-			if (!sizeMap.has(small_title)) {
-				const id = sizeMap.size + 1
-				processedData.value.products_by_id.sizes.push({
-					sizes_id: {...size_id, id},
-				})
-				sizeMap.set(small_title, id)
-			}
-		})
-	}
+				if (!sizeMap.has(size_id?.small_title || null)) {
+					const id = sizeMap.size + 1
+					processedData.value.products_by_id.sizes.push({
+						sizes_id: {...size_id, id},
+					})
+					sizeMap.set(size_id?.small_title, id)
+				}
+			})
+		}
+	})
 
 	const isMatching = computed(() => {
 		return product.value

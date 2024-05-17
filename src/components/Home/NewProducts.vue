@@ -23,6 +23,8 @@
 	}
 
 	defineProps<Props>()
+
+	const isMobile = useMediaQuery('(max-width: 479px)')
 </script>
 
 <template>
@@ -55,7 +57,9 @@
 				class="no-scrollbar mx-[-1rem] flex scroll-px-3 gap-[8px] overflow-x-auto px-[1rem] max-tablet:grid max-tablet:grid-cols-[1fr_1fr] max-tablet:gap-4 max-tablet:overflow-x-clip"
 			>
 				<div
-					v-for="(slide, idx) in productBanners"
+					v-for="(slide, idx) in isMobile
+						? productBanners.slice(0, 2)
+						: productBanners"
 					:key="idx"
 					class="h-[550px] max-w-[26.9rem] flex-shrink-0 max-tablet:h-[250px] max-tablet:w-full max-tablet:max-w-none"
 				>
