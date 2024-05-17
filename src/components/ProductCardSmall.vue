@@ -30,7 +30,7 @@
 		/>
 
 		<div
-			class="absolute flex flex-col items-start uppercase text-primary max-tablet:bottom-[20px] max-tablet:left-[8px] max-tablet:gap-[7px] tablet:bottom-[25px] tablet:left-[29px] tablet:gap-[17px]"
+			class="absolute bottom-[25px] left-[29px] right-[29px] flex flex-col items-start gap-[17px] uppercase text-primary max-tablet:bottom-[16px] max-tablet:left-[8px] max-tablet:right-[8px] max-tablet:gap-[7px]"
 		>
 			<p
 				class="text-[14px] font-bold tracking-[2.1px] max-tablet:text-[10px] max-tablet:tracking-[1.5px]"

@@ -94,11 +94,13 @@
 						trigger: 'h-3 w-3 text-black',
 						root: 'items-center border border-[#AAAAAA] px-3 shadow-none !outline-none',
 						input: 'pl-0 pr-2',
+						panel: '!mt-[8px]',
 					},
 					jumpToPageDropdown: {
 						trigger: 'h-3 w-3 text-black',
 						root: 'items-center border border-[#AAAAAA] px-3 shadow-none !outline-none',
 						input: 'pl-0 pr-2',
+						panel: '!mt-[8px]',
 					},
 				}"
 			></Paginator>
@@ -121,7 +123,7 @@
 </template>
 
 <style>
-	#pagination .p-highlight {
+	#pagination > .p-dropdown-item.p-highlight {
 		@apply !bg-red !text-primary;
 	}
 </style>

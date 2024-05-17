@@ -48,6 +48,9 @@
 		v-model:visible="websiteStore.isNewsletterPopup"
 		class="w-[38.75rem] overflow-hidden rounded-[12px] px-0"
 		id="newsletter-popup"
+		:pt="{
+			root: 'mx-6',
+		}"
 	>
 		<div class="rounded-xl bg-white">
 			<div class="relative">
@@ -60,7 +63,7 @@
 			</div>
 
 			<div
-				class="mx-1rem container flex max-w-[507px] flex-col gap-[2rem] pb-[4.375rem] pt-[34px]"
+				class="mx-1rem container flex max-w-[507px] flex-col gap-[2rem] pb-[4.375rem] pt-[34px] max-tablet:gap-3 max-tablet:pb-4 max-tablet:pt-4"
 			>
 				<div class="text-[1.25rem] font-medium">Присоединяйтесь к нам!</div>
 
@@ -73,15 +76,15 @@
 					Спасибо за подписку на нашу рассылку!
 				</div>
 
-				<div v-else>
+				<div v-else class="mt-2">
 					<form
 						@submit.prevent="onSubmit"
-						class="relative flex h-[54px] w-full"
+						class="relative flex h-[54px] w-full max-tablet:h-auto max-tablet:flex-col max-tablet:overflow-hidden max-tablet:rounded-[4px]"
 					>
 						<Field
 							:disabled="isSubmitting"
 							placeholder="Email"
-							class="w-full border-[1px] border-black px-5 font-extralight focus:outline-none disabled:pointer-events-none"
+							class="w-full rounded-b-[0px] border-[1px] border-black px-5 font-extralight focus:outline-none disabled:pointer-events-none max-tablet:min-h-9"
 							type="email"
 							name="newsletterEmail"
 						/>
@@ -92,7 +95,7 @@
 
 						<button
 							type="submit"
-							class="relative flex w-full max-w-[150px] items-center justify-center bg-black font-medium text-primary max-laptop:text-[12px] laptop:text-[0.875rem]"
+							class="relative flex w-full max-w-[150px] items-center justify-center bg-red2 font-medium text-primary hover:bg-red2-hover max-laptop:text-[12px] max-tablet:min-h-10 max-tablet:w-full max-tablet:max-w-none laptop:text-[0.875rem]"
 						>
 							<ProgressSpinner
 								aria-label="Loading..."

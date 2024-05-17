@@ -65,6 +65,7 @@
 						:collection="slide.collection"
 						:category="slide.category"
 						class="transition-duration-1000 transition-ease-in-out transition-all max-tablet:h-full"
+						:class="idx % 2 != 0 ? 'col-span-3' : ''"
 					/>
 				</div>
 			</div>
