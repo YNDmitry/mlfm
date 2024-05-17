@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 	import {object, string} from 'yup'
 	import {useTimeoutFn} from '@vueuse/core'
 

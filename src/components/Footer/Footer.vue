@@ -13,6 +13,8 @@
 		validationSchema: schema,
 	})
 
+	const {data: docs} = useAsyncGql('Docs')
+
 	const onSubmit = handleSubmit(async (values) => {
 		await websiteConfig.handleNewsletterSubscribe(values).catch((err) => {
 			if (err.errors[0].extensions.code === 'RECORD_NOT_UNIQUE') {
@@ -68,9 +70,11 @@
 							<NuxtLink to="/docs/conditions">Доставка и оплата</NuxtLink>
 						</li>
 						<li
+							v-for="doc in docs.docs"
+							:key="doc.id"
 							class="font-montserrat text-[14px] font-normal text-[#6C6C6C] max-tablet:text-[10px]"
 						>
-							<NuxtLink to="/docs/conditions">Публичная оферта</NuxtLink>
+							<NuxtLink :to="'/docs/' + doc.slug">{{ doc.title }}</NuxtLink>
 						</li>
 					</ul>
 				</div>

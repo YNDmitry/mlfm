@@ -1,0 +1,15 @@
+query Doc($slug: String) {
+	docs(filter: {slug: {_eq: $slug}}) {
+		title
+		body
+		slug
+		date_updated
+	}
+}
+
+query Docs {
+	docs {
+		title
+		slug
+	}
+}
