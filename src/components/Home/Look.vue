@@ -28,18 +28,19 @@
 			</h2>
 
 			<div
-				class="relative grid w-full grid-cols-buyImage items-start gap-4 pt-10 max-tablet:gap-0"
+				class="relative grid w-full grid-cols-buyImage items-start gap-4 pt-10 max-tablet:gap-2"
 			>
-				<NuxtImg
-					v-if="image"
-					provider="directus"
-					class="h-full object-cover max-tablet:max-w-[195px]"
-					:src="image"
-					width="678"
-					format="webp"
-				/>
+				<div v-if="image" class="h-full w-full">
+					<NuxtImg
+						provider="directus"
+						class="h-full object-cover"
+						:src="image"
+						width="678"
+						format="webp"
+					/>
+				</div>
 
-				<div>
+				<div class="w-full">
 					<Swiper
 						:modules="[SwiperAutoplay, SwiperPagination]"
 						:pagination="{clickable: true}"

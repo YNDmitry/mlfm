@@ -574,8 +574,12 @@
 						<p class="border-darkGray2 text-[12px]">
 							Я согласен со всеми
 
-							<a class="underline" href="javascript:void(0)"
-								>правилами и условиями</a
+							<NuxtLink to="/docs/privacy" class="underline"
+								>правилами</NuxtLink
+							>
+							и
+							<NuxtLink to="/docs/offer" class="underline"
+								>публичной офертой</NuxtLink
 							>
 						</p>
 					</label>

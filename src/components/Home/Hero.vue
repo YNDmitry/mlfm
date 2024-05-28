@@ -34,7 +34,7 @@
 
 			<NuxtLink
 				:to="'/catalog?collection=' + title"
-				class="flex h-11 w-full max-w-[10.625rem] items-center justify-center rounded-main bg-red2 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] transition-colors hover:bg-red2-hover max-tablet:hidden"
+				class="flex h-11 w-full min-w-[10.625rem] max-w-[10.625rem] items-center justify-center rounded-main bg-red2 px-4 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] transition-colors hover:bg-red2-hover max-tablet:hidden"
 			>
 				Купить
 			</NuxtLink>

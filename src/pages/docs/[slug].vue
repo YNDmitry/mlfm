@@ -29,19 +29,19 @@
 				<h1
 					class="text-center text-h1 max-laptop:text-[2.5rem] max-tablet:text-h1Mob"
 				>
-					{{ data.docs[0].title }}
+					{{ data?.docs[0].title }}
 				</h1>
 
 				<p class="max-mobile:text-[0.875rem] mobile:text-[18px]">
 					Дата вступления в силу:
-					{{ new Date(data.docs[0].date_updated).getDay() }}.{{
-						new Date(data.docs[0].date_updated).getMonth()
-					}}.{{ new Date(data.docs[0].date_updated).getFullYear() }}
+					{{ new Date(data?.docs[0].date_updated).getDay() }}.{{
+						new Date(data?.docs[0].date_updated).getMonth()
+					}}.{{ new Date(data?.docs[0].date_updated).getFullYear() }}
 				</p>
 			</div>
 
 			<div
-				v-html="data.docs[0].body"
+				v-html="data?.docs[0].body"
 				class="mt-9 flex flex-col max-tablet:gap-3 max-tablet:pt-[2.5rem] tablet:gap-4"
 			></div>
 		</div>

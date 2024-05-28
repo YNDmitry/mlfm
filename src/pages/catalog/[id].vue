@@ -1,9 +1,9 @@
 <script setup lang="ts">
 	const appConfig = useRuntimeConfig()
 	const {getItems} = useDirectusItems()
-	const {$preview} = useNuxtApp()
 
 	const cartStore = useCartStore()
+	const websiteStore = useWebsiteStore()
 	const wishlistStore = useWishlistStore()
 	const {id} = useRoute().params
 	const isOnWishlist = computed(() => wishlistStore.isOnWishlist(id as string))
@@ -60,6 +60,7 @@
 	const currentSize = ref(
 		product?.value?.product_variants?.at(0)?.size_id?.small_title,
 	)
+	const currentVariantId = ref(product?.value?.product_variants.at(0).id)
 
 	const isRandomProductsPending = ref(true)
 	const rProducts = ref(null)
@@ -90,13 +91,8 @@
 		const currentProduct = product?.value
 		cartStore.addItem({
 			product_id: currentProduct?.id,
-			price: currentProduct?.price,
-			category: currentProduct?.category?.title,
-			size_id: currentSize.value,
-			color_id: currentColor.value,
 			quantity: 1,
-			image_id: currentProduct?.main_image?.id,
-			title: currentProduct?.title,
+			variant_id: currentVariantId.value,
 		})
 
 		toast.add({
@@ -105,6 +101,11 @@
 			detail: 'Товар в корзине',
 			life: 3000,
 		})
+
+		setTimeout(() => {
+			websiteStore.handleVisibleCart()
+			toast.removeAllGroups()
+		}, 1000)
 	}
 
 	const price = computed(() =>
@@ -114,47 +115,50 @@
 		}).format(product?.value?.price as number),
 	)
 
-	let processedData = ref({
-		products_by_id: {
-			colors: [],
-			sizes: [],
-		},
+	const processedData = ref({
+		colors: [],
+		sizes: [],
 	})
 
 	// Extract unique colors and sizes
 	const colorSet = new Set()
 	const sizeMap = new Map()
 
-	watch(product, (newValue) => {
-		if (newValue) {
-			newValue.product_variants.forEach((item) => {
-				const {color_id, size_id} = item
+	watch(
+		product,
+		(newValue) => {
+			if (newValue && newValue.product_variants) {
+				processedData.value.colors = []
+				processedData.value.sizes = []
+				colorSet.clear()
+				sizeMap.clear()
 
-				if (!colorSet.has(color_id?.title || null)) {
-					processedData.value.products_by_id.colors.push({colors_id: color_id})
-					colorSet.add(color_id?.title)
-				}
+				newValue.product_variants.forEach((item) => {
+					const {color_id, size_id} = item
 
-				if (!sizeMap.has(size_id?.small_title || null)) {
-					const id = sizeMap.size + 1
-					processedData.value.products_by_id.sizes.push({
-						sizes_id: {...size_id, id},
-					})
-					sizeMap.set(size_id?.small_title, id)
-				}
-			})
-		}
-	})
+					if (color_id && !colorSet.has(color_id.title)) {
+						processedData.value.colors.push(color_id)
+						colorSet.add(color_id.title)
+					}
 
-	const isMatching = computed(() => {
-		return product.value
-			? product.value.product_variants.some(
-					(variant) =>
-						variant.color_id.title === currentColor.value &&
-						variant.size_id.small_title === currentSize.value &&
-						variant.quantity >= 1,
-				)
-			: false
+					if (size_id && !sizeMap.has(size_id.small_title)) {
+						const id = sizeMap.size + 1
+						processedData.value.sizes.push({...size_id, id})
+						sizeMap.set(size_id.small_title, id)
+					}
+				})
+			}
+		},
+		{immediate: true},
+	)
+
+	watch([currentColor, currentSize], () => {
+		const variant = product.value?.product_variants.find(
+			(variant) =>
+				variant?.color_id?.title === currentColor.value &&
+				variant?.size_id?.small_title === currentSize.value,
+		)
+		currentVariantId.value = variant ? variant.id : null
 	})
 </script>
 
@@ -175,12 +179,23 @@
 						:loop="true"
 					>
 						<SwiperSlide v-for="slide in 3" :key="slide">
-							<Image preview class="h-full w-full text-primary">
+							<Image
+								preview
+								:pt="{
+									zoomoutbutton: 'text-primary',
+									zoominbutton: 'text-primary',
+									closebutton: 'text-primary',
+									rotateleftbutton: 'hidden',
+									rotaterightbutton: 'hidden',
+									button: 'p-2 bg-black/10 transition-all',
+								}"
+								class="h-full w-full text-primary"
+							>
 								<template #image>
 									<NuxtImg
 										provider="directus"
 										class="h-full w-full object-cover"
-										:src="product.main_image?.id"
+										:src="product?.main_image?.id"
 									/>
 								</template>
 								<template #preview="slotProps">
@@ -188,7 +203,7 @@
 										provider="directus"
 										class="h-full w-full object-cover"
 										width="720"
-										:src="product.main_image?.id"
+										:src="product?.main_image?.id"
 										:style="slotProps.style"
 										@click="slotProps.onClick"
 									/>
@@ -214,30 +229,27 @@
 									>Категория: {{ product?.category?.title }}</span
 								>
 
-								<template
-									v-if="processedData.products_by_id.colors?.length > 0"
-								>
+								<template v-if="processedData.colors?.length > 0">
 									<span>Цвет: </span>
 									<div class="flex max-tablet:gap-[0.75rem] tablet:gap-2">
 										<label
 											class="inline-flex cursor-pointer items-center"
-											v-for="(color, idx) in processedData.products_by_id
-												.colors"
+											v-for="(color, idx) in processedData.colors"
 											:key="idx"
 										>
 											<input
 												checked
 												type="radio"
 												name="color"
-												:value="color?.colors_id?.title"
+												:value="color.title"
 												v-model="currentColor"
 												class="hidden"
 											/>
 
 											<span
-												class="rounded-full bg-white flex items-center justify-center border border-black text-black max-tablet:min-h-[1.25rem] max-tablet:min-w-[3.438rem] max-tablet:text-[0.625rem] tablet:min-h-[2rem] tablet:min-w-[5.938rem]"
+												class="rounded-full bg-white flex items-center justify-center border border-black px-2 text-black max-tablet:min-h-[1.25rem] max-tablet:min-w-[3.438rem] max-tablet:text-[0.625rem] tablet:min-h-[2rem] tablet:min-w-[5.938rem]"
 												id="option-6"
-												>{{ color?.colors_id?.title }}</span
+												>{{ color.title }}</span
 											>
 										</label>
 									</div>
@@ -246,7 +258,7 @@
 
 							<div
 								class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-2"
-								v-if="processedData.products_by_id.sizes?.length > 0"
+								v-if="processedData.sizes?.length > 0"
 							>
 								<span class="max-tablet:text-[0.625rem] tablet:text-[0.75rem]"
 									>Размер:</span
@@ -256,37 +268,32 @@
 								<div class="flex max-tablet:gap-[0.75rem] tablet:gap-2">
 									<label
 										class="inline-flex cursor-pointer items-center"
-										v-for="(size, idx) in processedData.products_by_id.sizes"
+										v-for="(size, idx) in processedData.sizes"
 										:key="idx"
 									>
 										<input
 											checked
 											type="radio"
 											name="size"
-											:value="size?.sizes_id?.small_title"
+											:value="size.small_title"
 											v-model="currentSize"
 											class="hidden"
 										/>
 
 										<span
-											class="rounded-full bg-white flex items-center justify-center border border-black text-black max-tablet:min-h-[1.25rem] max-tablet:min-w-[3.438rem] max-tablet:text-[0.625rem] tablet:min-h-[2rem] tablet:min-w-[5.938rem]"
+											class="rounded-full bg-white flex items-center justify-center border border-black px-2 text-black max-tablet:min-h-[1.25rem] max-tablet:min-w-[3.438rem] max-tablet:text-[0.625rem] tablet:min-h-[2rem] tablet:min-w-[5.938rem]"
 											id="option-6"
 										>
-											{{ size?.sizes_id?.small_title }}
+											{{ size.small_title }}
 										</span>
 									</label>
 								</div>
 								<!-- /radio кнопки! -->
-
-								<NuxtLink
-									class="text-[0.625rem] text-darkGray2 underline tablet:hidden"
-									>Руководсто по размерам</NuxtLink
-								>
 							</div>
 						</div>
 
 						<span class="max-tablet:text-[0.625rem] tablet:text-[0.875rem]"
-							>Цена: ₽ {{ price }}</span
+							>Цена: {{ price }}</span
 						>
 
 						<!-- Кнопки "Добавить" -->
@@ -295,29 +302,27 @@
 						>
 							<button
 								type="button"
-								:disabled="isMatching"
+								:disabled="currentVariantId === null"
 								@click="handleAddToCart"
 								class="w-full rounded-main bg-red2 text-primary transition-all hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-70 max-tablet:min-h-[2rem] max-tablet:text-[0.625rem] tablet:min-h-[3.313rem]"
 							>
 								Добавить в корзину
 							</button>
-							<ClientOnly>
-								<button
-									@click="
-										isOnWishlist
-											? wishlistStore.removeItemFromWishlist(id as string)
-											: wishlistStore.addItemToWishlist(id as string)
-									"
-									type="button"
-									class="w-full rounded-main border-[1px] border-black transition-all hover:bg-black hover:text-primary max-tablet:min-h-[2rem] max-tablet:text-[0.625rem] tablet:min-h-[3.313rem]"
-								>
-									{{
-										isOnWishlist
-											? 'Удалить из избранного'
-											: 'Добавить в избранное'
-									}}
-								</button>
-							</ClientOnly>
+							<button
+								@click="
+									isOnWishlist
+										? wishlistStore.removeItemFromWishlist(id as string)
+										: wishlistStore.addItemToWishlist(id as string)
+								"
+								type="button"
+								class="w-full rounded-main border-[1px] border-black transition-all hover:bg-black hover:text-primary max-tablet:min-h-[2rem] max-tablet:text-[0.625rem] tablet:min-h-[3.313rem]"
+							>
+								{{
+									isOnWishlist
+										? 'Удалить из избранного'
+										: 'Добавить в избранное'
+								}}
+							</button>
 						</div>
 						<!-- /Кнопки "Добавить" -->
 

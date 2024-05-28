@@ -4,6 +4,7 @@ query GetProductById($id: ID!) {
 		title
 		description
 		product_variants {
+			id
 			color_id {
 				title
 			}
@@ -17,18 +18,6 @@ query GetProductById($id: ID!) {
 		}
 		category {
 			title
-		}
-		colors {
-			colors_id {
-				title
-				id
-			}
-		}
-		sizes {
-			sizes_id {
-				small_title
-				id
-			}
 		}
 		price
 	}

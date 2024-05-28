@@ -2,13 +2,8 @@ import {defineStore} from 'pinia'
 
 interface CartItem {
 	product_id: string
-	price: number | null
 	quantity: number
-	category: string
-	color_id?: string | number
-	size_id?: string | number
-	image_id: string
-	title: string
+	variant_id: string
 }
 
 interface GiftCard {
@@ -25,17 +20,21 @@ type CartItemUnion = CartItem | GiftCard
 export const useCartStore = defineStore('userCart', {
 	state: () => ({
 		items: [] as CartItemUnion[],
+		itemsDetails: [],
 		relatedItems: [],
 		discount: '',
 		isRelatedProductPending: true,
 	}),
 	getters: {
 		totalPrice: (state) => {
-			return state.items.reduce((total, item) => {
+			return state.itemsDetails.reduce((total, item) => {
 				if ('quantity' in item) {
 					return total + item.price * item.quantity
 				}
-				return total + item.price // Assume quantity is 1 for gift cards
+				return Intl.NumberFormat('ru-RU', {
+					style: 'currency',
+					currency: 'RUB',
+				}).format(total + item.price) // Assume quantity is 1 for gift cards
 			}, 0)
 		},
 	},
@@ -58,8 +57,9 @@ export const useCartStore = defineStore('userCart', {
 		async initCart() {
 			const sessionId = await this.getSessionId()
 			if (sessionId) {
-				this.loadCartFromServer(sessionId)
-				return this.getRelatedProducts()
+				await this.loadCartFromServer(sessionId)
+				await this.loadProductDetails()
+				return await this.getRelatedProducts()
 			}
 		},
 
@@ -122,8 +122,7 @@ export const useCartStore = defineStore('userCart', {
 				(i) =>
 					'quantity' in i &&
 					i.product_id === item.product_id &&
-					i.color_id === item.color_id &&
-					i.size_id === item.size_id,
+					i.variant_id === item.variant_id,
 			)
 
 			if (existingItem && 'quantity' in existingItem) {
@@ -147,6 +146,28 @@ export const useCartStore = defineStore('userCart', {
 			this.items = []
 			this.discount = ''
 			await this.saveCartToServer()
+		},
+
+		async loadProductDetails() {
+			const productIds = Array.from(this.items).map((item) => item.product_id)
+			const productPvi = Array.from(this.items).map((item) => item.variant_id)
+			const productQuantity = Array.from(this.items).map(
+				(item) => item.quantity,
+			)
+			if (productIds.length > 0) {
+				try {
+					const res: any = await GqlGetCartProductsByIds({
+						ids: productIds,
+						pvi: productPvi,
+						quantity: productQuantity,
+					})
+					this.itemsDetails = res.products || []
+				} catch (error) {
+					console.error('Error loading product details:', error)
+				}
+			} else {
+				this.itemsDetails = []
+			}
 		},
 
 		async getRelatedProducts() {

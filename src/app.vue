@@ -32,24 +32,8 @@
 	const wishlistStore = useWishlistStore()
 
 	if (process.client) {
-		const fetchUserInfo = async () => {
-			try {
-				await userStore.getUserInfo()
-			} catch (error) {
-				console.error('Failed to fetch user info:', error)
-			}
-		}
-
-		const initWishlist = () => {
-			try {
-				wishlistStore.initWishlist()
-			} catch (error) {
-				console.error('Failed to initialize wishlist:', error)
-			}
-		}
-
-		await fetchUserInfo()
-		initWishlist()
+		await userStore.getUserInfo()
+		await wishlistStore.initWishlist()
 
 		const {scrollState, lenis} = useLenis()
 

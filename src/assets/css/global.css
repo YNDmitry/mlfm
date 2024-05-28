@@ -58,13 +58,6 @@ body {
 }
 /* /Переопределение неккоторых стилей свайпера */
 
-/* Оверлей для страницы рассылки */
-.overlayNewsletter {
-	backdrop-filter: blur(20px);
-	background: rgba(17, 17, 17, 0.8);
-}
-/* /Оверлей для страницы рассылки */
-
 /* Стилизация чекбоксов */
 input[type='checkbox']:checked + div svg {
 	display: block;

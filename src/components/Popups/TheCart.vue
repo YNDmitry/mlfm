@@ -30,12 +30,14 @@
 						class="flex flex-col font-montserrat max-tablet:gap-[1.875rem] max-tablet:py-[1.875rem] tablet:gap-[1.25rem] tablet:pb-[55px] tablet:pt-[45px]"
 					>
 						<article
-							v-for="item in useCart.items"
+							v-for="(item, idx) in useCart.itemsDetails"
 							:key="item?.id"
 							class="flex max-mobile:gap-[0.625rem] mobile:gap-[0.938rem]"
 						>
 							<NuxtImg
-								:src="config.public.databaseUrl + 'assets/' + item?.image_id"
+								:src="
+									config.public.databaseUrl + 'assets/' + item?.main_image.id
+								"
 								width="130"
 								class="object-cover max-mobile:h-[6.25rem] max-mobile:w-[3.813rem] mobile:h-[6.25rem]"
 							/>
@@ -56,7 +58,7 @@
 
 									<div class="flex gap-2">
 										<span class="text-[8px] opacity-50">
-											{{ item.quantity }} шт
+											{{ useCart.items[idx].quantity }} шт
 										</span>
 
 										<span class="text-[8px] opacity-50" v-if="item.color_id">

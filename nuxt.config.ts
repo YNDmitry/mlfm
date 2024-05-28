@@ -99,6 +99,7 @@ export default defineNuxtConfig({
 				'RadioButton',
 				'Skeleton',
 				'InputMask',
+				'SpeedDial',
 			],
 		},
 	},
