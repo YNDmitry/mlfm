@@ -20,15 +20,19 @@ export default defineNuxtConfig({
 		'/': {prerender: true},
 		'/auth/*': {
 			ssr: false,
+			index: false,
 		},
 		'/profile': {
 			ssr: false,
+			index: false,
 		},
 		'/checkout': {
 			ssr: false,
+			index: false,
 		},
 		'/wishlist': {
 			ssr: false,
+			index: false,
 		},
 	},
 
