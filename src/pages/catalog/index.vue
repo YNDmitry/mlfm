@@ -90,18 +90,18 @@
 	)
 
 	useSeoMeta({
-		title: data.value?.catalog?.meta_title,
-		ogTitle: data.value?.catalog?.meta_title,
-		description: data.value?.catalog?.meta_description,
-		ogDescription: data.value?.catalog?.meta_description,
+		title: data.value?.catalog?.SEO?.meta_title,
+		ogTitle: data.value?.catalog?.SEO?.meta_title,
+		description: data.value?.catalog?.SEO?.meta_description,
+		ogDescription: data.value?.catalog?.SEO?.meta_description,
 		ogImage:
 			appConfig.public.databaseUrl +
 			'assets/' +
-			data.value?.catalog?.og_image?.id,
+			data.value?.catalog?.SEO.og_image?.id,
 		twitterImage:
 			appConfig.public.databaseUrl +
 			'assets/' +
-			data.value?.catalog?.og_image?.id,
+			data.value?.catalog?.SEO?.og_image?.id,
 	})
 
 	function resetFilters() {

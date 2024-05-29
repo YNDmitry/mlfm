@@ -1,9 +1,11 @@
 query Catalog {
 	catalog {
-		meta_title
-		meta_description
-		og_image {
-			id
+		SEO {
+			meta_title
+			meta_description
+			og_image {
+				id
+			}
 		}
 		main_banner {
 			id
