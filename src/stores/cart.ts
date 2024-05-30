@@ -126,12 +126,22 @@ export const useCartStore = defineStore('userCart', {
 			)
 
 			if (existingItem && 'quantity' in existingItem) {
-				existingItem.quantity += item.quantity
+				if (
+					existingItem.quantity === 1 &&
+					existingItem.variant_id === '1' &&
+					item.quantity === 1
+				) {
+					console.log(
+						'Cannot add more of this item to the cart as it already has quantity 1 and variant_id 1.',
+					)
+				} else {
+					existingItem.quantity += item.quantity
+					await this.saveCartToServer()
+				}
 			} else {
 				this.items.push(item)
+				await this.saveCartToServer()
 			}
-
-			await this.saveCartToServer()
 		},
 
 		removeItem(productId: string) {
@@ -150,10 +160,13 @@ export const useCartStore = defineStore('userCart', {
 
 		async loadProductDetails() {
 			const productIds = Array.from(this.items).map((item) => item.product_id)
-			const productPvi = Array.from(this.items).map((item) => item.variant_id)
+			const productPvi = Array.from(this.items).map(
+				(item) => item.variant_id,
+			)[0]
 			const productQuantity = Array.from(this.items).map(
 				(item) => item.quantity,
-			)
+			)[0]
+
 			if (productIds.length > 0) {
 				try {
 					const res: any = await GqlGetCartProductsByIds({
@@ -161,6 +174,7 @@ export const useCartStore = defineStore('userCart', {
 						pvi: productPvi,
 						quantity: productQuantity,
 					})
+
 					this.itemsDetails = res.products || []
 				} catch (error) {
 					console.error('Error loading product details:', error)

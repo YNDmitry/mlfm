@@ -66,7 +66,6 @@ export const useUserStore = defineStore('userStore', {
 			}
 
 			await $directus.request(createUser(userPayload))
-			await createUser(userPayload)
 			await login({email: mail, password: password})
 
 			await this.getUserInfo()

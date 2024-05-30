@@ -22,6 +22,9 @@ export default defineNuxtConfig({
 			ssr: false,
 			index: false,
 		},
+		'/orders/*': {
+			ssr: false,
+		},
 		'/profile': {
 			ssr: false,
 			index: false,
