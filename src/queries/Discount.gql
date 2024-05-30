@@ -1,5 +1,0 @@
-query Discount($discount: String) {
-	discounts(search: $discount) {
-		percent
-	}
-}
