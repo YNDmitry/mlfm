@@ -51,7 +51,7 @@
 			</SpeedDial>
 			<HeaderLogo />
 			<HeaderMenuBtn @click="openMenu" />
-			<HeaderIcons :isMobile="isMobile" />
+			<HeaderIcons :isMobile="isMobile" @closeMenu="openMenu" />
 		</div>
 		<HeaderMobileMenu :isOpen="isOpen" :links="links" @closeMenu="openMenu" />
 		<PopupsTheCart />
