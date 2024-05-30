@@ -92,7 +92,7 @@
 
 					<!--  Промокод -->
 					<form
-						@submit.prevent="useCart.getDiscount(useCart.discount)"
+						@submit.prevent="useCart.setDiscount()"
 						class="relative flex items-center gap-4 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-[''] max-tablet:pb-[1.875rem] tablet:pb-[25px]"
 					>
 						<input

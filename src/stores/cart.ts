@@ -23,6 +23,7 @@ export const useCartStore = defineStore('userCart', {
 		itemsDetails: [],
 		relatedItems: [],
 		discount: '',
+		discountPercent: null,
 		isRelatedProductPending: true,
 	}),
 	getters: {
@@ -191,6 +192,20 @@ export const useCartStore = defineStore('userCart', {
 				this.isRelatedProductPending = false
 			} catch (error) {
 				console.error('Error fetching related products:', error)
+			}
+		},
+
+		async setDiscount() {
+			const config = useRuntimeConfig()
+			try {
+				const res = (await fetch(config.public.databaseUrl + 'discount', {
+					method: 'POST',
+					body: JSON.stringify({code: this.discount}),
+				}).then((res) => res.json())) as any
+
+				this.discountPercent = res.data.percent
+			} catch (error) {
+				console.error('Error fetching discount:', error)
 			}
 		},
 	},

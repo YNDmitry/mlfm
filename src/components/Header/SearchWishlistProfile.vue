@@ -1,8 +1,9 @@
 <template>
-	<div class="flex items-start gap-5 max-tablet:mt-5 max-tablet:flex-col">
+	<div
+		class="hidden items-start gap-5 max-tablet:mt-5 max-tablet:flex max-tablet:flex-col"
+	>
 		<NuxtLink
 			to="/wishlist"
-			class="hidden max-tablet:block"
 			@click="$emit('iconClick', 'wishlist'), $emit('closeMenu')"
 		>
 			<IconsHearth class="inline-block h-5 w-5 text-primary max-tablet:mr-2" />
