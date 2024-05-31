@@ -93,21 +93,30 @@
 					<!--  Промокод -->
 					<form
 						@submit.prevent="useCart.setDiscount()"
-						class="relative flex items-center gap-4 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-[''] max-tablet:pb-[1.875rem] tablet:pb-[25px]"
+						class="relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-[''] max-tablet:pb-[1.875rem] tablet:pb-[25px]"
 					>
-						<input
-							class="w-full border-[1px] border-black px-[12px] font-light max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[1.875rem] tablet:text-[0.875rem]"
-							type="text"
-							placeholder="Промокод"
-							v-model="useCart.discount"
-						/>
-
-						<button
-							type="submit"
-							class="border-[1px] border-black px-[1rem] transition-colors hover:bg-black hover:text-primary max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[1.875rem]"
+						<div
+							class="flex items-center gap-4"
+							v-if="useCart.discountPercent === null"
 						>
-							Применить
-						</button>
+							<input
+								class="w-full border-[1px] border-black px-[12px] font-light max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[1.875rem] tablet:text-[0.875rem]"
+								type="text"
+								placeholder="Промокод"
+								v-model="useCart.discount"
+							/>
+
+							<button
+								type="submit"
+								class="border-[1px] border-black px-[1rem] transition-colors hover:bg-black hover:text-primary max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[1.875rem]"
+							>
+								Применить
+							</button>
+						</div>
+						<p v-else>Успешно! Скидка добавлена.</p>
+						<p v-if="useCart.discountErrors" class="mt-4 text-red">
+							{{ useCart.discountErrors.statusMessage }}
+						</p>
 					</form>
 					<!--  /Промокод -->
 

@@ -24,6 +24,7 @@ export const useCartStore = defineStore('userCart', {
 		relatedItems: [],
 		discount: '',
 		discountPercent: null,
+		discountErrors: '',
 		isRelatedProductPending: true,
 	}),
 	getters: {
@@ -200,12 +201,19 @@ export const useCartStore = defineStore('userCart', {
 			try {
 				const res = (await fetch(config.public.databaseUrl + 'discount', {
 					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
 					body: JSON.stringify({code: this.discount}),
 				}).then((res) => res.json())) as any
 
-				this.discountPercent = res.data.percent
-			} catch (error) {
-				console.error('Error fetching discount:', error)
+				this.discountPercent = res.data[0].percent
+				this.discountErrors = ''
+			} catch (error: any) {
+				return (this.discountErrors = {
+					status: 400,
+					statusMessage: 'Скидка не найдена',
+				})
 			}
 		},
 	},

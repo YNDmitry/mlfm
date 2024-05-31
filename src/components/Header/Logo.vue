@@ -3,7 +3,7 @@
 		to="/"
 		class="absolute z-50 mx-auto text-center max-tablet:relative max-tablet:ml-0"
 	>
-		<div class="text-left">
+		<div class="max-tablet:text-left">
 			<div class="text-[1.25rem] text-red max-tablet:text-[12px]">
 				MLFM.STORE
 			</div>
