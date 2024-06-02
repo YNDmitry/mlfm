@@ -14,13 +14,14 @@
 </script>
 
 <template>
-	<div
-		v-if="filters"
-		class="relative flex flex-col gap-[1.25rem] pb-[0.625rem] pt-[1.25rem] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-['']"
-	>
+	<div v-if="filters" class="relative flex flex-col gap-[1.25rem] pt-[1.25rem]">
 		<span class="text-[0.875rem]">{{ title }}</span>
 
-		<div :id="'filter-wrapper-' + title" class="relative">
+		<div
+			:id="'filter-wrapper-' + title"
+			class="relative border-b-2 border-b-gray2 pb-[0.625rem]"
+			data-lenis-prevent
+		>
 			<Dropdown
 				@update:modelValue="(value) => emit('update:currentFilter', value)"
 				:modelValue="currentFilter"
@@ -32,7 +33,7 @@
 				:pt="{
 					dropdownicon: 'w-[10px]',
 					clearicon: 'w-[10px] ml-auto mr-2',
-					wrapper: 'bg-primary py-2 overflow-y-scroll py-4',
+					wrapper: 'bg-primary overflow-y-scroll pb-4',
 					list: 'h-[140px]',
 					item: 'text-[0.625rem] flex items-center px-2 rounded-main text-black h-[2rem] w-full cursor-pointer my-[0.5rem] transition-all hover:bg-grayLight',
 					input: 'outline-none',

@@ -1,4 +1,3 @@
-<!-- components/ProductList.vue -->
 <script lang="ts" setup>
 	interface Product {
 		id: string
@@ -21,35 +20,59 @@
 
 	const initialLimit = ref(props.currentLimit)
 	const newProductsLimit = ref(props.currentLimit)
+
+	const displayedProducts = computed(() => props.products)
+
+	const getBannerIndex = (overallIndex: number) => {
+		if (props.isMobile) {
+			return Math.floor(overallIndex / 6)
+		} else {
+			return Math.floor(overallIndex / 3)
+		}
+	}
 </script>
 
 <template>
 	<div>
 		<!-- Раздел с карточками -->
 		<div
-			class="grid grid-cols-catalog gap-[1.875rem] pb-[3.75rem] max-tablet:grid-cols-[1fr_1fr]"
+			class="grid grid-cols-[repeat(auto-fill,minmax(250px,_1fr))] gap-[1.875rem] pb-[3.75rem] max-tablet:grid-cols-[repeat(auto-fill,minmax(150px,_1fr))]"
 		>
-			<template v-for="(product, index) in props.products" :key="product.id">
+			<template v-for="(product, index) in displayedProducts" :key="product.id">
 				<ProductCard
 					:id="product.id"
 					:title="product?.title"
 					:imgSrc="product.main_image?.id"
 					:price="product?.price"
+					:class="{
+						'max-tablet:col-span-full':
+							index === displayedProducts.length - 1 &&
+							displayedProducts.length % 2 !== 0,
+					}"
 					class="animation-duration-2000 flex-shrink-0 transition-all"
 				/>
 
 				<!-- изображение -->
 				<template
 					v-if="
-						(index + 1) % 3 === 0 && props.data.catalog?.random_banners.length
+						(props.isMobile &&
+							(index + props.currentPage * props.currentLimit + 1) % 6 === 0) ||
+						(!props.isMobile &&
+							(index + props.currentPage * props.currentLimit + 1) % 3 === 0)
 					"
 				>
-					<div class="col-span-3 w-full overflow-hidden max-tablet:col-span-2">
+					<div
+						class="col-span-full w-full overflow-hidden"
+						v-if="
+							props.data.catalog.random_banners.length >
+							getBannerIndex(index + props.currentPage * props.currentLimit)
+						"
+					>
 						<NuxtImg
 							provider="directus"
 							:src="
 								props.data.catalog.random_banners[
-									Math.floor((index + 1) / 3) - 1
+									getBannerIndex(index + props.currentPage * props.currentLimit)
 								]?.directus_files_id.id
 							"
 							class="h-auto max-w-full"
