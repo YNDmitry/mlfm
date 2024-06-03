@@ -158,6 +158,7 @@
 		() => {
 			refresh()
 			window.scrollTo(0, 0)
+			document.querySelector('header')?.classList.remove('translate-y-[-100%]')
 		},
 		{deep: true},
 	)
