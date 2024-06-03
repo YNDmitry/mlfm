@@ -65,11 +65,6 @@
 							<NuxtLink to="/gift-card">Подарочные сертификаты</NuxtLink>
 						</li>
 						<li
-							class="font-montserrat text-[14px] font-normal text-[#6C6C6C] max-tablet:text-[10px]"
-						>
-							<NuxtLink to="/docs/conditions">Доставка и оплата</NuxtLink>
-						</li>
-						<li
 							v-for="doc in docs?.docs"
 							:key="doc.id"
 							class="font-montserrat text-[14px] font-normal text-[#6C6C6C] max-tablet:text-[10px]"

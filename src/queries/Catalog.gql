@@ -13,11 +13,6 @@ query Catalog {
 		main_banner_collection {
 			title
 		}
-		random_banners {
-			directus_files_id {
-				id
-			}
-		}
 		random_banners_collection {
 			collection_id {
 				title
