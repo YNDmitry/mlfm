@@ -52,7 +52,11 @@
 
 						<form class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-4">
 							<div class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-2">
-								<div class="mb-2 mt-4 font-normal">Номинал в рублях:</div>
+								<div
+									class="mb-2 mt-4 text-[0.75rem] font-normal max-tablet:text-[0.625rem]"
+								>
+									Номинал в рублях:
+								</div>
 								<input
 									type="number"
 									name="gift-nominal"
@@ -61,7 +65,11 @@
 									v-model="nominal"
 								/>
 								<div>
-									<div class="mb-2 mt-4 font-normal">Тип:</div>
+									<div
+										class="mb-2 mt-4 text-[0.75rem] font-normal max-tablet:text-[0.625rem]"
+									>
+										Тип:
+									</div>
 									<div class="flex w-full items-center gap-4">
 										<label
 											for="p"
@@ -133,21 +141,6 @@
 							</div>
 							<!-- /Кнопки "Добавить" -->
 						</form>
-
-						<!-- Dropdown-ы -->
-						<div
-							class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-[1.25rem]"
-						>
-							<Accordion>
-								<AccordionTab class="p-0">
-									<template #header class="p-0">
-										<div class="font-normal">О продукте</div>
-									</template>
-									<div v-html="data.gift_card?.description"></div>
-								</AccordionTab>
-							</Accordion>
-						</div>
-						<!-- /Dropdown-ы -->
 					</div>
 				</div>
 			</div>
