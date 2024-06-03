@@ -157,13 +157,20 @@
 
 			<!-- Баннер -->
 			<div class="pt-[25px]" v-if="props.data?.catalog?.main_banner?.id">
-				<NuxtImg
-					provider="directus"
-					:src="props.data?.catalog?.main_banner?.id"
-					width="275"
-					height="485"
-					format="webp"
-				/>
+				<NuxtLink
+					:to="
+						'/catalog?collection=' +
+						props.data?.catalog?.main_banner_collection?.title
+					"
+				>
+					<NuxtImg
+						provider="directus"
+						:src="props.data?.catalog?.main_banner?.id"
+						width="275"
+						height="485"
+						format="webp"
+					/>
+				</NuxtLink>
 			</div>
 			<!-- /Баннер -->
 		</div>

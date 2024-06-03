@@ -64,21 +64,32 @@
 					<div
 						class="col-span-full w-full overflow-hidden"
 						v-if="
-							props.data.catalog.random_banners.length >
+							props.data.catalog.random_banners_collection.length >
 							getBannerIndex(index + props.currentPage * props.currentLimit)
 						"
 					>
-						<NuxtImg
-							provider="directus"
-							:src="
-								props.data.catalog.random_banners[
+						<NuxtLink
+							:to="
+								'/catalog?collection=' +
+								props.data.catalog.random_banners_collection[
 									getBannerIndex(index + props.currentPage * props.currentLimit)
-								]?.directus_files_id.id
+								]?.collection_id.title
 							"
-							class="h-auto max-w-full"
-							width="955"
-							format="webp"
-						/>
+						>
+							<NuxtImg
+								provider="directus"
+								:src="
+									props.data.catalog.random_banners_collection[
+										getBannerIndex(
+											index + props.currentPage * props.currentLimit,
+										)
+									]?.image.id
+								"
+								class="h-auto max-w-full"
+								width="955"
+								format="webp"
+							/>
+						</NuxtLink>
 					</div>
 				</template>
 			</template>

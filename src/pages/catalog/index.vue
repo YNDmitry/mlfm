@@ -117,12 +117,36 @@
 		refresh()
 	}
 
+	function updateQueryParams() {
+		const queryParams: any = {
+			sort: currentSort.value,
+		}
+		// Добавляем только определенные фильтры в URL
+		if (initialState.filter.brandTitle)
+			queryParams.brandTitle = initialState.filter.brandTitle
+		if (initialState.filter.collectionId)
+			queryParams.collection = initialState.filter.collectionId
+		if (initialState.filter.colors.length > 0)
+			queryParams.color = initialState.filter.colors.join(',')
+		if (initialState.filter.size) queryParams.size = initialState.filter.size
+		if (initialState.filter.categories.length > 0)
+			queryParams.category = initialState.filter.categories.join(',')
+		if (initialState.filter.minPrice)
+			queryParams.minPrice = initialState.filter.minPrice
+		if (initialState.filter.maxPrice)
+			queryParams.maxPrice = initialState.filter.maxPrice
+
+		router.push({query: queryParams})
+	}
+
 	function updateLimit(newLimit: number) {
 		currentLimit.value = newLimit
+		updateQueryParams()
 	}
 
 	function updatePage(newPage: number) {
 		currentPage.value = newPage
+		updateQueryParams()
 	}
 
 	watch(

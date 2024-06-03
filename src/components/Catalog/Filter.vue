@@ -27,7 +27,6 @@
 				:modelValue="currentFilter"
 				:options="filters.map((filter) => filter.title)"
 				:placeholder="title"
-				unstyled
 				:showClear="true"
 				:aria-label="title"
 				:pt="{
@@ -39,8 +38,9 @@
 					input: 'outline-none',
 					panel: '!top-[23px] !left-0',
 				}"
-				class="flex cursor-pointer justify-between border-0 text-[0.625rem] shadow-none outline-none"
 				:append-to="'#filter-wrapper-' + title"
+				unstyled
+				class="flex cursor-pointer justify-between border-0 text-[0.625rem] shadow-none outline-none"
 			>
 			</Dropdown>
 		</div>

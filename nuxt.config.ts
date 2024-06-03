@@ -18,6 +18,7 @@ export default defineNuxtConfig({
 
 	routeRules: {
 		'/': {prerender: true},
+		'/catalog': {prerender: true},
 		'/auth/*': {
 			ssr: false,
 			index: false,

@@ -337,17 +337,6 @@
 									</template>
 									<p>{{ product?.description }}</p>
 								</AccordionTab>
-								<AccordionTab class="p-0">
-									<template #header>
-										<div class="font-normal">Доставка</div>
-									</template>
-									<p>
-										Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-										Fuga illo ex architecto distinctio esse dolorum, quis totam
-										deserunt! Harum saepe alias veniam ex iusto accusamus sunt
-										commodi officia sit blanditiis?
-									</p>
-								</AccordionTab>
 							</Accordion>
 						</div>
 						<!-- /Dropdown-ы -->

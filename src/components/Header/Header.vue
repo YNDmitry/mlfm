@@ -33,8 +33,8 @@
 	>
 		<div class="relative flex items-center justify-center bg-primary px-5 py-5">
 			<SpeedDial
-				:model="items"
 				direction="right"
+				:model="items"
 				:rotate-animation="false"
 				:pt="{
 					root: 'left-4 max-tablet:hidden',
@@ -50,7 +50,7 @@
 				</template>
 			</SpeedDial>
 			<HeaderLogo />
-			<HeaderMenuBtn @click="openMenu" />
+			<HeaderMenuBtn @click="openMenu" class="max-tablet:block" />
 			<HeaderIcons :isMobile="isMobile" @closeMenu="openMenu" />
 		</div>
 		<HeaderMobileMenu :isOpen="isOpen" :links="links" @closeMenu="openMenu" />
