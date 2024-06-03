@@ -33,15 +33,16 @@
 	>
 		<div class="relative flex items-center justify-center bg-primary px-5 py-5">
 			<SpeedDial
+				class="max-tablet:hidden"
 				direction="right"
 				:model="items"
 				:rotate-animation="false"
 				:pt="{
-					root: 'left-4 max-tablet:hidden',
+					root: 'left-4',
 				}"
 			>
 				<template #icon>
-					<HeaderMenuBtn />
+					<HeaderMenuBtn class="max-tablet:hidden" />
 				</template>
 				<template #item="slotParams">
 					<NuxtLink :to="slotParams.item.path">
@@ -50,7 +51,7 @@
 				</template>
 			</SpeedDial>
 			<HeaderLogo />
-			<HeaderMenuBtn @click="openMenu" class="max-tablet:block" />
+			<HeaderMenuBtn @click="openMenu" class="hidden max-tablet:block" />
 			<HeaderIcons :isMobile="isMobile" @closeMenu="openMenu" />
 		</div>
 		<HeaderMobileMenu :isOpen="isOpen" :links="links" @closeMenu="openMenu" />

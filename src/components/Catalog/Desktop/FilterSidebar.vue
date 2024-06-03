@@ -16,7 +16,7 @@
 	}
 
 	const props = defineProps<Props>()
-	const emit = defineEmits('updateCollection')
+	const emit = defineEmits(['updateCollection'])
 </script>
 
 <template>
