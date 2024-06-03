@@ -16,7 +16,12 @@
 	}
 
 	const props = defineProps<Props>()
-	const emit = defineEmits(['resetFilters', 'updateLimit', 'updatePage'])
+	const emit = defineEmits([
+		'resetFilters',
+		'updateLimit',
+		'updatePage',
+		'updateCollection',
+	])
 
 	const initialLimit = ref(props.currentLimit)
 	const newProductsLimit = ref(props.currentLimit)
@@ -68,12 +73,17 @@
 							getBannerIndex(index + props.currentPage * props.currentLimit)
 						"
 					>
-						<NuxtLink
-							:to="
-								'/catalog?collection=' +
-								props.data.catalog.random_banners_collection[
-									getBannerIndex(index + props.currentPage * props.currentLimit)
-								]?.collection_id.title
+						<button
+							type="button"
+							@click="
+								$emit(
+									'updateCollection',
+									props.data.catalog.random_banners_collection[
+										getBannerIndex(
+											index + props.currentPage * props.currentLimit,
+										)
+									]?.collection_id.title,
+								)
 							"
 						>
 							<NuxtImg
@@ -89,7 +99,7 @@
 								width="955"
 								format="webp"
 							/>
-						</NuxtLink>
+						</button>
 					</div>
 				</template>
 			</template>

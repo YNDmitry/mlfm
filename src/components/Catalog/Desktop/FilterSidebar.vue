@@ -16,6 +16,7 @@
 	}
 
 	const props = defineProps<Props>()
+	const emit = defineEmits('updateCollection')
 </script>
 
 <template>
@@ -157,10 +158,13 @@
 
 			<!-- Баннер -->
 			<div class="pt-[25px]" v-if="props.data?.catalog?.main_banner?.id">
-				<NuxtLink
-					:to="
-						'/catalog?collection=' +
-						props.data?.catalog?.main_banner_collection?.title
+				<button
+					type="button"
+					@click="
+						$emit(
+							'updateCollection',
+							props.data?.catalog?.main_banner_collection?.title,
+						)
 					"
 				>
 					<NuxtImg
@@ -170,7 +174,7 @@
 						height="485"
 						format="webp"
 					/>
-				</NuxtLink>
+				</button>
 			</div>
 			<!-- /Баннер -->
 		</div>

@@ -149,6 +149,10 @@
 		updateQueryParams()
 	}
 
+	function updateCollection(newCollection: string) {
+		initialState.filter.collectionId = newCollection
+	}
+
 	watch(
 		() => [currentPage, currentSort, currentLimit, initialState.filter],
 		() => {
@@ -188,6 +192,13 @@
 		{deep: true},
 	)
 
+	watch(
+		() => route,
+		() => {
+			updateQueryParams()
+		},
+	)
+
 	const minPrice = computed(() =>
 		Intl.NumberFormat('ru-RU', {
 			style: 'currency',
@@ -222,6 +233,7 @@
 						:resetFilters="resetFilters"
 						:minPrice="minPrice"
 						:maxPrice="maxPrice"
+						@updateCollection="updateCollection"
 					/>
 					<!-- /Боковое меню (На ПК)-->
 
@@ -293,6 +305,7 @@
 							@resetFilters="resetFilters"
 							@updateLimit="updateLimit"
 							@updatePage="updatePage"
+							@updateCollection="updateCollection"
 						/>
 					</div>
 				</div>
