@@ -1,0 +1,15 @@
+query GetCheckoutSession($id: ID!) {
+	checkout_sessions_by_id(id: $id) {
+		id
+		session_data
+		expires_at
+	}
+}
+
+mutation CreateCheckoutSession($session_data: JSON!, $expires_at: Date!) {
+	create_checkout_sessions_item(
+		data: {session_data: $session_data, expires_at: $expires_at}
+	) {
+		id
+	}
+}

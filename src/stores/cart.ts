@@ -33,10 +33,7 @@ export const useCartStore = defineStore('userCart', {
 				if ('quantity' in item) {
 					return total + item.price * item.quantity
 				}
-				return Intl.NumberFormat('ru-RU', {
-					style: 'currency',
-					currency: 'RUB',
-				}).format(total + item.price) // Assume quantity is 1 for gift cards
+				return total + item.price // Assume quantity is 1 for gift cards
 			}, 0)
 		},
 	},
@@ -69,6 +66,7 @@ export const useCartStore = defineStore('userCart', {
 			try {
 				const res = await GqlGetSession({id: sessionId})
 				this.items = res?.guest_session_by_id?.temp_order || []
+				await this.loadProductDetails() // Обновление деталей продуктов после загрузки корзины
 			} catch (error) {
 				console.error('Error loading cart from server:', error)
 			}
@@ -84,6 +82,7 @@ export const useCartStore = defineStore('userCart', {
 						temp_order: this.items,
 					},
 				})
+				await this.loadProductDetails() // Обновление деталей продуктов после сохранения корзины
 			} catch (error) {
 				console.error('Error saving cart to server:', error)
 			}
@@ -96,21 +95,17 @@ export const useCartStore = defineStore('userCart', {
 				return
 			}
 
-			const existingItem = this.items.find(
-				(i) => i.product_id === item.product_id,
+			const existingItemIndex = this.items.findIndex(
+				(i) => i.product_id === item.product_id && 'price' in i,
 			)
-			if (existingItem) {
-				// const toast = useToast()
-				// toast.error(
-				// 	'Item already in cart. Remove it first if you want to change.',
-				// )
-				console.log(
-					'Item already in cart. Remove it first if you want to change.',
-				)
+			if (existingItemIndex !== -1) {
+				// Заменяем номинал карты вместо сообщения об ошибке
+				this.items[existingItemIndex] = item
 			} else {
 				this.items.push(item)
-				await this.saveCartToServer()
 			}
+
+			await this.saveCartToServer()
 		},
 
 		async addItem(item: CartItem) {
@@ -128,22 +123,12 @@ export const useCartStore = defineStore('userCart', {
 			)
 
 			if (existingItem && 'quantity' in existingItem) {
-				if (
-					existingItem.quantity === 1 &&
-					existingItem.variant_id === '1' &&
-					item.quantity === 1
-				) {
-					console.log(
-						'Cannot add more of this item to the cart as it already has quantity 1 and variant_id 1.',
-					)
-				} else {
-					existingItem.quantity += item.quantity
-					await this.saveCartToServer()
-				}
+				existingItem.quantity += item.quantity
 			} else {
 				this.items.push(item)
-				await this.saveCartToServer()
 			}
+
+			await this.saveCartToServer()
 		},
 
 		removeItem(productId: string) {
@@ -161,20 +146,16 @@ export const useCartStore = defineStore('userCart', {
 		},
 
 		async loadProductDetails() {
-			const productIds = Array.from(this.items).map((item) => item.product_id)
-			const productPvi = Array.from(this.items).map(
-				(item) => item.variant_id,
-			)[0]
-			const productQuantity = Array.from(this.items).map(
-				(item) => item.quantity,
-			)[0]
-
-			if (productIds.length > 0) {
+			if (this.items.length > 0) {
 				try {
+					const productIds = this.items.map((item) => item.product_id)
+					const variantIds = this.items
+						.filter((item): item is CartItem => 'variant_id' in item)
+						.map((item) => item.variant_id)
+
 					const res: any = await GqlGetCartProductsByIds({
 						ids: productIds,
-						pvi: productPvi,
-						quantity: productQuantity,
+						variant_ids: variantIds,
 					})
 
 					this.itemsDetails = res.products || []
@@ -214,6 +195,79 @@ export const useCartStore = defineStore('userCart', {
 					status: 400,
 					statusMessage: 'Скидка не найдена',
 				})
+			}
+		},
+
+		async createCheckoutSession() {
+			const sessionId = await this.getSessionId()
+			if (!sessionId) {
+				await this.initCart()
+				return
+			}
+
+			const existingCheckoutSessionId =
+				localStorage.getItem('checkoutSessionId')
+			if (existingCheckoutSessionId) {
+				try {
+					const data = await GqlGetCheckoutSession({
+						id: existingCheckoutSessionId,
+					})
+
+					const existingSession = data.checkout_sessions_by_id
+
+					// Проверка, не истекла ли сессия
+					if (
+						existingSession &&
+						new Date(existingSession.expires_at) > new Date()
+					) {
+						// Проверка, изменились ли данные в корзине
+						const currentSessionData = {
+							items: this.items,
+							totalPrice: this.totalPrice,
+							discount: this.discount,
+						}
+
+						console.log(
+							'Current session data:',
+							JSON.stringify(currentSessionData),
+						)
+						console.log(
+							'Existing session data:',
+							JSON.stringify(existingSession.session_data),
+						)
+
+						if (
+							JSON.stringify(currentSessionData) ===
+							JSON.stringify(existingSession.session_data)
+						) {
+							return existingCheckoutSessionId // Возвращаем ID существующей активной сессии
+						}
+					}
+				} catch (error) {
+					console.error('Error reading existing checkout session:', error)
+					localStorage.removeItem('checkoutSessionId') // Удаляем невалидную сессию
+				}
+			}
+
+			try {
+				const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString() // Сессия действительна в течение 30 минут
+
+				const sessionData = {
+					items: this.items,
+					totalPrice: this.totalPrice,
+					discount: this.discount,
+				}
+
+				const data = await GqlCreateCheckoutSession({
+					session_data: sessionData,
+					expires_at: expiresAt,
+				})
+
+				const newSessionId = data.create_checkout_sessions_item?.id as string
+				localStorage.setItem('checkoutSessionId', newSessionId)
+				return newSessionId
+			} catch (error) {
+				console.error('Error creating checkout session:', error)
 			}
 		},
 	},

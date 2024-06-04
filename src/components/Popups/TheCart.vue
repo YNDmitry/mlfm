@@ -3,6 +3,11 @@
 	const useCart = useCartStore()
 
 	const config = useRuntimeConfig()
+
+	const handleSubmit = async () => {
+		const id = await useCart.createCheckoutSession()
+		return navigateTo(`/checkout/${id}`)
+	}
 </script>
 
 <template>
@@ -61,12 +66,18 @@
 											{{ useCart.items[idx].quantity }} шт
 										</span>
 
-										<span class="text-[8px] opacity-50" v-if="item.color_id">
-											{{ item.color_id }} цвет
+										<span
+											class="text-[8px] opacity-50"
+											v-if="item.product_variants[0].color_id"
+										>
+											{{ item.product_variants[0].color_id.title }} цвет
 										</span>
 
-										<span class="text-[8px] opacity-50" v-if="item.color_id">
-											{{ item.size_id }} размер
+										<span
+											class="text-[8px] opacity-50"
+											v-if="item.product_variants[0].size_id"
+										>
+											{{ item.product_variants[0].size_id.small_title }} размер
 										</span>
 									</div>
 								</div>
@@ -136,18 +147,24 @@
 						<div class="flex justify-between text-[0.625rem] font-medium">
 							<span>Итого</span>
 
-							<span>{{ useCart.totalPrice }}</span>
+							<span>{{
+								Intl.NumberFormat('ru-RU', {
+									style: 'currency',
+									currency: 'RUB',
+								}).format(useCart.totalPrice)
+							}}</span>
 						</div>
 					</div>
 					<!--  /Скидка/Итого -->
 
 					<!--  Кнопка - Перейти к оплате -->
-					<NuxtLink
-						to="/checkout"
+					<button
+						type="button"
+						@click="handleSubmit"
 						class="flex w-full items-center justify-center bg-red2 text-[0.625rem] text-primary transition-colors hover:bg-red2-hover max-tablet:mt-[1.875rem] max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] tablet:mt-[1.25rem] tablet:min-h-[37px] tablet:rounded-[1.875rem] tablet:font-medium"
 					>
 						Перейти к оплате
-					</NuxtLink>
+					</button>
 					<!--  /Кнопка - Перейти к оплате -->
 				</div>
 

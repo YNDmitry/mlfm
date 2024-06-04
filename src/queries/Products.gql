@@ -35,24 +35,15 @@ query GetProductsByIds($ids: [String]) {
 	}
 }
 
-query GetCartProductsByIds(
-	$ids: [String]
-	$pvi: String
-	$quantity: GraphQLStringOrFloat
-) {
-	products(
-		filter: {
-			id: {_in: $ids}
-			product_variants: {id: {_eq: $pvi}, qunatity: {_gte: $quantity}}
-		}
-	) {
+query GetCartProductsByIds($ids: [String], $variant_ids: [String]) {
+	products(filter: {id: {_in: $ids}}) {
 		id
 		main_image {
 			id
 		}
 		title
 		price
-		product_variants {
+		product_variants(filter: {id: {_in: $variant_ids}}) {
 			id
 			color_id {
 				title
