@@ -18,7 +18,6 @@ export default defineNuxtConfig({
 
 	routeRules: {
 		'/': {prerender: true},
-		'/catalog': {prerender: true},
 		'/auth/*': {
 			ssr: false,
 			index: false,
@@ -30,7 +29,7 @@ export default defineNuxtConfig({
 			ssr: false,
 			index: false,
 		},
-		'/checkout': {
+		'/checkout/*': {
 			ssr: false,
 			index: false,
 		},
