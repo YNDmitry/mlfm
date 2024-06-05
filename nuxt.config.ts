@@ -41,6 +41,14 @@ export default defineNuxtConfig({
 		},
 	},
 
+	vite: {
+		build: {
+			rollupOptions: {
+				external: ['nuxt-lenis'],
+			},
+		},
+	},
+
 	runtimeConfig: {
 		public: {
 			databaseUrl: process.env.DATABASE_URL,
@@ -113,4 +121,6 @@ export default defineNuxtConfig({
 			],
 		},
 	},
+
+	telemetry: false,
 })
