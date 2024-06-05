@@ -61,15 +61,15 @@
 		offer: false,
 	}
 
-	// Закомменти этот говнокод чтобы протестировать валидацию
-	if (process.env.NODE_ENV === 'development') {
-		import('~/config/devConfig').then((module) => {
-			initialValues = {
-				...initialValues,
-				...module.devCheckoutInitialValues,
-			}
-		})
-	}
+	// Разкоменти этот говнокод чтобы протестировать валидацию
+	// if (process.env.NODE_ENV === 'development') {
+	// 	import('~/config/devConfig').then((module) => {
+	// 		initialValues = {
+	// 			...initialValues,
+	// 			...module.devCheckoutInitialValues,
+	// 		}
+	// 	})
+	// }
 
 	const {handleSubmit, isSubmitting} = useForm({
 		validationSchema: schema,
