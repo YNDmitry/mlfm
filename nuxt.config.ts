@@ -41,14 +41,6 @@ export default defineNuxtConfig({
 		},
 	},
 
-	vite: {
-		build: {
-			rollupOptions: {
-				external: ['nuxt-lenis'],
-			},
-		},
-	},
-
 	runtimeConfig: {
 		public: {
 			databaseUrl: process.env.DATABASE_URL,
@@ -72,7 +64,6 @@ export default defineNuxtConfig({
 		'@vee-validate/nuxt',
 		'nuxt-primevue',
 		'nuxt-swiper',
-		'nuxt-lenis',
 		'@formkit/auto-animate',
 		'@nuxt/fonts',
 		'nuxt-graphql-client',

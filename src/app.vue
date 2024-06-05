@@ -1,14 +1,4 @@
 <script setup lang="ts">
-	const LenisOptions = ref({
-		duration: 0.5,
-		lerp: 0.1,
-		syncTouchLerp: 0.075,
-		smoothWheel: true,
-		wheelMultiplier: 1,
-		touchMultiplier: 1,
-		autoResize: true,
-	})
-
 	const websiteStore = useWebsiteStore()
 
 	const {data: configData, error: configError} = await useAsyncData(
@@ -40,9 +30,7 @@
 <template>
 	<div>
 		<NuxtLayout>
-			<lenis :options="LenisOptions">
-				<NuxtPage />
-			</lenis>
+			<NuxtPage />
 		</NuxtLayout>
 	</div>
 </template>
