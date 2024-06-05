@@ -49,6 +49,7 @@
     "@directus/sdk": "16.0.2",
     "@formkit/auto-animate": "^0.8.1",
     "@nuxtjs/tailwindcss": "^6.10.4",
+    "@rollup/plugin-commonjs": "^25.0.8",
     "@vee-validate/nuxt": "^4.12.6",
     "jwt-decode": "^4.0.0",
     "nuxt-lenis": "^1.0.8",

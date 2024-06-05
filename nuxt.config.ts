@@ -1,3 +1,5 @@
+import commonjs from '@rollup/plugin-commonjs'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
 	devtools: {enabled: true},
@@ -18,6 +20,9 @@ export default defineNuxtConfig({
 
 	build: {
 		transpile: ['nuxt-lenis'],
+		rollupOptions: {
+			plugins: [commonjs()],
+		},
 	},
 
 	routeRules: {
