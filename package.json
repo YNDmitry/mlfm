@@ -50,7 +50,7 @@
     "@nuxtjs/tailwindcss": "^6.10.4",
     "@vee-validate/nuxt": "^4.12.6",
     "jwt-decode": "^4.0.0",
-    "nuxt-lenis": "^1.0.8",
+    "nuxt-lenis": "^1.2.0",
     "nuxt-swiper": "^1.2.2",
     "primevue": "^3.49.1"
   }
