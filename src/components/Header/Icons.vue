@@ -11,17 +11,12 @@
 </script>
 
 <template>
-	<div class="ml-auto flex items-center gap-5 max-tablet:hidden">
-		<button
-			@click="handleIconClick('search'), $emit('closeMenu')"
-			type="button"
-		>
-			<IconsSearch class="inline-block h-[18px] w-[18px] max-tablet:mr-2" />
-			<span class="tablet:hidden">Поиск</span>
+	<div class="z-50 ml-auto flex items-center gap-5 max-tablet:gap-3">
+		<button @click="handleIconClick('search')" type="button">
+			<IconsSearch class="inline-block h-[18px] w-[18px]" />
 		</button>
-		<button @click="handleIconClick('cart'), $emit('closeMenu')">
-			<IconsCart class="inline-block h-5 w-5 max-tablet:mr-2" />
-			<span class="tablet:hidden">Корзина</span>
+		<button @click="handleIconClick('cart')">
+			<IconsCart class="inline-block h-5 w-5" />
 		</button>
 	</div>
 </template>

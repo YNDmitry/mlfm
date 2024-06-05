@@ -16,20 +16,20 @@
 		@show.once="useCart.initCart()"
 		:modal="true"
 		position="right"
-		class="z-10 h-full w-full overflow-scroll bg-primary pb-9 pt-12 tablet:max-w-[505px]"
+		class="z-10 h-full w-full overflow-scroll bg-primary pb-9 pt-12 max-tablet:pt-5 tablet:max-w-[505px]"
 		data-lenis-prevent
 	>
 		<template #container>
 			<div>
 				<div
-					class="flex w-full items-center justify-between border-b-[1px] border-b-gray2 px-10 pb-[1.25rem]"
+					class="flex w-full items-center justify-between border-b-[1px] border-b-gray2 px-10 pb-[1.25rem] max-tablet:px-4"
 				>
 					<div class="max-tablet:text-[0.875rem]">Корзина</div>
 					<button type="button" @click="websiteStore.isVisibleCart = false">
 						<IconsClose class="h-3 w-3" />
 					</button>
 				</div>
-				<div class="px-10" v-if="useCart.items.length > 0">
+				<div class="px-10 max-tablet:px-4" v-if="useCart.items.length > 0">
 					<!--  Товары -->
 					<div
 						class="flex flex-col font-montserrat max-tablet:gap-[1.875rem] max-tablet:py-[1.875rem] tablet:gap-[1.25rem] tablet:pb-[55px] tablet:pt-[45px]"

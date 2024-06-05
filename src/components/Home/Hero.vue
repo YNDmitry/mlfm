@@ -27,7 +27,7 @@
 		>
 			<h1
 				v-if="title"
-				class="text-center text-h1 uppercase tracking-[0.375rem] max-tablet:text-right max-tablet:text-h1Mob max-tablet:font-light max-tablet:tracking-[2.5px]"
+				class="text-center text-h1 uppercase tracking-[0.375rem] max-tablet:text-right max-tablet:text-[0.8rem] max-tablet:font-light max-tablet:tracking-[2.5px]"
 			>
 				{{ title }}
 			</h1>

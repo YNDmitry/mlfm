@@ -7,52 +7,56 @@
 		{title: 'Контакты', href: '/contact-us'},
 	])
 
-	const items = ref([
-		{
-			label: 'Профиль',
-			path: '/profile',
-		},
-		{
-			label: 'Избранное',
-			path: '/wishlist',
-		},
-	])
-
 	const isMobile = useMediaQuery('(max-width: 768px)')
 	const isOpen = ref(false)
+
+	const isDesktopMenuOpen = ref(false)
 
 	const openMenu = () => {
 		if (!isMobile.value) return
 		isOpen.value = !isOpen.value
 	}
+	const tooltipStyles = {
+		text: 'text-[0.75rem]',
+		root: 'py-2',
+	}
 </script>
 
 <template>
 	<header
-		class="sticky top-0 z-[1002] translate-y-0 transition-all duration-500"
+		class="sticky top-0 z-[1000] translate-y-0 transition-all duration-500"
 	>
 		<div class="relative flex items-center justify-center bg-primary px-5 py-5">
-			<SpeedDial
-				class="max-tablet:hidden"
-				direction="right"
-				:model="items"
-				:rotate-animation="false"
-				:pt="{
-					root: 'left-4',
-				}"
-			>
-				<template #icon>
+			<div class="relative flex items-center max-tablet:hidden" v-auto-animate>
+				<div @click="isDesktopMenuOpen = !isDesktopMenuOpen">
 					<HeaderMenuBtn class="max-tablet:hidden" />
-				</template>
-				<template #item="slotParams">
-					<NuxtLink :to="slotParams.item.path">
-						{{ slotParams.item.label }}
+				</div>
+				<div
+					v-show="isDesktopMenuOpen"
+					class="absolute left-8 flex items-center gap-3"
+				>
+					<NuxtLink
+						to="/profile"
+						class="h-5 w-5"
+						v-tooltip.bottom="{value: 'Профиль', pt: tooltipStyles}"
+					>
+						<IconsProfile />
 					</NuxtLink>
-				</template>
-			</SpeedDial>
+					<NuxtLink
+						to="/wishlist"
+						class="h-5 w-5"
+						v-tooltip.bottom="{value: 'Избранное', pt: tooltipStyles}"
+					>
+						<IconsHearth class="text-primary" />
+					</NuxtLink>
+				</div>
+			</div>
+			<HeaderMenuBtn
+				@click="openMenu"
+				class="hidden max-tablet:mr-auto max-tablet:block"
+			/>
 			<HeaderLogo />
-			<HeaderMenuBtn @click="openMenu" class="hidden max-tablet:block" />
-			<HeaderIcons :isMobile="isMobile" @closeMenu="openMenu" />
+			<HeaderIcons :isMobile="isMobile" />
 		</div>
 		<HeaderMobileMenu :isOpen="isOpen" :links="links" @closeMenu="openMenu" />
 		<PopupsTheCart />
