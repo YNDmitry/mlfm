@@ -20,9 +20,6 @@ export default defineNuxtConfig({
 
 	build: {
 		transpile: ['nuxt-lenis'],
-		rollupOptions: {
-			plugins: [commonjs()],
-		},
 	},
 
 	routeRules: {
