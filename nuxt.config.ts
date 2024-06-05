@@ -16,6 +16,10 @@ export default defineNuxtConfig({
 		},
 	},
 
+	build: {
+		transpile: ['nuxt-lenis'],
+	},
+
 	routeRules: {
 		'/': {prerender: true},
 		'/auth/*': {
