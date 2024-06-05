@@ -4,6 +4,7 @@
 		name: String,
 		label: String,
 		checked: Boolean,
+		value: String,
 	})
 </script>
 
@@ -13,11 +14,12 @@
 			:id="id"
 			type="radio"
 			:name="name"
+			:value="value"
 			class="absolute h-5 w-5 cursor-pointer opacity-0"
 			:checked="checked"
 		/>
 		<div
-			class="rounded-full relative flex h-5 w-5 cursor-pointer items-center justify-center border-[1px] border-black"
+			class="relative flex h-5 w-5 cursor-pointer items-center justify-center rounded-[100%] border-[1px] border-black"
 		></div>
 		<span class="text-[0.625rem]">{{ label }}</span>
 	</label>

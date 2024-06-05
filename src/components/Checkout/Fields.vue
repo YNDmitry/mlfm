@@ -7,14 +7,24 @@
 		</h1>
 		<div class="flex flex-col gap-[1.25rem]">
 			<div class="grid grid-cols-[1fr_1fr] gap-[1.25rem]">
-				<CheckoutInputField label="Имя*" placeholder="Введите имя" />
-				<CheckoutInputField label="Фамилия*" placeholder="Введите фамилию" />
+				<CheckoutInputField
+					name="firstName"
+					label="Имя*"
+					placeholder="Введите имя"
+				/>
+				<CheckoutInputField
+					name="lastName"
+					label="Фамилия*"
+					placeholder="Введите фамилию"
+				/>
 			</div>
 			<CheckoutInputField
+				name="thirdName"
 				label="Отчество"
 				placeholder="Отчество (опционально)"
 			/>
 			<CheckoutInputField
+				name="email"
 				label="Электронная почта (Email)*"
 				placeholder="user@gmail.com"
 			/>

@@ -227,15 +227,6 @@ export const useCartStore = defineStore('userCart', {
 							discount: this.discount,
 						}
 
-						console.log(
-							'Current session data:',
-							JSON.stringify(currentSessionData),
-						)
-						console.log(
-							'Existing session data:',
-							JSON.stringify(existingSession.session_data),
-						)
-
 						if (
 							JSON.stringify(currentSessionData) ===
 							JSON.stringify(existingSession.session_data)

@@ -8,15 +8,32 @@
 			Способ оплаты
 		</h2>
 		<div class="flex flex-col max-tablet:gap-[12px] tablet:gap-[1.25rem]">
-			<CheckoutPaymentOption id="radio-3" name="payment" label="СПБ" checked />
 			<CheckoutPaymentOption
-				id="radio-4"
-				name="payment"
+				name="paymentMethod"
+				value="SPB"
+				label="СПБ"
+				checked
+			/>
+			<CheckoutPaymentOption
+				name="paymentMethod"
+				value="Банковская карта"
 				label="Банковская карта"
 			/>
-			<CheckoutPaymentOption id="radio-5" name="payment" label="Долями" />
-			<CheckoutPaymentOption id="radio-6" name="payment" label="SberPay" />
-			<CheckoutPaymentOption id="radio-7" name="payment" label="TinkoffPay" />
+			<CheckoutPaymentOption
+				name="paymentMethod"
+				value="Долями"
+				label="Долями"
+			/>
+			<CheckoutPaymentOption
+				name="paymentMethod"
+				value="SberPay"
+				label="SberPay"
+			/>
+			<CheckoutPaymentOption
+				name="paymentMethod"
+				value="TinkoffPay"
+				label="TinkoffPay"
+			/>
 		</div>
 	</div>
 </template>

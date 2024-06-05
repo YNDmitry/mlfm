@@ -1,0 +1,16 @@
+export const devCheckoutInitialValues = {
+	firstName: 'Иван',
+	lastName: 'Иванов',
+	thirdName: 'Иванович',
+	email: 'ivanov@example.com',
+	phone: '+71234567890',
+	city: 'Москва',
+	street: 'Тверская',
+	home: '1',
+	entrance: '1',
+	apartment: '1',
+	postCode: '123456',
+	comment: 'Комментарий',
+	paymentMethod: 'Банковская карта',
+	terms: true,
+}

@@ -45,7 +45,7 @@ module.exports = {
 		},
 		fontSize: {
 			h1: '1.5rem',
-			h1Mob: '1.2rem',
+			h1Mob: '1rem',
 			h2: '1rem',
 			h2Mob: '0.8rem'
 		},

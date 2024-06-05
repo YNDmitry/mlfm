@@ -1,6 +1,8 @@
 <script setup lang="ts">
 	import {boolean, object, string} from 'yup'
 
+	const route = useRoute()
+
 	definePageMeta({
 		layout: 'checkout',
 		middleware: 'checkout',
@@ -12,66 +14,40 @@
 	})
 
 	const cartStore = useCartStore()
-	const deliveryType = ref(false)
 
-	const schema = object({
-		firstName: string().required(),
-		lastName: string().required(),
-		thirdName: string(),
-		email: string().email().required(),
-		phone: string().required(),
-		deliveryType: boolean(),
-		city: string().when('deliveryType', {
-			is: true,
-			then: string().required(),
-			otherwise: string().notRequired(),
-		}),
-		street: string().when('deliveryType', {
-			is: true,
-			then: string().required(),
-			otherwise: string().notRequired(),
-		}),
-		home: string().when('deliveryType', {
-			is: true,
-			then: string().required(),
-			otherwise: string().notRequired(),
-		}),
-		entrance: string().when('deliveryType', {
-			is: true,
-			then: string().required(),
-			otherwise: string().notRequired(),
-		}),
-		apartment: string().when('deliveryType', {
-			is: true,
-			then: string().required(),
-			otherwise: string().notRequired(),
-		}),
-		postCode: string().when('deliveryType', {
-			is: true,
-			then: string().required(),
-			otherwise: string().notRequired(),
-		}),
-		comment: string(),
-		paymentMethod: string(),
-		terms: boolean(),
+	const data = await GqlGetCheckoutSession({
+		id: route.params.id as string,
 	})
 
-	const {handleSubmit} = useForm({
-		validationSchema: schema,
+	const productIds = data.checkout_sessions_by_id?.session_data.items.map(
+		(item: any) => item.product_id,
+	)
+	const variantIds = data.checkout_sessions_by_id?.session_data.items
+		.filter((item: any) => 'variant_id' in item)
+		.map((item: any) => item.variant_id)
+
+	const res = await GqlGetCartProductsByIds({
+		ids: productIds,
+		variant_ids: variantIds,
 	})
 
-	const onSubmit = handleSubmit((values) => {
-		console.log(values)
+	const totalPrice = computed(() => {
+		return res.products.reduce((total, item) => {
+			if ('quantity' in item) {
+				return total + item.price * item.quantity
+			}
+			return total + item.price // Assume quantity is 1 for gift cards
+		}, 0)
 	})
 </script>
 
 <template>
-	<section class="laptop:grid laptop:grid-cols-delivery">
-		<CheckoutInfoForm @submit="onSubmit" :deliveryType="deliveryType" />
+	<section class="grid grid-cols-delivery max-tablet:flex max-tablet:flex-col">
+		<CheckoutInfoForm />
 		<CheckoutOrderSummary
-			:cartItems="cartStore.items"
-			:totalPrice="cartStore.totalPrice"
-			:discount="cartStore.discount"
+			:cartItems="res.products"
+			:totalPrice="totalPrice"
+			:discount="res.discount"
 		/>
 	</section>
 </template>

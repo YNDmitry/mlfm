@@ -3,15 +3,32 @@
 		totalPrice: Number,
 		discount: Number,
 	})
+
+	const priceFormated = computed(() =>
+		Intl.NumberFormat('ru-RU', {
+			style: 'currency',
+			currency: 'RUB',
+		}).format(props.totalPrice as number),
+	)
 </script>
 
 <template>
 	<div>
 		<div
-			class="relative flex flex-col gap-[1.875rem] max-laptop:pt-[45px] laptop:pb-[1.25rem] laptop:pt-[1.25rem] laptop:after:absolute laptop:after:bottom-0 laptop:after:left-0 laptop:after:h-[2px] laptop:after:w-full laptop:after:bg-gray2 laptop:after:content-[’’]"
+			class="relative mt-8 flex flex-col gap-2 border-t-[1px] border-gray2 pb-[1.25rem] pt-[1.25rem]"
 		>
-			Доставка 500₽ Скидка -360₽ Итого
-			{{ totalPrice }}
+			<div class="flex justify-between">
+				<span>Доставка</span>
+				<span>500 ₽</span>
+			</div>
+			<div class="flex justify-between">
+				<span>Скидка</span>
+				<span>-360₽</span>
+			</div>
+			<div class="flex justify-between">
+				<span>Итого</span>
+				<span>{{ priceFormated }}</span>
+			</div>
 		</div>
 	</div>
 </template>

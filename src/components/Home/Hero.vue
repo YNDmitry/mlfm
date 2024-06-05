@@ -23,7 +23,7 @@
 			/>
 		</div>
 		<div
-			class="absolute z-10 flex translate-y-[-50%] flex-col items-center justify-center gap-[1.5rem] text-primary max-tablet:right-[0.75rem] max-tablet:top-[40%] tablet:left-2/4 tablet:top-2/4 tablet:translate-x-[-50%]"
+			class="absolute z-10 flex flex-col items-center justify-center gap-[1.5rem] text-primary"
 		>
 			<h1
 				v-if="title"
@@ -34,7 +34,7 @@
 
 			<NuxtLink
 				:to="'/catalog?collection=' + title"
-				class="flex h-11 w-full min-w-[10.625rem] max-w-[10.625rem] items-center justify-center rounded-main bg-red2 px-4 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] transition-colors hover:bg-red2-hover max-tablet:hidden"
+				class="flex h-11 w-full min-w-[10.625rem] max-w-[10.625rem] items-center justify-center rounded-main bg-red2 px-4 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] transition-colors hover:bg-red2-hover max-tablet:h-8"
 			>
 				Купить
 			</NuxtLink>
