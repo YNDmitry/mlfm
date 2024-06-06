@@ -47,7 +47,7 @@
 
 			<NuxtLink
 				:to="'/catalog/' + link"
-				class="flex min-h-[2.813rem] max-w-[10.625rem] items-center justify-center rounded-main bg-third px-6 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] text-red2 transition-colors hover:bg-primary max-tablet:min-h-[1.8rem] max-tablet:max-w-[8rem] max-tablet:text-[10px] mobile:w-full"
+				class="flex min-h-[2.813rem] max-w-[10.625rem] items-center justify-center rounded-main bg-third px-6 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] text-red2 transition-colors hover:bg-primary max-tablet:hidden max-tablet:min-h-[1.8rem] max-tablet:max-w-[8rem] max-tablet:text-[10px] mobile:w-full"
 			>
 				купить
 			</NuxtLink>
