@@ -20,7 +20,7 @@
 
 <template>
 	<section class="bg-red pb-16 pt-10 max-tablet:pb-9 max-tablet:pt-9">
-		<div class="mx-auto my-0 max-w-[1095px] px-3 max-tablet:px-1">
+		<div class="mx-auto my-0 max-w-[1095px] px-3 max-tablet:px-2">
 			<h2
 				class="text-center text-h2 font-bold uppercase text-third max-tablet:text-h2Mob max-mobile:tracking-[2.5px] mobile:tracking-[5.25px]"
 			>
