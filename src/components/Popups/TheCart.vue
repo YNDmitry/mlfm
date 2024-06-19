@@ -107,13 +107,13 @@
 						class="relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-[''] max-tablet:pb-[1.875rem] tablet:pb-[25px]"
 					>
 						<div
-							class="flex items-center gap-4"
+							class="flex items-center gap-2"
 							v-if="useCart.discountPercent === null"
 						>
 							<input
-								class="w-full border-[1px] border-black px-[12px] font-light max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[1.875rem] tablet:text-[0.875rem]"
+								class="w-full border-[1px] border-black px-[12px] font-light outline-none transition-all focus:border-red2-hover max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[1.875rem] tablet:text-[0.875rem]"
 								type="text"
-								placeholder="Промокод"
+								placeholder="Промокод либо код подарочной карты"
 								v-model="useCart.discount"
 							/>
 

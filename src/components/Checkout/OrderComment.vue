@@ -7,7 +7,7 @@
 		</h2>
 		<textarea
 			name="comment"
-			class="max-h-[250px] min-h-[155px] w-full rounded-main border border-black px-5 py-5 outline-none focus:border-red2-hover"
+			class="max-h-[250px] min-h-[155px] w-full rounded-main border border-black px-5 py-5 text-[0.875rem] outline-none placeholder:font-normal focus:border-red2-hover"
 			placeholder="Введите комментарий"
 		></textarea>
 	</div>

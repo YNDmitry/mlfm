@@ -41,7 +41,7 @@
 	<div>
 		<!-- Главный банер - слайдер -->
 		<HomeHero
-			:title="data.homepage?.slider_collection?.big_title"
+			:title="data.homepage?.slider_collection?.title"
 			:image="data.homepage?.slider_collection?.image?.id"
 		/>
 		<!-- /Главный банер - слайдер -->
@@ -52,7 +52,7 @@
 
 		<!-- Новинки -->
 		<HomeNewProducts
-			:products="data.products"
+			:products="data.homepage_products.map((el: any) => (el = el.products_id))"
 			:product-banners="data.homepage_banners"
 		/>
 		<!-- /Новинки -->

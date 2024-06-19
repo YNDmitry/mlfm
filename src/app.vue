@@ -1,7 +1,7 @@
 <script setup lang="ts">
 	const websiteStore = useWebsiteStore()
 
-	const {data: configData, error: configError} = await useAsyncData(
+	await useAsyncData(
 		'config',
 		async () => {
 			try {
@@ -18,12 +18,9 @@
 		},
 	)
 
-	const userStore = useUserStore()
-	const wishlistStore = useWishlistStore()
-
 	if (process.client) {
-		await userStore.getUserInfo()
-		await wishlistStore.initWishlist()
+		await useUserStore().getUserInfo()
+		await useWishlistStore().initWishlist()
 	}
 </script>
 

@@ -30,12 +30,14 @@ query Homepage {
 			id
 		}
 	}
-	products(limit: 4, sort: "-date_created") {
-		title
-		id
-		price
-		main_image {
+	homepage_products {
+		products_id {
 			id
+			title
+			price
+			main_image {
+				id
+			}
 		}
 	}
 	homepage_banners {

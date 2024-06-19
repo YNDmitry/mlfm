@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	import {boolean, object, string} from 'yup'
+	import type {IconsOrderArrow} from '#build/components'
 
 	const route = useRoute()
 
@@ -43,6 +43,13 @@
 
 <template>
 	<section class="grid grid-cols-delivery max-tablet:flex max-tablet:flex-col">
+		<NuxtLink
+			to="/"
+			v-tooltip.right="'Вернуться на сайт'"
+			class="fixed left-4 top-5 flex h-12 w-12 rotate-180 items-center justify-center rounded-[100%] p-2 transition-all hover:bg-black/10 tablet:hidden"
+		>
+			<IconsOrderArrow width="30px" height="30px" />
+		</NuxtLink>
 		<CheckoutInfoForm />
 		<CheckoutOrderSummary
 			:cartItems="res.products"

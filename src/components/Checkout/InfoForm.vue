@@ -55,11 +55,11 @@
 		offer: boolean().oneOf([true], 'Нужно обязательно подтвердить'),
 	})
 
-	let initialValues = {
+	let initialValues = ref({
 		deliveryType: 'delivery',
 		terms: false,
 		offer: false,
-	}
+	})
 
 	// Разкоменти этот говнокод чтобы протестировать валидацию
 	// if (process.env.NODE_ENV === 'development') {
@@ -71,14 +71,22 @@
 	// 	})
 	// }
 
-	const {handleSubmit, isSubmitting} = useForm({
+	const {isSubmitting} = useForm({
 		validationSchema: schema,
-		initialValues: initialValues,
+		initialValues: initialValues.value,
 	})
 
-	const submitForm = handleSubmit((values) => {
+	const submitForm = (values: any) => {
 		console.log(values)
-	})
+	}
+
+	function onInvalidSubmit({errors}: any) {
+		const firstErrorFieldName = Object.keys(errors)[0]
+		const el = document.querySelector(`[name="${firstErrorFieldName}"]`)
+		if (el) {
+			el.scrollIntoView()
+		}
+	}
 
 	const deliveryTypeField = useField('deliveryType')
 	const deliveryTypeValue = computed(() => deliveryTypeField.value.value)
@@ -87,14 +95,19 @@
 <template>
 	<div class="pb-[3.75rem]">
 		<div class="container laptop:max-w-[512px]">
-			<form @submit.prevent="submitForm" class="pt-8">
+			<Form
+				@submit="submitForm"
+				:validationSchema="schema"
+				@invalidSubmit="onInvalidSubmit"
+				class="pt-8"
+			>
 				<CheckoutFields />
 				<CheckoutDeliveryOptions />
 				<CheckoutDeliveryAddress v-if="deliveryTypeValue === 'delivery'" />
 				<CheckoutOrderComment />
 				<CheckoutPaymentMethod />
 				<CheckoutSubmitButton :isSubmitting="isSubmitting" />
-			</form>
+			</Form>
 		</div>
 	</div>
 </template>
