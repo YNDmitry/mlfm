@@ -1,5 +1,7 @@
+<script setup lang="ts"></script>
+
 <template>
-	<div class="max-tablet:pt-[2rem] tablet:pt-[3.125rem]">
+	<div v-auto-animate class="max-tablet:pt-[2rem] tablet:pt-[3.125rem]">
 		<h2
 			class="pb-[2rem] text-h2 max-tablet:pb-[24px] max-tablet:text-h2Mob max-tablet:font-medium"
 		>

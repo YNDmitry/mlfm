@@ -34,62 +34,99 @@
 					<div
 						class="flex flex-col font-montserrat max-tablet:gap-[1.875rem] max-tablet:py-[1.875rem] tablet:gap-[1.25rem] tablet:pb-[55px] tablet:pt-[45px]"
 					>
-						<article
-							v-for="(item, idx) in useCart.itemsDetails"
-							:key="item?.id"
-							class="flex max-mobile:gap-[0.625rem] mobile:gap-[0.938rem]"
-						>
-							<NuxtImg
-								:src="
-									config.public.databaseUrl + 'assets/' + item?.main_image.id
-								"
-								width="130"
-								class="object-cover max-mobile:h-[6.25rem] max-mobile:w-[3.813rem] mobile:h-[6.25rem]"
-							/>
+						<div v-for="(item, idx) in useCart.itemsDetails" :key="item?.id">
+							<article
+								v-if="item.type === 'product'"
+								class="flex max-mobile:gap-[0.625rem] mobile:gap-[0.938rem]"
+							>
+								<NuxtImg
+									:src="
+										config.public.databaseUrl + 'assets/' + item?.main_image.id
+									"
+									width="130"
+									class="object-cover max-mobile:h-[6.25rem] max-mobile:w-[3.813rem] mobile:h-[6.25rem]"
+								/>
 
-							<div class="relative flex w-full items-center justify-between">
-								<button
-									@click="useCart.removeItem(item.id)"
-									type="button"
-									:aria-label="'Удалить товар ' + item?.title"
-									class="absolute right-0 top-0"
-								>
-									<IconsClose class="w-2" />
-								</button>
-								<div class="flex flex-col gap-1">
-									<span class="text-[0.625rem]">{{ item.category }}</span>
+								<div class="relative flex w-full items-center justify-between">
+									<button
+										@click="useCart.removeItem(item.id)"
+										type="button"
+										:aria-label="'Удалить товар ' + item?.title"
+										class="absolute -right-5 -top-5 p-5"
+									>
+										<IconsClose class="w-2" />
+									</button>
+									<div class="flex flex-col gap-1">
+										<span class="text-[0.625rem]">{{ item.category }}</span>
 
-									<p class="text-[0.625rem] font-medium">{{ item.title }}</p>
+										<p class="text-[0.625rem] font-medium">{{ item.title }}</p>
 
-									<div class="flex gap-2">
-										<span class="text-[8px] opacity-50">
-											{{ useCart.items[idx].quantity }} шт
-										</span>
+										<div class="flex gap-2">
+											<span class="text-[8px] opacity-50">
+												{{ useCart.items[idx]?.quantity }} шт
+											</span>
 
-										<span
-											class="text-[8px] opacity-50"
-											v-if="item.product_variants[0].color_id"
-										>
-											{{ item.product_variants[0].color_id.title }} цвет
-										</span>
+											<span
+												class="text-[8px] opacity-50"
+												v-if="item.product_variants[0].color_id"
+											>
+												{{ item.product_variants[0].color_id.title }} цвет
+											</span>
 
-										<span
-											class="text-[8px] opacity-50"
-											v-if="item.product_variants[0].size_id"
-										>
-											{{ item.product_variants[0].size_id.small_title }} размер
-										</span>
+											<span
+												class="text-[8px] opacity-50"
+												v-if="item.product_variants[0].size_id"
+											>
+												{{ item.product_variants[0].size_id.small_title }}
+												размер
+											</span>
+										</div>
 									</div>
-								</div>
 
-								<span class="text-[0.625rem]">{{
-									Intl.NumberFormat('ru-RU', {
-										style: 'currency',
-										currency: 'RUB',
-									}).format(item.price)
-								}}</span>
-							</div>
-						</article>
+									<span class="text-[0.625rem]">{{
+										Intl.NumberFormat('ru-RU', {
+											style: 'currency',
+											currency: 'RUB',
+										}).format(item.price)
+									}}</span>
+								</div>
+							</article>
+							<article
+								v-if="item.type === 'gift-card'"
+								class="flex flex-1 border-b-[1px] border-[black/10] pb-5 max-mobile:gap-[0.625rem] mobile:gap-[0.938rem]"
+							>
+								<NuxtImg
+									:src="config.public.databaseUrl + 'assets/' + item?.image_id"
+									width="130"
+									class="object-cover max-mobile:h-[6.25rem] max-mobile:w-[3.813rem] mobile:h-[6.25rem]"
+								/>
+
+								<div class="relative flex w-full items-center justify-between">
+									<button
+										@click="useCart.removeItem(item.id)"
+										type="button"
+										:aria-label="'Удалить товар ' + item?.title"
+										class="absolute -right-5 -top-5 p-5"
+									>
+										<IconsClose class="w-2" />
+									</button>
+									<div class="flex flex-col gap-1">
+										<span class="text-[0.625rem]">{{ item.title }}</span>
+
+										<p class="text-[0.625rem] font-medium">
+											{{ item.category }}
+										</p>
+									</div>
+
+									<span class="text-[0.625rem]">{{
+										Intl.NumberFormat('ru-RU', {
+											style: 'currency',
+											currency: 'RUB',
+										}).format(item.price)
+									}}</span>
+								</div>
+							</article>
+						</div>
 
 						<button
 							v-if="useCart.items.length > 0"
@@ -102,33 +139,95 @@
 					<!--  /Товары -->
 
 					<!--  Промокод -->
-					<form
-						@submit.prevent="useCart.setDiscount()"
-						class="relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-[''] max-tablet:pb-[1.875rem] tablet:pb-[25px]"
+					<TabView
+						id="cart-tabs"
+						:pt="{
+							panelcontainer: 'p-0',
+							nav: 'mb-4',
+							inkbar: 'hidden',
+						}"
 					>
-						<div
-							class="flex items-center gap-2"
-							v-if="useCart.discountPercent === null"
+						<TabPanel
+							header="Промокод"
+							:pt="{
+								header: 'w-full text-center',
+								headerTitle: 'mx-auto font-normal',
+								headerAction:
+									'hover:bg-red2-hover hover:text-primary rounded-main',
+							}"
 						>
-							<input
-								class="w-full border-[1px] border-black px-[12px] font-light outline-none transition-all focus:border-red2-hover max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[1.875rem] tablet:text-[0.875rem]"
-								type="text"
-								placeholder="Промокод либо код подарочной карты"
-								v-model="useCart.discount"
-							/>
-
-							<button
-								type="submit"
-								class="border-[1px] border-black px-[1rem] transition-colors hover:bg-black hover:text-primary max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[1.875rem]"
+							<form
+								@submit.prevent="useCart.setDiscount()"
+								class="relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-[''] max-tablet:pb-[1.875rem] tablet:pb-[25px]"
 							>
-								Применить
-							</button>
-						</div>
-						<p v-else>Успешно! Скидка добавлена.</p>
-						<p v-if="useCart.discountErrors" class="mt-4 text-red">
-							{{ useCart.discountErrors.statusMessage }}
-						</p>
-					</form>
+								<div
+									class="flex items-center gap-2"
+									v-if="useCart.discountPercent === null"
+								>
+									<input
+										class="w-full border-[1px] border-black px-[12px] font-light outline-none transition-all focus:border-red2-hover max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[1.875rem] tablet:text-[0.875rem]"
+										type="text"
+										placeholder="Промокод"
+										v-model.uppercase.trim="useCart.discount"
+									/>
+
+									<button
+										type="submit"
+										class="border-[1px] border-black px-[1rem] transition-colors hover:bg-black hover:text-primary max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[1.875rem]"
+									>
+										Применить
+									</button>
+								</div>
+								<p v-else>Успешно! Скидка добавлена.</p>
+								<p
+									v-if="useCart.discountErrors.statusMessage"
+									class="mt-4 text-red"
+								>
+									{{ useCart.discountErrors.statusMessage }}
+								</p>
+							</form>
+						</TabPanel>
+						<TabPanel
+							header="Подарочная карта"
+							:pt="{
+								header: 'w-full text-center',
+								headerTitle: 'mx-auto font-normal',
+								headerAction:
+									'hover:bg-red2-hover hover:text-primary rounded-main',
+							}"
+						>
+							<form
+								@submit.prevent="useCart.setGiftCard()"
+								class="relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-[''] max-tablet:pb-[1.875rem] tablet:pb-[25px]"
+							>
+								<div
+									class="flex items-center gap-2"
+									v-if="useCart.giftCodeCurrentBalance === null"
+								>
+									<input
+										class="w-full border-[1px] border-black px-[12px] font-light outline-none transition-all focus:border-red2-hover max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[1.875rem] tablet:text-[0.875rem]"
+										type="text"
+										placeholder="Код подарочной карты"
+										v-model.uppercase.trim="useCart.giftCode"
+									/>
+
+									<button
+										type="submit"
+										class="border-[1px] border-black px-[1rem] transition-colors hover:bg-black hover:text-primary max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[1.875rem]"
+									>
+										Применить
+									</button>
+								</div>
+								<p v-else>Успешно! Подарочная карта применена.</p>
+								<p
+									v-if="useCart.giftCodeErrors.statusMessage"
+									class="mt-4 text-red"
+								>
+									{{ useCart.giftCodeErrors.statusMessage }}
+								</p>
+							</form>
+						</TabPanel>
+					</TabView>
 					<!--  /Промокод -->
 
 					<!--  Скидка/Итого -->
@@ -136,13 +235,46 @@
 						class="relative flex flex-col gap-[0.875rem] max-tablet:pt-[1.875rem] tablet:pt-[1rem]"
 					>
 						<div
-							v-if="useCart.discount"
+							v-if="useCart.discountPercent !== null"
 							class="flex justify-between text-[0.625rem] text-darkGray"
 						>
 							<span>Скидка</span>
 
-							<span>-360₽</span>
+							<span>{{
+								Intl.NumberFormat('ru-RU', {
+									style: 'currency',
+									currency: 'RUB',
+								}).format(useCart.discountAmount)
+							}}</span>
 						</div>
+
+						<div
+							v-if="useCart.giftCodeCurrentBalance !== null"
+							class="flex justify-between text-[0.625rem] text-darkGray"
+						>
+							<span>Подарочная карта</span>
+
+							<span>{{
+								Intl.NumberFormat('ru-RU', {
+									style: 'currency',
+									currency: 'RUB',
+								}).format(useCart.giftCodeCurrentBalance)
+							}}</span>
+						</div>
+
+						<!-- Добавление отображения остатка баланса подарочной карты -->
+						<div v-if="useCart.giftCodeCurrentBalance !== null">
+							<div class="flex justify-between text-[0.625rem] text-darkGray">
+								<span>Остаток на подарочной карте</span>
+								<span>{{
+									Intl.NumberFormat('ru-RU', {
+										style: 'currency',
+										currency: 'RUB',
+									}).format(useCart.remainingGiftCardBalance)
+								}}</span>
+							</div>
+						</div>
+						<!-- /Добавление отображения остатка баланса подарочной карты -->
 
 						<div class="flex justify-between text-[0.625rem] font-medium">
 							<span>Итого</span>
@@ -151,7 +283,7 @@
 								Intl.NumberFormat('ru-RU', {
 									style: 'currency',
 									currency: 'RUB',
-								}).format(useCart.totalPrice)
+								}).format(useCart.totalPriceWithDiscount)
 							}}</span>
 						</div>
 					</div>
@@ -168,7 +300,7 @@
 					<!--  /Кнопка - Перейти к оплате -->
 				</div>
 
-				<div class="mt-10 px-10" v-else>Корзина пустая</div>
+				<div class="mt-10 px-10 max-tablet:px-4" v-else>Корзина пустая</div>
 
 				<!--  Вас могут заинтересовать -->
 				<div
@@ -229,3 +361,9 @@
 		</template>
 	</Sidebar>
 </template>
+
+<style>
+	#cart-tabs [data-p-active='true'] .p-tabview-nav-link {
+		@apply bg-red2-hover text-primary;
+	}
+</style>

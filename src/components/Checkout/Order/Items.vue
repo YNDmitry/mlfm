@@ -1,6 +1,7 @@
 <script setup lang="ts">
 	const props = defineProps({
 		items: Array,
+		giftCard: Object,
 	})
 
 	const formattedPrice = (price: number) => {
@@ -13,6 +14,27 @@
 
 <template>
 	<div class="flex flex-col gap-[1.25rem]">
+		<article
+			v-if="giftCard"
+			class="flex max-mobile:gap-[0.625rem] mobile:gap-[0.938rem]"
+		>
+			<NuxtImg
+				provider="directus"
+				v-if="giftCard?.image_id"
+				:src="giftCard?.image_id"
+				format="webp"
+				class="max-mobile:h-[3.75rem] max-mobile:w-[6.563rem] mobile:h-[6.25rem]"
+			/>
+			<div class="flex w-full items-center justify-between">
+				<div class="flex flex-col gap-1">
+					<span class="text-[0.625rem]">{{ giftCard.category }}</span>
+					<p class="text-[0.625rem] font-medium">{{ giftCard.title }}</p>
+				</div>
+				<span class="text-[0.625rem]">{{
+					formattedPrice(giftCard.price)
+				}}</span>
+			</div>
+		</article>
 		<article
 			v-for="item in items"
 			:key="item.id"

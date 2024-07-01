@@ -4,6 +4,7 @@ interface CartItem {
 	product_id: string
 	quantity: number
 	variant_id: string
+	type: 'product'
 }
 
 interface GiftCard {
@@ -12,29 +13,98 @@ interface GiftCard {
 	image_id: string
 	title: string
 	category: string
+	type: 'gift-card'
 }
 
 // Union type for all cart items
 type CartItemUnion = CartItem | GiftCard
 
+interface ItemDetail {
+	id: 'gift-card'
+	title: string
+	price: number
+	image_id: string
+	type: 'product' | 'gift-card'
+	quantity?: number
+	category?: string
+}
+
 export const useCartStore = defineStore('userCart', {
 	state: () => ({
 		items: [] as CartItemUnion[],
-		itemsDetails: [],
+		itemsDetails: [] as ItemDetail[],
 		relatedItems: [],
 		discount: '',
 		discountPercent: null,
-		discountErrors: '',
+		discountErrors: {} as {status?: number; statusMessage?: string},
+		giftCode: '',
+		giftCodeInitialAmount: null,
+		giftCodeCurrentBalance: null,
+		giftCodeRemainingBalance: null,
+		giftCodeErrors: {} as {status?: number; statusMessage?: string},
 		isRelatedProductPending: true,
 	}),
 	getters: {
 		totalPrice: (state) => {
-			return state.itemsDetails.reduce((total, item) => {
-				if ('quantity' in item) {
+			const total = state.itemsDetails.reduce((total, item) => {
+				if (item.type === 'product' && item.quantity) {
 					return total + item.price * item.quantity
 				}
-				return total + item.price // Assume quantity is 1 for gift cards
+				return total + item.price
 			}, 0)
+			return total
+		},
+		totalPriceWithDiscount: (state) => {
+			let total = state.itemsDetails.reduce((total, item) => {
+				if (item.type === 'product' && item.quantity) {
+					return total + item.price * item.quantity
+				}
+				return total + item.price
+			}, 0)
+
+			if (state.discountPercent) {
+				total -= (total * state.discountPercent) / 100
+			}
+
+			if (state.giftCodeCurrentBalance && total > 1) {
+				let totalWithoutGiftCards = total
+				if (state.items.some((item) => item.type === 'gift-card')) {
+					totalWithoutGiftCards -= state.itemsDetails
+						.filter((item) => item.type === 'gift-card')
+						.reduce((sum, item) => sum + item.price, 0)
+				}
+
+				const giftCardAmountToApply = Math.min(
+					totalWithoutGiftCards,
+					state.giftCodeCurrentBalance,
+				)
+				const remainingBalance =
+					state.giftCodeCurrentBalance - giftCardAmountToApply
+				state.giftCodeRemainingBalance =
+					remainingBalance < 0 ? 0 : remainingBalance
+
+				total -= giftCardAmountToApply
+
+				// Убедимся, что хотя бы 1 рубль остается для оплаты
+				if (total < 1) {
+					state.giftCodeRemainingBalance += 1 - total
+					total = 1
+				}
+			}
+
+			return total > 0 ? total : 0
+		},
+		discountAmount: (state) => {
+			const total = state.itemsDetails.reduce((total, item) => {
+				if (item.type === 'product' && item.quantity) {
+					return total + item.price * item.quantity
+				}
+				return total + item.price
+			}, 0)
+			return state.discountPercent ? (total * state.discountPercent) / 100 : 0
+		},
+		remainingGiftCardBalance: (state) => {
+			return state.giftCodeRemainingBalance
 		},
 	},
 	actions: {
@@ -89,6 +159,7 @@ export const useCartStore = defineStore('userCart', {
 		},
 
 		async addGiftCard(item: GiftCard) {
+			item.type = 'gift-card'
 			const sessionId = await this.getSessionId()
 			if (!sessionId) {
 				await this.initCart()
@@ -109,6 +180,7 @@ export const useCartStore = defineStore('userCart', {
 		},
 
 		async addItem(item: CartItem) {
+			item.type = 'product'
 			const sessionId = await this.getSessionId()
 			if (!sessionId) {
 				await this.initCart()
@@ -142,6 +214,10 @@ export const useCartStore = defineStore('userCart', {
 		async removeCart() {
 			this.items = []
 			this.discount = ''
+			this.giftCode = ''
+			this.discountPercent = null
+			this.giftCodeInitialAmount = null
+			this.giftCodeCurrentBalance = null
 			await this.saveCartToServer()
 		},
 
@@ -158,7 +234,29 @@ export const useCartStore = defineStore('userCart', {
 						variant_ids: variantIds,
 					})
 
-					this.itemsDetails = res.products || []
+					const productsDetails = res.products || []
+					this.itemsDetails = this.items.map((item) => {
+						const detail = productsDetails.find(
+							(p: any) => p.id === item.product_id,
+						)
+						if (detail) {
+							return {
+								...detail,
+								type: item.type,
+								quantity: 'quantity' in item ? item.quantity : 1,
+								category: 'category' in item ? item.category : undefined,
+							}
+						}
+						return {
+							id: item.product_id,
+							title: 'Подарочная карта',
+							price: 'price' in item ? item.price : 0,
+							image_id: 'image_id' in item ? item.image_id : '',
+							type: item.type,
+							quantity: 'quantity' in item ? item.quantity : 1,
+							category: 'category' in item ? item.category : undefined,
+						}
+					})
 				} catch (error) {
 					console.error('Error loading product details:', error)
 				}
@@ -189,12 +287,40 @@ export const useCartStore = defineStore('userCart', {
 				}).then((res) => res.json())) as any
 
 				this.discountPercent = res.data[0].percent
-				this.discountErrors = ''
+				this.discountErrors = {}
 			} catch (error: any) {
 				return (this.discountErrors = {
 					status: 400,
 					statusMessage: 'Скидка не найдена',
 				})
+			}
+		},
+
+		async setGiftCard() {
+			const config = useRuntimeConfig()
+			try {
+				const res = (await fetch(config.public.databaseUrl + 'gift-card', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({code: this.giftCode}),
+				}).then((res) => res.json())) as any
+
+				this.giftCodeInitialAmount = parseFloat(res.data[0].initial_amount)
+				this.giftCodeCurrentBalance = parseFloat(res.data[0].current_balance)
+				const totalWithoutGiftCards = this.itemsDetails
+					.filter((item) => item.type === 'product')
+					.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0)
+				this.giftCodeRemainingBalance =
+					this.giftCodeCurrentBalance - totalWithoutGiftCards
+				if (this.giftCodeRemainingBalance < 0) this.giftCodeRemainingBalance = 0
+				this.giftCodeErrors = ''
+			} catch (error: any) {
+				this.giftCodeErrors = {
+					status: 400,
+					statusMessage: 'Подарочная карта не найдена',
+				}
 			}
 		},
 
@@ -223,8 +349,11 @@ export const useCartStore = defineStore('userCart', {
 						// Проверка, изменились ли данные в корзине
 						const currentSessionData = {
 							items: this.items,
-							totalPrice: this.totalPrice,
+							totalPrice: this.totalPriceWithDiscount,
 							discount: this.discount,
+							giftCode: this.giftCode,
+							giftCodeCurrentBalance: this.giftCodeCurrentBalance,
+							remainingGiftCardBalance: this.remainingGiftCardBalance,
 						}
 
 						if (
@@ -245,8 +374,11 @@ export const useCartStore = defineStore('userCart', {
 
 				const sessionData = {
 					items: this.items,
-					totalPrice: this.totalPrice,
+					totalPrice: this.totalPriceWithDiscount,
 					discount: this.discount,
+					giftCode: this.giftCode,
+					giftCodeCurrentBalance: this.giftCodeCurrentBalance,
+					remainingGiftCardBalance: this.remainingGiftCardBalance,
 				}
 
 				const data = await GqlCreateCheckoutSession({

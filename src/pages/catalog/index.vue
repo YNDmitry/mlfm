@@ -222,7 +222,19 @@
 			<div class="container max-w-[1342px]">
 				<div class="laptop:grid laptop:grid-cols-aside laptop:gap-20">
 					<!-- Кнопки для фильтров (На Мобилках) -->
-					<CatalogMobileFilterSidebar />
+					<CatalogMobileFilterSidebar
+						:currentSort="currentSort"
+						:sortOptions="sortOptions"
+						@update:currentSort="($event) => (currentSort = $event)"
+						:totalProducts="totalProducts"
+						:categories="categories.categories"
+						:filters="initialState.filter"
+						:data="data"
+						:resetFilters="resetFilters"
+						:minPrice="minPrice"
+						:maxPrice="maxPrice"
+						@updateCollection="updateCollection"
+					/>
 					<!-- Кнопки для фильтров (На Мобилках) -->
 
 					<!-- Боковое меню (На ПК) -->
@@ -235,6 +247,7 @@
 						:minPrice="minPrice"
 						:maxPrice="maxPrice"
 						@updateCollection="updateCollection"
+						class="max-tablet:hidden"
 					/>
 					<!-- /Боковое меню (На ПК)-->
 

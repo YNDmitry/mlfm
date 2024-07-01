@@ -1,9 +1,11 @@
 <script setup lang="ts">
 	const useCart = useCartStore()
-	const type = ref('Физическая')
-	const nominal = ref(null)
+	const type = ref('Виртуальная')
+	const nominal = ref<number | null>(null)
 
-	const isDisabled = computed(() => (nominal.value !== null ? false : true))
+	const isDisabled = computed(
+		() => nominal.value === null || nominal.value <= 0,
+	)
 
 	useSeoMeta({
 		title: 'Подарочная карта | MLFM',
@@ -19,6 +21,16 @@
 			},
 		},
 	)
+
+	const addItemToCart = () => {
+		useCart.addGiftCard({
+			title: 'Подарочная карта',
+			image_id: data.value.gift_card?.image.id,
+			category: type.value,
+			price: nominal.value || 0,
+			type: 'gift-card',
+		})
+	}
 </script>
 
 <template>
@@ -50,7 +62,10 @@
 							{{ data.gift_card?.title }}
 						</h1>
 
-						<form class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-4">
+						<form
+							@submit.prevent="addItemToCart"
+							class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-4"
+						>
 							<div class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-2">
 								<div
 									class="mb-2 mt-4 text-[0.75rem] font-normal max-tablet:text-[0.625rem]"
@@ -59,11 +74,12 @@
 								</div>
 								<InputNumber
 									inputId="gift-nominal"
-									v-model="nominal"
+									v-model:model-value="nominal"
+									@update:model-value="nominal"
 									mode="currency"
 									currency="RUB"
 									locale="ru-RU"
-									placeholder="10.000"
+									placeholder="10.000 ₽"
 									:min="100"
 									:pt="{
 										root: 'outline-none !active:outline-none',
@@ -77,6 +93,27 @@
 										Тип:
 									</div>
 									<div class="flex w-full items-center gap-4">
+										<label
+											for="virtual"
+											class="relative flex h-12 w-full items-center justify-center overflow-hidden rounded-main border border-black text-center has-[:checked]:text-[#ffffff]"
+										>
+											<RadioButton
+												:pt="{
+													root: 'absolute w-full h-full left-0 right-0 bottom-0 top-0',
+													box: 'w-full h-full left-0 right-0 bottom-0 top-0 rounded-[0] after:hidden',
+													input: 'peer',
+													icon: 'hidden',
+												}"
+												inputId="virtual"
+												name="type"
+												value="Виртуальная"
+												v-model="type"
+											/>
+											<span
+												class="z-10 cursor-pointer text-[14px] transition-all checked:text-[#ffffff]"
+												>Виртуальная</span
+											>
+										</label>
 										<label
 											for="p"
 											class="relative flex h-12 w-full items-center justify-center overflow-hidden rounded-main border border-black text-center has-[:checked]:text-[#ffffff]"
@@ -99,27 +136,6 @@
 												>Физическая</span
 											>
 										</label>
-										<label
-											for="virtual"
-											class="relative flex h-12 w-full items-center justify-center overflow-hidden rounded-main border border-black text-center has-[:checked]:text-[#ffffff]"
-										>
-											<RadioButton
-												:pt="{
-													root: 'absolute w-full h-full left-0 right-0 bottom-0 top-0',
-													box: 'w-full h-full left-0 right-0 bottom-0 top-0 rounded-[0] after:hidden',
-													input: 'peer',
-													icon: 'hidden',
-												}"
-												inputId="virtual"
-												name="type"
-												value="Виртуальная"
-												v-model="type"
-											/>
-											<span
-												class="z-10 cursor-pointer text-[14px] transition-all checked:text-[#ffffff]"
-												>Виртуальная</span
-											>
-										</label>
 									</div>
 								</div>
 							</div>
@@ -128,18 +144,9 @@
 								class="flex flex-col max-tablet:my-[1.25rem] max-tablet:gap-[1rem] tablet:gap-[1.313rem]"
 							>
 								<button
-									@click="
-										useCart.addItem({
-											product_id: data?.gift_card.id,
-											title: data?.gift_card?.title,
-											image_id: data?.gift_card?.image.id,
-											category: type,
-											price: nominal,
-											quantity: 1,
-										})
-									"
+									@click="addItemToCart"
 									:disabled="isDisabled"
-									type="button"
+									type="submit"
 									class="w-full rounded-main bg-red2 text-primary transition-all hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-70 max-tablet:min-h-[2rem] max-tablet:text-[0.625rem] tablet:min-h-[3.313rem]"
 								>
 									Добавить в корзину

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 	import {boolean, object, string} from 'yup'
 
+	const checkoutStore = useCheckoutStore()
+	const config = useRuntimeConfig()
+
 	const schema = object({
 		firstName: string().required('Обязательное поле'),
 		lastName: string().required('Обязательное поле'),
@@ -8,7 +11,9 @@
 		email: string()
 			.email('Введите валидный email')
 			.required('Обязательное поле'),
-		phone: string().required('Обязательное поле'),
+		phone: string()
+			.matches(/^\+7 \(\d{3}\) \d{3} \d{2}-\d{2}$/, 'Обязательное поле')
+			.required('Обязательное поле'),
 		deliveryType: string()
 			.oneOf(['delivery', 'self-delivery'])
 			.default('delivery')
@@ -45,69 +50,147 @@
 		}),
 		comment: string(),
 		paymentMethod: string().oneOf([
-			'SPB',
-			'Банковская карта',
-			'Долями',
-			'SberPay',
-			'TinkoffPay',
+			'sbp',
+			'bank_card',
+			'installments',
+			'sberbank',
+			'tinkoff_bank',
 		]),
-		terms: boolean().oneOf([true], 'Нужно обязательно подтвердить'),
-		offer: boolean().oneOf([true], 'Нужно обязательно подтвердить'),
+		offer: boolean()
+			.required('Нужно обязательно подтвердить')
+			.oneOf([true], 'Нужно обязательно подтвердить'),
 	})
 
-	let initialValues = ref({
-		deliveryType: 'delivery',
-		terms: false,
-		offer: false,
-	})
-
-	// Разкоменти этот говнокод чтобы протестировать валидацию
-	// if (process.env.NODE_ENV === 'development') {
-	// 	import('~/config/devConfig').then((module) => {
-	// 		initialValues = {
-	// 			...initialValues,
-	// 			...module.devCheckoutInitialValues,
-	// 		}
-	// 	})
-	// }
-
-	const {isSubmitting} = useForm({
+	const {isSubmitting, handleSubmit} = useForm({
 		validationSchema: schema,
-		initialValues: initialValues.value,
+		initialValues: {
+			deliveryType: 'delivery',
+			offer: false,
+		},
 	})
 
-	const submitForm = (values: any) => {
-		console.log(values)
+	const {value: email} = useField('email')
+
+	const sendOtpCode = async () => {
+		await fetch(config.public.databaseUrl + 'order/send-otp', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				email: email.value,
+			}),
+		}).then((res) => res.json())
 	}
 
-	function onInvalidSubmit({errors}: any) {
-		const firstErrorFieldName = Object.keys(errors)[0]
-		const el = document.querySelector(`[name="${firstErrorFieldName}"]`)
-		if (el) {
-			el.scrollIntoView()
+	const formValues = ref('')
+	const submitForm = handleSubmit(async (values: any) => {
+		try {
+			await sendOtpCode()
+			checkoutStore.isOtpVisible = true
+			formValues.value = values
+		} catch (error) {
+			throw createError({
+				status: 401,
+				statusMessage: 'Что-то пошло не так',
+			})
 		}
+	})
+
+	const resendOtpCode = async () => {
+		await sendOtpCode()
 	}
 
-	const deliveryTypeField = useField('deliveryType')
-	const deliveryTypeValue = computed(() => deliveryTypeField.value.value)
+	const {value: comment} = useField('comment')
+	const {value: firstName} = useField('firstName')
+	const {value: lastName} = useField('lastName')
+	const {value: thirdName} = useField('thirdName')
+	const {value: paymentMethod} = useField('paymentMethod')
+
+	const submitOtp = async () => {
+		fetch(config.public.databaseUrl + 'order/create', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				email: email.value,
+				otpCode: checkoutStore.otpCode,
+				orderDetails: {
+					comment: comment.value,
+					status: 'created',
+					delivery_type: checkoutStore.deliveryType,
+					items: checkoutStore.items,
+					promoCode: checkoutStore.promoCode || null,
+					giftCardCode: checkoutStore.giftCard || null,
+				},
+				userDetails: {
+					first_name: firstName.value,
+					last_name: lastName.value,
+					third_name: thirdName.value,
+				},
+				paymentMethod: paymentMethod.value,
+			}),
+		})
+			.then((res) => res.json())
+			.then((data) => console.log(data))
+			.catch((err) => console.log(err))
+	}
 </script>
 
 <template>
 	<div class="pb-[3.75rem]">
 		<div class="container laptop:max-w-[512px]">
-			<Form
-				@submit="submitForm"
-				:validationSchema="schema"
-				@invalidSubmit="onInvalidSubmit"
-				class="pt-8"
-			>
+			<Dialog modal v-model:visible="checkoutStore.isOtpVisible">
+				<div class="flex-column align-items-center flex flex-col text-center">
+					<div class="text-xl mb-2 font-bold">Подтвердите свою почту</div>
+					<p class="text-color-secondary mb-5 block">
+						Пожалуйста, введите код который был выслан вам на почту
+					</p>
+					<InputOtp
+						v-model="checkoutStore.otpCode"
+						:length="6"
+						integerOnly
+						:pt="{root: 'justify-center', input: 'h-12'}"
+					>
+						<template #default="{attrs, events, index}">
+							<input
+								type="text"
+								v-bind="attrs"
+								v-on="events"
+								class="h-10 w-10 rounded-[0.5rem] border-2 border-gray2 text-center focus:outline-none"
+							/>
+						</template>
+					</InputOtp>
+					<div
+						class="justify-content-between align-self-stretch mt-5 flex flex-col"
+					>
+						<button
+							:disabled="checkoutStore.otpCode.length < 6 ? true : false"
+							@click="submitOtp"
+							class="w-full bg-red2 text-primary transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-50 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[45px] tablet:rounded-[1.875rem]"
+						>
+							Подтвердить
+						</button>
+						<button
+							@click="resendOtpCode"
+							class="mt-4 w-full bg-black text-[0.7rem] text-primary transition-colors hover:bg-red2-hover max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[35px] tablet:rounded-[1.875rem]"
+						>
+							Отправить код заново
+						</button>
+					</div>
+				</div>
+			</Dialog>
+			<form @submit.prevent="submitForm" class="pt-8">
 				<CheckoutFields />
 				<CheckoutDeliveryOptions />
-				<CheckoutDeliveryAddress v-if="deliveryTypeValue === 'delivery'" />
+				<CheckoutDeliveryAddress
+					v-if="checkoutStore.deliveryType === 'delivery'"
+				/>
 				<CheckoutOrderComment />
 				<CheckoutPaymentMethod />
 				<CheckoutSubmitButton :isSubmitting="isSubmitting" />
-			</Form>
+			</form>
 		</div>
 	</div>
 </template>

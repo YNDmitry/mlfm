@@ -10,28 +10,28 @@
 		<div class="flex flex-col max-tablet:gap-[12px] tablet:gap-[1.25rem]">
 			<CheckoutPaymentOption
 				name="paymentMethod"
-				value="SPB"
+				value="spb"
 				label="СПБ"
 				checked
 			/>
 			<CheckoutPaymentOption
 				name="paymentMethod"
-				value="Банковская карта"
+				value="bank_card"
 				label="Банковская карта"
 			/>
 			<CheckoutPaymentOption
 				name="paymentMethod"
-				value="Долями"
+				value="installments"
 				label="Долями"
 			/>
 			<CheckoutPaymentOption
 				name="paymentMethod"
-				value="SberPay"
+				value="sberbank"
 				label="SberPay"
 			/>
 			<CheckoutPaymentOption
 				name="paymentMethod"
-				value="TinkoffPay"
+				value="tinkoff_bank"
 				label="TinkoffPay"
 			/>
 		</div>

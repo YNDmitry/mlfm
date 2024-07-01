@@ -20,7 +20,7 @@
 </script>
 
 <template>
-	<aside class="pb-[4.375rem] max-laptop:hidden">
+	<aside class="pb-[4.375rem]">
 		<div class="relative">
 			<p
 				v-if="props.totalProducts"
@@ -159,6 +159,7 @@
 			<!-- Баннер -->
 			<div class="pt-[25px]" v-if="props.data?.catalog?.main_banner?.id">
 				<button
+					class="max-tablet:w-full"
 					type="button"
 					@click="
 						$emit(
@@ -173,6 +174,7 @@
 						width="275"
 						height="485"
 						format="webp"
+						class="max-tablet:w-full"
 					/>
 				</button>
 			</div>

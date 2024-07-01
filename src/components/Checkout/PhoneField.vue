@@ -22,7 +22,8 @@
 			name="phone"
 			:invalid="meta.touched && !meta.valid"
 			:auto-clear="false"
-			@update:model-value="value"
+			:model-value="value"
+			@update:model-value="(value: any) => handleChange(value)"
 		/>
 		<span
 			v-if="errorMessage && meta.touched"

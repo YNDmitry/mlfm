@@ -1,5 +1,11 @@
 <script setup lang="ts">
-	const {handleChange} = useField(() => 'deliveryType', undefined)
+	const {handleChange} = useField(() => 'deliveryType')
+
+	const deliveryType = useState('deliveryType')
+	const updateValue = (newValue: any) => {
+		handleChange(newValue.target.value)
+		deliveryType.value = newValue.target.value
+	}
 </script>
 
 <template>
@@ -18,12 +24,12 @@
 				class="absolute h-5 w-5 cursor-pointer opacity-0"
 				checked
 				value="delivery"
-				@change="($event) => handleChange($event)"
+				@change="($event) => updateValue($event)"
 			/>
 			<div
 				class="relative flex h-5 w-5 cursor-pointer items-center justify-center rounded-[100%] border-[1px] border-black"
 			></div>
-			<span class="text-[0.625rem]">Доставка</span>
+			<span class="text-[0.625rem]">Доставка (+500 ₽)</span>
 		</label>
 		<label class="flex cursor-pointer items-center gap-[0.625rem]">
 			<input
@@ -31,7 +37,7 @@
 				name="delivery"
 				class="absolute h-5 w-5 cursor-pointer opacity-0"
 				value="self-delivery"
-				@change="($event) => handleChange($event)"
+				@change="($event) => updateValue($event)"
 			/>
 			<div
 				class="relative flex h-5 w-5 cursor-pointer items-center justify-center rounded-[100%] border-[1px] border-black"
