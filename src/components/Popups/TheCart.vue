@@ -34,7 +34,11 @@
 					<div
 						class="flex flex-col font-montserrat max-tablet:gap-[1.875rem] max-tablet:py-[1.875rem] tablet:gap-[1.25rem] tablet:pb-[55px] tablet:pt-[45px]"
 					>
-						<div v-for="(item, idx) in useCart.itemsDetails" :key="item?.id">
+						<div
+							v-for="(item, idx) in useCart.itemsDetails"
+							:key="item?.id"
+							:class="item.type === 'gift-card' ? '-order-1' : ''"
+						>
 							<article
 								v-if="item.type === 'product'"
 								class="flex max-mobile:gap-[0.625rem] mobile:gap-[0.938rem]"

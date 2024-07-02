@@ -56,11 +56,17 @@
 							>{{ item.product_variants[0].qunatity }} шт</span
 						>
 
-						<span class="text-[8px] opacity-50">
+						<span
+							class="text-[8px] opacity-50"
+							v-if="item?.product_variants[0]?.color_id?.title"
+						>
 							Цвет: {{ item.product_variants[0].color_id.title }}
 						</span>
 
-						<span class="text-[8px] opacity-50">
+						<span
+							class="text-[8px] opacity-50"
+							v-if="item?.product_variants[0].size_id.small_title"
+						>
 							Размер: {{ item.product_variants[0].size_id.small_title }}
 						</span>
 					</div>
