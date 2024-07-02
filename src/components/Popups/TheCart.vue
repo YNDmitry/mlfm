@@ -97,7 +97,7 @@
 							</article>
 							<article
 								v-if="item.type === 'gift-card'"
-								class="flex flex-1 border-b-[1px] border-[black/10] pb-5 max-mobile:gap-[0.625rem] mobile:gap-[0.938rem]"
+								class="flex flex-1 border-b-[1px] border-b-gray2 pb-5 max-mobile:gap-[0.625rem] mobile:gap-[0.938rem]"
 							>
 								<NuxtImg
 									:src="config.public.databaseUrl + 'assets/' + item?.image_id"
@@ -157,19 +157,19 @@
 								header: 'w-full text-center',
 								headerTitle: 'mx-auto font-normal',
 								headerAction:
-									'hover:bg-red2-hover hover:text-primary rounded-main',
+									'hover:bg-red2 hover:text-primary rounded-main text-[0.625rem] h-[30px]',
 							}"
 						>
 							<form
 								@submit.prevent="useCart.setDiscount()"
-								class="relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-[''] max-tablet:pb-[1.875rem] tablet:pb-[25px]"
+								class="relative border-b-[1px] border-b-gray2 max-tablet:pb-[1.875rem] tablet:pb-[25px]"
 							>
 								<div
 									class="flex items-center gap-2"
 									v-if="useCart.discountPercent === null"
 								>
 									<input
-										class="w-full border-[1px] border-black px-[12px] font-light outline-none transition-all focus:border-red2-hover max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[1.875rem] tablet:text-[0.875rem]"
+										class="h-[35px] w-full rounded-[1.875rem] border-[1px] border-black px-[12px] text-[0.875rem] font-light outline-none transition-all focus:border-red2-hover max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
 										type="text"
 										placeholder="Промокод"
 										v-model.uppercase.trim="useCart.discount"
@@ -177,7 +177,7 @@
 
 									<button
 										type="submit"
-										class="border-[1px] border-black px-[1rem] transition-colors hover:bg-black hover:text-primary max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[1.875rem]"
+										class="h-[35px] rounded-[1.875rem] border-[1px] border-black px-[1rem] transition-colors hover:bg-black hover:text-primary max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
 									>
 										Применить
 									</button>
@@ -197,19 +197,19 @@
 								header: 'w-full text-center',
 								headerTitle: 'mx-auto font-normal',
 								headerAction:
-									'hover:bg-red2-hover hover:text-primary rounded-main',
+									'hover:bg-red2 hover:text-primary rounded-main text-[0.625rem] h-[30px]',
 							}"
 						>
 							<form
 								@submit.prevent="useCart.setGiftCard()"
-								class="relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-[''] max-tablet:pb-[1.875rem] tablet:pb-[25px]"
+								class="relative border-b-[1px] border-b-gray2 max-tablet:pb-[1.875rem] tablet:pb-[25px]"
 							>
 								<div
 									class="flex items-center gap-2"
 									v-if="useCart.giftCodeCurrentBalance === null"
 								>
 									<input
-										class="w-full border-[1px] border-black px-[12px] font-light outline-none transition-all focus:border-red2-hover max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[1.875rem] tablet:text-[0.875rem]"
+										class="h-[35px] w-full rounded-[1.875rem] border-[1px] border-black px-[12px] text-[0.875rem] font-light outline-none transition-all focus:border-red2-hover max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
 										type="text"
 										placeholder="Код подарочной карты"
 										v-model.uppercase.trim="useCart.giftCode"
@@ -217,7 +217,7 @@
 
 									<button
 										type="submit"
-										class="border-[1px] border-black px-[1rem] transition-colors hover:bg-black hover:text-primary max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[1.875rem]"
+										class="h-[35px] rounded-[1.875rem] border-[1px] border-black px-[1rem] transition-colors hover:bg-black hover:text-primary max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
 									>
 										Применить
 									</button>
@@ -368,6 +368,6 @@
 
 <style>
 	#cart-tabs [data-p-active='true'] .p-tabview-nav-link {
-		@apply bg-red2-hover text-primary;
+		@apply bg-red2 text-primary;
 	}
 </style>
