@@ -8,12 +8,7 @@
 			Способ оплаты
 		</h2>
 		<div class="flex flex-col max-tablet:gap-[12px] tablet:gap-[1.25rem]">
-			<CheckoutPaymentOption
-				name="paymentMethod"
-				value="spb"
-				label="СПБ"
-				checked
-			/>
+			<CheckoutPaymentOption name="paymentMethod" value="spb" label="СПБ" />
 			<CheckoutPaymentOption
 				name="paymentMethod"
 				value="bank_card"

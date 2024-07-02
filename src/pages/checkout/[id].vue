@@ -38,6 +38,10 @@
 	checkoutStore.items = data.checkout_sessions_by_id?.session_data.items
 	checkoutStore.promoCode = data.checkout_sessions_by_id?.session_data.discount
 	checkoutStore.giftCard = data.checkout_sessions_by_id?.session_data.giftCode
+
+	onUnmounted(() => {
+		checkoutStore.clearResendInterval // Чтобы очистить интервал при размонтировании
+	})
 </script>
 
 <template>

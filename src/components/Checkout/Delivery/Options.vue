@@ -1,10 +1,10 @@
 <script setup lang="ts">
 	const {handleChange} = useField(() => 'deliveryType')
 
-	const deliveryType = useState('deliveryType')
+	const checkoutStore = useCheckoutStore()
 	const updateValue = (newValue: any) => {
 		handleChange(newValue.target.value)
-		deliveryType.value = newValue.target.value
+		checkoutStore.deliveryType = newValue.target.value
 	}
 </script>
 

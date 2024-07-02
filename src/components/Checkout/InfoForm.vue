@@ -70,23 +70,15 @@
 	})
 
 	const {value: email} = useField('email')
-
-	const sendOtpCode = async () => {
-		await fetch(config.public.databaseUrl + 'order/send-otp', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				email: email.value,
-			}),
-		}).then((res) => res.json())
-	}
+	const {value: comment} = useField('comment')
+	const {value: firstName} = useField('firstName')
+	const {value: lastName} = useField('lastName')
+	const {value: thirdName} = useField('thirdName')
 
 	const formValues = ref('')
 	const submitForm = handleSubmit(async (values: any) => {
 		try {
-			await sendOtpCode()
+			await checkoutStore.sendCode(email.value)
 			checkoutStore.isOtpVisible = true
 			formValues.value = values
 		} catch (error) {
@@ -96,16 +88,6 @@
 			})
 		}
 	})
-
-	const resendOtpCode = async () => {
-		await sendOtpCode()
-	}
-
-	const {value: comment} = useField('comment')
-	const {value: firstName} = useField('firstName')
-	const {value: lastName} = useField('lastName')
-	const {value: thirdName} = useField('thirdName')
-	const {value: paymentMethod} = useField('paymentMethod')
 
 	const submitOtp = async () => {
 		fetch(config.public.databaseUrl + 'order/create', {
@@ -129,19 +111,28 @@
 					last_name: lastName.value,
 					third_name: thirdName.value,
 				},
-				paymentMethod: paymentMethod.value,
+				paymentMethod: checkoutStore.paymentMethod,
+				checkout_session_id: useRoute().params.id,
 			}),
 		})
 			.then((res) => res.json())
 			.then((data) => console.log(data))
 			.catch((err) => console.log(err))
 	}
+
+	const sendCode = () => {
+		checkoutStore.sendCode(email.value)
+	}
 </script>
 
 <template>
 	<div class="pb-[3.75rem]">
 		<div class="container laptop:max-w-[512px]">
-			<Dialog modal v-model:visible="checkoutStore.isOtpVisible">
+			<Dialog
+				modal
+				v-model:visible="checkoutStore.isOtpVisible"
+				:pt="{icons: 'hidden', root: 'max-tablet:w-[95%]'}"
+			>
 				<div class="flex-column align-items-center flex flex-col text-center">
 					<div class="text-xl mb-2 font-bold">Подтвердите свою почту</div>
 					<p class="text-color-secondary mb-5 block">
@@ -173,11 +164,16 @@
 							Подтвердить
 						</button>
 						<button
-							@click="resendOtpCode"
-							class="mt-4 w-full bg-black text-[0.7rem] text-primary transition-colors hover:bg-red2-hover max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[35px] tablet:rounded-[1.875rem]"
+							@click="sendCode"
+							:disabled="checkoutStore.isResendDisabled"
+							class="mt-4 w-full bg-black text-[0.7rem] text-primary transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-50 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[35px] tablet:rounded-[1.875rem]"
 						>
 							Отправить код заново
 						</button>
+						<p v-if="checkoutStore.isResendDisabled" class="mt-2 text-[0.7rem]">
+							Можно отправить код через
+							{{ checkoutStore.otpResendTimeout }} секунд
+						</p>
 					</div>
 				</div>
 			</Dialog>
