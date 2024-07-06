@@ -113,8 +113,9 @@
 		>
 			<Paginator
 				id="pagination"
-				@update:first="($event) => emit('updatePage', $event)"
-				@update:rows="($event) => emit('updateLimit', $event)"
+				:always-show="false"
+				@page="($event) => $emit('updatePage', $event)"
+				@update:rows="($event) => $emit('updateLimit', $event)"
 				:rows="props.currentLimit"
 				:totalRecords="props.totalProducts"
 				template="PrevPageLink CurrentPageReport JumpToPageDropdown RowsPerPageDropdown NextPageLink"
@@ -130,21 +131,27 @@
 						: '{currentPage} из {totalPages}'
 				"
 				:pt="{
-					root: 'px-0',
-					paginator: 'w-full',
-					previouspagebutton: 'mr-auto',
-					nextpagebutton: 'ml-auto',
-					rowPerPageDropdown: {
-						trigger: 'h-3 w-3 text-black',
+					root: 'px-0 w-full',
+					paginatorcontainer: 'w-full',
+					content: 'w-full',
+					prev: 'mr-auto',
+					next: 'ml-auto',
+					current: 'text-black text-[0.7rem] mr-2',
+					pcrowperpagedropdown: {
+						label: 'text-black p-1 text-[0.7rem]',
+						option: 'text-black text-[0.7rem]',
+						dropdown: 'w-4 text-black ml-4',
 						root: 'items-center border border-[#AAAAAA] px-3 shadow-none !outline-none',
 						input: 'pl-0 pr-2',
-						panel: '!mt-[8px]',
+						listcontainer: '!mt-[8px]',
 					},
-					jumpToPageDropdown: {
-						trigger: 'h-3 w-3 text-black',
+					pcjumptopagedropdown: {
+						label: 'text-black p-1 text-[0.7rem]',
+						option: 'text-black text-[0.7rem]',
+						dropdown: 'w-4 text-black ml-4',
 						root: 'items-center border border-[#AAAAAA] px-3 shadow-none !outline-none',
 						input: 'pl-0 pr-2',
-						panel: '!mt-[8px]',
+						listcontainer: '!mt-[8px]',
 					},
 				}"
 			></Paginator>
@@ -167,7 +174,7 @@
 </template>
 
 <style>
-	#pagination > .p-dropdown-item.p-highlight {
-		@apply !bg-red !text-primary;
+	#pagination [data-p-selected='true'] {
+		@apply bg-red2 text-primary;
 	}
 </style>

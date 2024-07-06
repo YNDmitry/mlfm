@@ -12,6 +12,11 @@ query GetProductById($id: ID!) {
 				small_title
 			}
 			qunatity
+			availability
+			price
+			image {
+				id
+			}
 		}
 		main_image {
 			id

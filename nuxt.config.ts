@@ -1,4 +1,4 @@
-import commonjs from '@rollup/plugin-commonjs'
+import Aura from '@primevue/themes/aura'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -49,10 +49,7 @@ export default defineNuxtConfig({
 		},
 	},
 
-	css: [
-		'~/assets/css/global.css',
-		'primevue/resources/themes/aura-light-green/theme.css',
-	],
+	css: ['~/assets/css/global.css'],
 
 	modules: [
 		'@nuxtjs/tailwindcss',
@@ -63,11 +60,11 @@ export default defineNuxtConfig({
 		'@nuxtjs/sitemap',
 		'nuxt-directus',
 		'@vee-validate/nuxt',
-		'nuxt-primevue',
 		'nuxt-swiper',
 		'@formkit/auto-animate',
 		'@nuxt/fonts',
 		'nuxt-graphql-client',
+		'@primevue/nuxt-module',
 		'@nuxt/test-utils/module',
 	],
 
@@ -89,22 +86,34 @@ export default defineNuxtConfig({
 	},
 
 	primevue: {
+		options: {
+			theme: {
+				preset: Aura,
+				options: {
+					darkModeSelector: '',
+					cssLayer: true,
+				},
+			},
+		},
 		components: {
 			include: [
 				'Tooltip',
 				'Toast',
-				'TabView',
+				'Tabs',
+				'TabList',
+				'Tab',
+				'TabPanels',
 				'TabPanel',
 				'Toast',
 				'ScrollPanel',
-				'Sidebar',
+				'Drawer',
 				'Breadcrumb',
 				'Paginator',
 				'Accordion',
 				'AccordionTab',
 				'Image',
 				'Dialog',
-				'Dropdown',
+				'Select',
 				'Checkbox',
 				'ProgressSpinner',
 				'RadioButton',
@@ -118,4 +127,5 @@ export default defineNuxtConfig({
 	},
 
 	telemetry: false,
+	compatibilityDate: '2024-07-06',
 })

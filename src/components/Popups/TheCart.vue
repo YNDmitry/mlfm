@@ -11,7 +11,7 @@
 </script>
 
 <template>
-	<Sidebar
+	<Drawer
 		v-model:visible="websiteStore.isVisibleCart"
 		@show.once="useCart.initCart()"
 		:modal="true"
@@ -143,95 +143,93 @@
 					<!--  /Товары -->
 
 					<!--  Промокод -->
-					<TabView
+					<Tabs
+						value="0"
 						id="cart-tabs"
 						:pt="{
 							panelcontainer: 'p-0',
 							nav: 'mb-4',
-							inkbar: 'hidden',
 						}"
 					>
-						<TabPanel
-							header="Промокод"
-							:pt="{
-								header: 'w-full text-center',
-								headerTitle: 'mx-auto font-normal',
-								headerAction:
-									'hover:bg-red2 hover:text-primary rounded-main text-[0.625rem] h-[30px]',
-							}"
-						>
-							<form
-								@submit.prevent="useCart.setDiscount()"
-								class="relative border-b-[1px] border-b-gray2 max-tablet:pb-[1.875rem] tablet:pb-[25px]"
+						<TabList :pt="{inkbar: 'hidden'}">
+							<Tab
+								value="0"
+								class="w-full rounded-main py-2 text-center text-[0.625rem] font-normal hover:bg-red2 hover:text-primary"
+								>Промокод</Tab
 							>
-								<div
-									class="flex items-center gap-2"
-									v-if="useCart.discountPercent === null"
-								>
-									<input
-										class="h-[35px] w-full rounded-[1.875rem] border-[1px] border-black px-[12px] text-[0.875rem] font-light outline-none transition-all focus:border-red2-hover max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
-										type="text"
-										placeholder="Промокод"
-										v-model.uppercase.trim="useCart.discount"
-									/>
-
-									<button
-										type="submit"
-										class="h-[35px] rounded-[1.875rem] border-[1px] border-black px-[1rem] transition-colors hover:bg-black hover:text-primary max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
-									>
-										Применить
-									</button>
-								</div>
-								<p v-else>Успешно! Скидка добавлена.</p>
-								<p
-									v-if="useCart.discountErrors.statusMessage"
-									class="mt-4 text-red"
-								>
-									{{ useCart.discountErrors.statusMessage }}
-								</p>
-							</form>
-						</TabPanel>
-						<TabPanel
-							header="Подарочная карта"
-							:pt="{
-								header: 'w-full text-center',
-								headerTitle: 'mx-auto font-normal',
-								headerAction:
-									'hover:bg-red2 hover:text-primary rounded-main text-[0.625rem] h-[30px]',
-							}"
-						>
-							<form
-								@submit.prevent="useCart.setGiftCard()"
-								class="relative border-b-[1px] border-b-gray2 max-tablet:pb-[1.875rem] tablet:pb-[25px]"
+							<Tab
+								value="1"
+								class="w-full rounded-main py-2 text-center text-[0.625rem] font-normal hover:bg-red2 hover:text-primary"
+								>Подарочная карта</Tab
 							>
-								<div
-									class="flex items-center gap-2"
-									v-if="useCart.giftCodeCurrentBalance === null"
+						</TabList>
+						<TabPanels :pt="{root: 'px-0'}">
+							<TabPanel value="0">
+								<form
+									@submit.prevent="useCart.setDiscount()"
+									class="relative border-b-[1px] border-b-gray2 max-tablet:pb-[1.875rem] tablet:pb-[25px]"
 								>
-									<input
-										class="h-[35px] w-full rounded-[1.875rem] border-[1px] border-black px-[12px] text-[0.875rem] font-light outline-none transition-all focus:border-red2-hover max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
-										type="text"
-										placeholder="Код подарочной карты"
-										v-model.uppercase.trim="useCart.giftCode"
-									/>
-
-									<button
-										type="submit"
-										class="h-[35px] rounded-[1.875rem] border-[1px] border-black px-[1rem] transition-colors hover:bg-black hover:text-primary max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
+									<div
+										class="flex items-center gap-2"
+										v-if="useCart.discountPercent === null"
 									>
-										Применить
-									</button>
-								</div>
-								<p v-else>Успешно! Подарочная карта применена.</p>
-								<p
-									v-if="useCart.giftCodeErrors.statusMessage"
-									class="mt-4 text-red"
+										<input
+											class="h-[35px] w-full rounded-[1.875rem] border-[1px] border-black px-[12px] text-[0.875rem] font-light outline-none transition-all focus:border-red2-hover max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
+											type="text"
+											placeholder="Промокод"
+											v-model.uppercase.trim="useCart.discount"
+										/>
+
+										<button
+											type="submit"
+											class="h-[35px] rounded-[1.875rem] border-[1px] border-black px-[1rem] transition-colors hover:bg-black hover:text-primary max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
+										>
+											Применить
+										</button>
+									</div>
+									<p v-else>Успешно! Скидка добавлена.</p>
+									<p
+										v-if="useCart.discountErrors.statusMessage"
+										class="mt-4 text-red"
+									>
+										{{ useCart.discountErrors.statusMessage }}
+									</p>
+								</form>
+							</TabPanel>
+							<TabPanel value="1">
+								<form
+									@submit.prevent="useCart.setGiftCard()"
+									class="relative border-b-[1px] border-b-gray2 max-tablet:pb-[1.875rem] tablet:pb-[25px]"
 								>
-									{{ useCart.giftCodeErrors.statusMessage }}
-								</p>
-							</form>
-						</TabPanel>
-					</TabView>
+									<div
+										class="flex items-center gap-2"
+										v-if="useCart.giftCodeCurrentBalance === null"
+									>
+										<input
+											class="h-[35px] w-full rounded-[1.875rem] border-[1px] border-black px-[12px] text-[0.875rem] font-light outline-none transition-all focus:border-red2-hover max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
+											type="text"
+											placeholder="Код подарочной карты"
+											v-model.uppercase.trim="useCart.giftCode"
+										/>
+
+										<button
+											type="submit"
+											class="h-[35px] rounded-[1.875rem] border-[1px] border-black px-[1rem] transition-colors hover:bg-black hover:text-primary max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
+										>
+											Применить
+										</button>
+									</div>
+									<p v-else>Успешно! Подарочная карта применена.</p>
+									<p
+										v-if="useCart.giftCodeErrors.statusMessage"
+										class="mt-4 text-red"
+									>
+										{{ useCart.giftCodeErrors.statusMessage }}
+									</p>
+								</form>
+							</TabPanel>
+						</TabPanels>
+					</Tabs>
 					<!--  /Промокод -->
 
 					<!--  Скидка/Итого -->
@@ -363,11 +361,11 @@
 				<!--  /Вас могут заинтересовать -->
 			</div>
 		</template>
-	</Sidebar>
+	</Drawer>
 </template>
 
 <style>
-	#cart-tabs [data-p-active='true'] .p-tabview-nav-link {
+	#cart-tabs .p-tab-active {
 		@apply bg-red2 text-primary;
 	}
 </style>

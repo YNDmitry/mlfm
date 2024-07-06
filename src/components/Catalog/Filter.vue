@@ -22,27 +22,27 @@
 			class="relative border-b-2 border-b-gray2 pb-[0.625rem]"
 			data-lenis-prevent
 		>
-			<Dropdown
+			<Select
 				@update:modelValue="(value) => emit('update:currentFilter', value)"
 				:modelValue="currentFilter"
 				:options="filters.map((filter) => filter.title)"
 				:placeholder="title"
-				:showClear="true"
+				:showClear="currentFilter !== null"
 				:aria-label="title"
 				:pt="{
 					dropdownicon: 'w-[10px]',
 					clearicon: 'w-[10px] ml-auto mr-2',
-					wrapper: 'bg-primary overflow-y-scroll pb-4',
-					list: 'h-[140px]',
-					item: 'text-[0.625rem] flex items-center px-2 rounded-main text-black h-[2rem] w-full cursor-pointer my-[0.5rem] transition-all hover:bg-grayLight',
+					listcontainer: 'bg-primary h-[140px] overflow-y-scroll pb-4',
+					option:
+						'text-[0.625rem] flex items-center px-2 rounded-main text-black h-[2rem] w-full cursor-pointer my-[0.5rem] transition-all hover:bg-grayLight',
 					input: 'outline-none',
-					panel: '!top-[23px] !left-0',
+					overlay: '!top-[23px] !left-0',
 				}"
 				:append-to="'#filter-wrapper-' + title"
 				unstyled
 				class="flex cursor-pointer justify-between border-0 text-[0.625rem] shadow-none outline-none"
 			>
-			</Dropdown>
+			</Select>
 		</div>
 	</div>
 </template>

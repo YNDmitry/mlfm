@@ -7,6 +7,9 @@
 	const wishlistStore = useWishlistStore()
 	const {id} = useRoute().params
 	const isOnWishlist = computed(() => wishlistStore.isOnWishlist(id as string))
+	const toast = useToast()
+	const isRandomProductsPending = ref(true)
+	const rProducts = ref(null)
 
 	definePageMeta({
 		layout: 'default',
@@ -62,8 +65,6 @@
 	)
 	const currentVariantId = ref(product?.value?.product_variants.at(0).id)
 
-	const isRandomProductsPending = ref(true)
-	const rProducts = ref(null)
 	const initRandomProducts = async () => {
 		try {
 			const randomProducts = await getItems({
@@ -86,7 +87,6 @@
 	}
 	await initRandomProducts()
 
-	const toast = useToast()
 	const handleAddToCart = async () => {
 		const currentProduct = product?.value
 		cartStore.addItem({
@@ -159,6 +159,12 @@
 				variant?.size_id?.small_title === currentSize.value,
 		)
 		currentVariantId.value = variant ? variant.id : null
+	})
+
+	const isProductOutOfStock = computed(() => {
+		return product.value?.product_variants?.find(
+			(el: any) => el.id === currentVariantId.value,
+		).availability
 	})
 </script>
 
@@ -302,11 +308,18 @@
 						>
 							<button
 								type="button"
-								:disabled="currentVariantId === null"
+								:disabled="
+									currentVariantId === null ||
+									isProductOutOfStock === 'out_of_stock'
+								"
 								@click="handleAddToCart"
 								class="w-full rounded-main bg-red2 text-primary transition-all hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-70 max-tablet:min-h-[2rem] max-tablet:text-[0.625rem] tablet:min-h-[3.313rem]"
 							>
-								Добавить в корзину
+								{{
+									isProductOutOfStock === 'out_of_stock'
+										? 'Нет в наличии'
+										: 'Добавить в корзину'
+								}}
 							</button>
 							<button
 								@click="

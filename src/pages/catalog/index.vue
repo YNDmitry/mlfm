@@ -16,13 +16,13 @@
 	const initialState = reactive({
 		offset: currentPage.value,
 		filter: {
-			brandTitle: '',
-			collectionId: route.query.collection || '',
-			colors: route.query.color || [],
-			size: route.query.size || '',
+			brandTitle: null,
+			collectionId: route.query.collection || null,
+			colors: route.query.color || null,
+			size: route.query.size || null,
 			categories: route.query.category || [],
-			minPrice: route.query.minPrice || '',
-			maxPrice: route.query.maxPrice || '',
+			minPrice: route.query.minPrice || null,
+			maxPrice: route.query.maxPrice || null,
 		},
 	})
 
@@ -38,7 +38,7 @@
 			filters.collection = {title: {_eq: filter.collectionId}}
 		}
 
-		if (filter.colors.length > 0) {
+		if (filter.colors !== null) {
 			filters.colors = {colors_id: {title: {_eq: filter.colors}}}
 		}
 
@@ -59,7 +59,7 @@
 		}
 
 		return GqlProducts({
-			page: Math.ceil(currentPage.value / currentLimit.value) + 1,
+			page: currentPage.value + 1,
 			limit: currentLimit.value,
 			sort:
 				currentSort?.value.length === 0
@@ -108,9 +108,9 @@
 		router.replace({query: {}})
 		Object.keys(initialState.filter).forEach((key) => {
 			if (Array.isArray(initialState.filter[key])) {
-				initialState.filter[key] = []
+				initialState.filter[key] = null || []
 			} else {
-				initialState.filter[key] = ''
+				initialState.filter[key] = null
 			}
 		})
 		currentPage.value = 1
@@ -126,10 +126,10 @@
 			queryParams.brandTitle = initialState.filter.brandTitle
 		if (initialState.filter.collectionId)
 			queryParams.collection = initialState.filter.collectionId
-		if (initialState.filter.colors.length > 0)
+		if (initialState.filter.colors !== null)
 			queryParams.color = initialState.filter.colors.join(',')
 		if (initialState.filter.size) queryParams.size = initialState.filter.size
-		if (initialState.filter.categories.length > 0)
+		if (initialState.filter.categories !== null)
 			queryParams.category = initialState.filter.categories.join(',')
 		if (initialState.filter.minPrice)
 			queryParams.minPrice = initialState.filter.minPrice
@@ -144,8 +144,8 @@
 		updateQueryParams()
 	}
 
-	function updatePage(newPage: number) {
-		currentPage.value = newPage
+	function updatePage(newPage: any) {
+		currentPage.value = newPage.page
 		updateQueryParams()
 	}
 
@@ -262,17 +262,18 @@
 								<NuxtLink to="/catalog">Каталог</NuxtLink>
 							</div>
 							<div id="sort-wrapper" class="relative">
-								<Dropdown
+								<Select
 									v-model="currentSort"
 									:options="sortOptions"
 									optionLabel="sort"
 									placeholder="Сортировка"
 									:pt="{
-										input: 'p-0 text-black text-[12px]',
-										root: 'shadow-none outline-none',
-										trigger: 'w-[14px] ml-[8px] text-black',
+										root: 'shadow-none outline-none !max-h-none items-center gap-4',
+										label: 'text-black p-0 text-black text-[12px]',
 										wrapper: '!max-h-none',
-										panel: '!left-auto !right-0 !top-[30px]',
+										overlay: '!left-auto !right-0 !top-[30px]',
+										dropdownicon: 'text-black',
+										dropdown: 'w-[14px] h-[14px]',
 									}"
 									append-to="#sort-wrapper"
 								>
@@ -289,7 +290,7 @@
 											<div>{{ slotProps.option.name }}</div>
 										</div>
 									</template>
-								</Dropdown>
+								</Select>
 							</div>
 						</div>
 						<!-- /Хлебные крошки -->
@@ -329,7 +330,7 @@
 </template>
 
 <style>
-	#sort-wrapper .p-highlight {
-		@apply bg-red text-primary;
+	#sort-wrapper .p-select-option-selected {
+		@apply bg-red2 text-primary;
 	}
 </style>
