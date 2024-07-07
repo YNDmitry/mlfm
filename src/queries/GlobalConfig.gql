@@ -1,0 +1,14 @@
+query GlobalConfig {
+	site {
+		meta_title
+		meta_thumbnail {
+			id
+		}
+		meta_description
+		general_message
+		current_phone_number
+		current_address
+		current_email
+		current_whatsapp
+	}
+}

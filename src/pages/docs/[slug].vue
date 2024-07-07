@@ -5,7 +5,7 @@
 
 	const {params} = useRoute()
 
-	const {data} = useAsyncGql(
+	const {data} = await useAsyncGql(
 		'Doc',
 		{slug: params.slug as string},
 		{
@@ -14,8 +14,6 @@
 			},
 		},
 	)
-
-	console.log(data)
 </script>
 
 <template>

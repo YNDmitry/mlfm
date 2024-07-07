@@ -11,16 +11,7 @@ export const useWebsiteStore = defineStore('websiteStore', {
 		isNewsletterPopup: false,
 		isNewsletterFormSubmitted: false,
 		isSearchPopup: false,
-		siteSettings: {
-			meta_title: '',
-			meta_description: '',
-			meta_thumbnail: '',
-			current_phone_number: '',
-			general_message: '',
-			current_address: '',
-			current_email: '',
-			current_whatsapp: '',
-		},
+		siteSettings: {} as Config,
 	}),
 	actions: {
 		// Toggles the visibility of the cart popup.
@@ -49,24 +40,18 @@ export const useWebsiteStore = defineStore('websiteStore', {
 		},
 
 		async getConfig() {
-			const {getItems} = useDirectusItems()
-			const response = await getItems({
-				collection: 'site',
-				params: {
-					fields: [
-						'meta_title',
-						'meta_description',
-						'meta_thumbnail',
-						'general_message',
-						'current_phone_number',
-						'current_address',
-						'current_email',
-						'current_whatsapp',
-					],
+			const response = await useAsyncGql(
+				'GlobalConfig',
+				{},
+				{
+					getCachedData(key, nuxtApp) {
+						return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+					},
 				},
-			})
-			this.siteSettings = response as unknown as Config
-			return response as unknown
+			)
+
+			this.siteSettings = response.data?.value?.site as unknown as Config
+			return response.data.value as unknown
 		},
 	},
 })

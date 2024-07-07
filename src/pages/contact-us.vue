@@ -26,7 +26,7 @@
 			data.value.contacts?.og_image?.id,
 	})
 
-	const config = useNuxtData('config').data
+	const websiteStore = useWebsiteStore()
 </script>
 
 <template>
@@ -50,8 +50,8 @@
 				>
 					<IconsEmail />
 
-					<NuxtLink :to="'mail:' + config.current_email">{{
-						config.current_email
+					<NuxtLink :to="'mail:' + websiteStore.siteSettings?.current_email">{{
+						websiteStore.siteSettings?.current_email
 					}}</NuxtLink>
 				</div>
 
@@ -60,9 +60,10 @@
 				>
 					<IconsPhone />
 
-					<NuxtLink :to="'tel:' + config.current_phone_number">{{
-						config.current_phone_number
-					}}</NuxtLink>
+					<NuxtLink
+						:to="'tel:' + websiteStore.siteSettings?.current_phone_number"
+						>{{ websiteStore.siteSettings?.current_phone_number }}</NuxtLink
+					>
 				</div>
 
 				<div
@@ -70,22 +71,9 @@
 				>
 					<IconsMap />
 
-					<div>{{ config.current_address }}</div>
+					<div>{{ websiteStore.siteSettings?.current_address }}</div>
 				</div>
 			</div>
 		</div>
-
-		<!-- <div
-			id="map"
-			class="mx-auto max-tablet:w-full max-tablet:pt-[1rem] max-mobile:h-[250px] mobile:h-[405px] tablet:w-[635px] tablet:pt-[35px]"
-		>
-			<NuxtImg
-				provider="directus"
-				src="8a3d173d-d1f6-4f31-b792-8e15baa93d7d"
-				width="635"
-				height="405"
-				class="h-full w-full object-cover"
-			/>
-		</div> -->
 	</section>
 </template>

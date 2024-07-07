@@ -1,7 +1,7 @@
 <script setup lang="ts">
 	const appConfig = useRuntimeConfig()
 	const isMobile = useMediaQuery('(max-width:768px)')
-	const config = useNuxtData('config').data
+	const websiteStore = useWebsiteStore()
 
 	definePageMeta({
 		layout: 'default',
@@ -28,12 +28,14 @@
 	)
 
 	useSeoMeta({
-		title: config?.value?.meta_title,
-		ogTitle: config?.value?.meta_title,
-		description: config?.value?.meta_description,
-		ogDescription: config?.value?.meta_description,
+		title: websiteStore.siteSettings?.meta_title,
+		ogTitle: websiteStore.siteSettings?.meta_title,
+		description: websiteStore.siteSettings?.meta_description,
+		ogDescription: websiteStore.siteSettings?.meta_description,
 		ogImage:
-			appConfig.public.databaseUrl + 'assets/' + config?.value?.meta_thumbnail,
+			appConfig.public.databaseUrl +
+			'assets/' +
+			websiteStore.siteSettings?.meta_thumbnail,
 	})
 </script>
 

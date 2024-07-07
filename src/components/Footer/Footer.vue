@@ -1,7 +1,6 @@
 <script setup lang="ts">
 	import {object, string} from 'yup'
-	const config = useNuxtData('config').data
-	const websiteConfig = useWebsiteStore()
+	const websiteStore = useWebsiteStore()
 
 	const schema = object({
 		footerEmail: string()
@@ -13,10 +12,18 @@
 		validationSchema: schema,
 	})
 
-	const {data: docs} = useAsyncGql('Docs')
+	const {data: docs} = await useAsyncGql(
+		'Docs',
+		{},
+		{
+			getCachedData(key, nuxtApp) {
+				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+			},
+		},
+	)
 
 	const onSubmit = handleSubmit(async (values) => {
-		await websiteConfig.handleNewsletterSubscribe(values).catch((err) => {
+		await websiteStore.handleNewsletterSubscribe(values).catch((err) => {
 			if (err.errors[0].extensions.code === 'RECORD_NOT_UNIQUE') {
 				setErrors({
 					footerEmail: 'Пользователь с этим email уже подписан',
@@ -85,7 +92,7 @@
 						>
 							Лучшие акции, главные новинки и персональные предложения
 						</p>
-						<div v-if="websiteConfig.isNewsletterFormSubmitted" class="mt-5">
+						<div v-if="websiteStore.isNewsletterFormSubmitted" class="mt-5">
 							Спасибо за подписку на нашу рассылку!
 						</div>
 						<template v-else>
@@ -116,14 +123,14 @@
 				>
 					<IconsFooterLogo class="max-tablet:mx-auto" />
 					<div
-						v-if="config?.current_address"
+						v-if="websiteStore.siteSettings?.current_address"
 						class="mt-12 font-montserrat text-[14px] text-[#6C6C6C]"
 					>
-						<div>{{ config.current_address }}</div>
+						<div>{{ websiteStore.siteSettings.current_address }}</div>
 						<NuxtLink
-							:to="'tel:' + config.current_phone_number"
+							:to="'tel:' + websiteStore.siteSettings.current_phone_number"
 							class="font-bold"
-							>{{ config.current_phone_number }}</NuxtLink
+							>{{ websiteStore.siteSettings.current_phone_number }}</NuxtLink
 						>
 					</div>
 				</div>
