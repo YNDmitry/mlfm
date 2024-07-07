@@ -118,10 +118,9 @@
 	}
 
 	function updateQueryParams() {
-		const queryParams: any = {
-			sort: currentSort.value,
-		}
+		const queryParams: any = {}
 		// Добавляем только определенные фильтры в URL
+		if (currentSort.value) queryParams.sort = currentSort.value
 		if (initialState.filter.brandTitle)
 			queryParams.brandTitle = initialState.filter.brandTitle
 		if (initialState.filter.collectionId)
@@ -129,7 +128,7 @@
 		if (initialState.filter.colors !== null)
 			queryParams.color = initialState.filter.colors.join(',')
 		if (initialState.filter.size) queryParams.size = initialState.filter.size
-		if (initialState.filter.categories !== null)
+		if (initialState.filter.categories.length > 0)
 			queryParams.category = initialState.filter.categories.join(',')
 		if (initialState.filter.minPrice)
 			queryParams.minPrice = initialState.filter.minPrice
@@ -141,11 +140,14 @@
 
 	function updateLimit(newLimit: number) {
 		currentLimit.value = newLimit
+		refresh()
 		updateQueryParams()
 	}
 
 	function updatePage(newPage: any) {
 		currentPage.value = newPage.page
+		refresh()
+		window.scrollTo(0, 0)
 		updateQueryParams()
 	}
 
@@ -154,20 +156,12 @@
 	}
 
 	watch(
-		() => [currentPage, currentSort, currentLimit, initialState.filter],
+		() => [currentSort, initialState.filter],
 		() => {
 			refresh()
+			currentPage.value = 0
 			window.scrollTo(0, 0)
 			document.querySelector('header')?.classList.remove('translate-y-[-100%]')
-		},
-		{deep: true},
-	)
-
-	watch(
-		() => [initialState.filter],
-		() => {
-			currentPage.value = 0
-			refresh()
 		},
 		{deep: true},
 	)

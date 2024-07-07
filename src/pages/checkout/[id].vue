@@ -48,7 +48,10 @@
 	<section class="grid grid-cols-delivery max-tablet:flex max-tablet:flex-col">
 		<NuxtLink
 			to="/"
-			v-tooltip.right="'Вернуться на сайт'"
+			v-tooltip.right="{
+				value: 'Вернуться на сайт',
+				pt: {text: 'text-[0.5rem] py-2 bg-red2 text-primary'},
+			}"
 			class="fixed left-4 top-5 flex h-12 w-12 rotate-180 items-center justify-center rounded-[100%] p-2 transition-all hover:bg-black/10 max-tablet:hidden"
 		>
 			<IconsOrderArrow width="30px" height="30px" />

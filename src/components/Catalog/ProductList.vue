@@ -113,7 +113,6 @@
 		>
 			<Paginator
 				id="pagination"
-				:always-show="false"
 				@page="($event) => $emit('updatePage', $event)"
 				@update:rows="($event) => $emit('updateLimit', $event)"
 				:rows="props.currentLimit"
