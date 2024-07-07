@@ -151,7 +151,13 @@
 							nav: 'mb-4',
 						}"
 					>
-						<TabList :pt="{inkbar: 'hidden'}">
+						<TabList
+							:pt="{inkbar: 'hidden'}"
+							v-if="
+								useCart.discountAmount === 0 ||
+								useCart.giftCodeInitialAmount === 0
+							"
+						>
 							<Tab
 								value="0"
 								class="w-full rounded-main py-2 text-center text-[0.625rem] font-normal hover:bg-red2 hover:text-primary"
@@ -280,7 +286,15 @@
 						<!-- /Добавление отображения остатка баланса подарочной карты -->
 
 						<div class="flex justify-between text-[0.625rem] font-medium">
-							<span>Итого</span>
+							<span
+								>Итого
+								{{ useCart.discount.length > 0 ? '(С учётом скидки)' : '' }}
+								{{
+									useCart.giftCodeInitialAmount !== null
+										? '(С учётом подарочной карты)'
+										: ''
+								}}
+							</span>
 
 							<span>{{
 								Intl.NumberFormat('ru-RU', {
