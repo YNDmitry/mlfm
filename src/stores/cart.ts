@@ -119,6 +119,27 @@ export const useCartStore = defineStore('userCart', {
 					console.error('Error during session initialization:', error)
 					return undefined
 				}
+			} else {
+				// Проверка валидности существующей сессии в базе данных
+				try {
+					const res = await GqlGetSession({id: sessionId})
+					if (!res || !res.guest_session_by_id) {
+						// Сессия не найдена, создаем новую
+						const newRes = await GqlCreateGuestSessionItem({
+							data: {status: 'draft'},
+						})
+						sessionId = newRes.create_guest_session_item?.id as string
+						localStorage.setItem('sessionId', sessionId)
+					}
+				} catch (error) {
+					console.error('Error validating session:', error)
+					// Ошибка при проверке, создаем новую сессию
+					const newRes = await GqlCreateGuestSessionItem({
+						data: {status: 'draft'},
+					})
+					sessionId = newRes.create_guest_session_item?.id as string
+					localStorage.setItem('sessionId', sessionId)
+				}
 			}
 			return sessionId
 		},

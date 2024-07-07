@@ -174,7 +174,7 @@
 										v-if="useCart.discountPercent === null"
 									>
 										<input
-											class="h-[35px] w-full rounded-[1.875rem] border-[1px] border-black px-[12px] text-[0.875rem] font-light outline-none transition-all focus:border-red2-hover max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
+											class="h-[35px] w-full rounded-[1.875rem] border-[1px] border-black px-[12px] text-[0.7rem] font-light outline-none transition-all focus:border-red2-hover max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
 											type="text"
 											placeholder="Промокод"
 											v-model.uppercase.trim="useCart.discount"
@@ -182,7 +182,7 @@
 
 										<button
 											type="submit"
-											class="h-[35px] rounded-[1.875rem] border-[1px] border-black px-[1rem] transition-colors hover:bg-black hover:text-primary max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
+											class="h-[35px] rounded-[1.875rem] border-[1px] border-black px-[1rem] text-[0.7rem] transition-colors hover:bg-black hover:text-primary max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
 										>
 											Применить
 										</button>
@@ -206,7 +206,7 @@
 										v-if="useCart.giftCodeCurrentBalance === null"
 									>
 										<input
-											class="h-[35px] w-full rounded-[1.875rem] border-[1px] border-black px-[12px] text-[0.875rem] font-light outline-none transition-all focus:border-red2-hover max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
+											class="h-[35px] w-full rounded-[1.875rem] border-[1px] border-black px-[12px] text-[0.7rem] font-light outline-none transition-all focus:border-red2-hover max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
 											type="text"
 											placeholder="Код подарочной карты"
 											v-model.uppercase.trim="useCart.giftCode"
@@ -214,7 +214,8 @@
 
 										<button
 											type="submit"
-											class="h-[35px] rounded-[1.875rem] border-[1px] border-black px-[1rem] transition-colors hover:bg-black hover:text-primary max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
+											:spaceBetween="10"
+											class="h-[35px] rounded-[1.875rem] border-[1px] border-black px-[1rem] text-[0.7rem] transition-colors hover:bg-black hover:text-primary max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
 										>
 											Применить
 										</button>
@@ -327,13 +328,12 @@
 						</div>
 					</div>
 
-					<Swiper
-						v-else
-						:slidesPerView="3"
-						:spaceBetween="10"
-						class="overflow-visible"
-					>
-						<SwiperSlide v-for="product in useCart.relatedItems" :key="product">
+					<div v-else class="flex gap-[10px] overflow-hidden">
+						<div
+							v-for="product in useCart.relatedItems"
+							:key="product.id"
+							class="w-full"
+						>
 							<NuxtLink
 								:to="'/catalog/' + product.id"
 								@click="websiteStore.isVisibleCart = false"
@@ -346,7 +346,9 @@
 										width="200"
 									/>
 									<div class="inset-0 mt-2 overflow-hidden whitespace-nowrap">
-										<div class="overflow-hidden overflow-ellipsis font-medium">
+										<div
+											class="overflow-hidden overflow-ellipsis text-[0.7rem] font-normal"
+										>
 											{{ product.title }}
 										</div>
 										<div class="overflow-ellipsis text-[10px]">
@@ -355,8 +357,8 @@
 									</div>
 								</div>
 							</NuxtLink>
-						</SwiperSlide>
-					</Swiper>
+						</div>
+					</div>
 				</div>
 				<!--  /Вас могут заинтересовать -->
 			</div>
