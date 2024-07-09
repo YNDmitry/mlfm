@@ -8,16 +8,10 @@
 			Способ оплаты
 		</h2>
 		<div class="flex flex-col max-tablet:gap-[12px] tablet:gap-[1.25rem]">
-			<CheckoutPaymentOption name="paymentMethod" value="spb" label="СПБ" />
 			<CheckoutPaymentOption
 				name="paymentMethod"
 				value="bank_card"
 				label="Банковская карта"
-			/>
-			<CheckoutPaymentOption
-				name="paymentMethod"
-				value="installments"
-				label="Долями"
 			/>
 			<CheckoutPaymentOption
 				name="paymentMethod"
@@ -28,6 +22,12 @@
 				name="paymentMethod"
 				value="tinkoff_bank"
 				label="TinkoffPay"
+			/>
+			<CheckoutPaymentOption name="paymentMethod" value="spb" label="СПБ" />
+			<CheckoutPaymentOption
+				name="paymentMethod"
+				value="installments"
+				label="Долями"
 			/>
 		</div>
 	</div>

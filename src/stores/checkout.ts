@@ -6,7 +6,7 @@ export const useCheckoutStore = defineStore('checkoutStore', {
 		isOtpVisible: false,
 		promoCode: null,
 		giftCard: null,
-		paymentMethod: 'spb',
+		paymentMethod: 'bank_card',
 	}),
 	actions: {
 		async sendCode(email: string) {
