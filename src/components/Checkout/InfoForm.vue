@@ -8,6 +8,7 @@
 	const isError = ref(false)
 	const isOtpSubmit = ref(false)
 	const otpResendTimeout = ref(0)
+	const toast = useToast()
 
 	const schema = object({
 		firstName: string().required('Обязательное поле'),
@@ -170,6 +171,13 @@
 				if (data.success) {
 					isOtpSubmit.value = false
 					window.location.href = data.paymentUrl
+				} else {
+					toast.add({
+						severity: 'warn',
+						summary: 'Ошибка',
+						detail: data.message,
+						life: 10000,
+					})
 				}
 			})
 			.catch(() => {
@@ -188,6 +196,7 @@
 
 <template>
 	<div class="pb-[3.75rem]">
+		<Toast :position="'top-right'" />
 		<div class="container laptop:max-w-[512px]">
 			<Dialog
 				modal
