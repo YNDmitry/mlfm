@@ -89,8 +89,11 @@
 		}
 	})
 
+	const isError = ref(false)
+	const isOtpSubmit = ref(false)
 	const submitOtp = async () => {
-		fetch(config.public.databaseUrl + 'order/create', {
+		isOtpSubmit.value = true
+		await fetch(config.public.databaseUrl + 'order/create', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -116,8 +119,14 @@
 			}),
 		})
 			.then((res) => res.json())
-			.then((data) => console.log(data))
-			.catch((err) => console.log(err))
+			.then((data) => {
+				isOtpSubmit.value = false
+				console.log(data)
+			})
+			.catch(() => {
+				isOtpSubmit.value = false
+				isError.value = true
+			})
 	}
 
 	const sendCode = () => {
@@ -156,23 +165,42 @@
 					<div
 						class="justify-content-between align-self-stretch mt-5 flex flex-col"
 					>
-						<button
-							:disabled="checkoutStore.otpCode.length < 6 ? true : false"
-							@click="submitOtp"
-							class="w-full bg-red2 text-primary transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-50 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[45px] tablet:rounded-[1.875rem]"
+						<div class="flex">
+							<button
+								@click="sendCode"
+								:disabled="checkoutStore.isResendDisabled || isError"
+								class="w-full text-[0.7rem] transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-50 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[35px] tablet:rounded-[1.875rem]"
+							>
+								Отправить код заново
+							</button>
+							<button
+								:disabled="
+									checkoutStore.otpCode.length < 6 ? true : false || isError
+								"
+								@click="submitOtp"
+								class="w-full bg-red2 text-primary transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-50 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[45px] tablet:rounded-[1.875rem]"
+							>
+								<ProgressSpinner
+									aria-label="Loading..."
+									style="width: 20px; height: 20px"
+									:pt="{
+										root: 'mx-0 absolute left-[2rem]',
+										circle: '!stroke-[#ffffff]',
+									}"
+									v-if="isOtpSubmit"
+								/>
+								Подтвердить
+							</button>
+						</div>
+						<p
+							v-if="checkoutStore.isResendDisabled || !isError"
+							class="mt-2 text-[0.7rem]"
 						>
-							Подтвердить
-						</button>
-						<button
-							@click="sendCode"
-							:disabled="checkoutStore.isResendDisabled"
-							class="mt-4 w-full bg-black text-[0.7rem] text-primary transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-50 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[35px] tablet:rounded-[1.875rem]"
-						>
-							Отправить код заново
-						</button>
-						<p v-if="checkoutStore.isResendDisabled" class="mt-2 text-[0.7rem]">
 							Можно отправить код через
 							{{ checkoutStore.otpResendTimeout }} секунд
+						</p>
+						<p v-if="isError" class="text-red2">
+							Что-то пошло не так. Пожалуйста, попробуйте создать заказ позже
 						</p>
 					</div>
 				</div>

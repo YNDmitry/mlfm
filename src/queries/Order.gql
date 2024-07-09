@@ -1,0 +1,21 @@
+query OrderProducts($ids: [String]) {
+	product_variants(filter: {id: {_in: $ids}}) {
+		id
+		price
+		image {
+			id
+		}
+		color_id {
+			title
+		}
+		size_id {
+			small_title
+		}
+		product {
+			title
+			category {
+				title
+			}
+		}
+	}
+}

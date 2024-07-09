@@ -122,6 +122,7 @@ export default defineNuxtConfig({
 				'InputNumber',
 				'SpeedDial',
 				'InputOtp',
+				'Message',
 			],
 		},
 	},
