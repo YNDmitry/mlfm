@@ -48,7 +48,7 @@
 			} else {
 				toast.add({
 					severity: 'error',
-					detail: 'PIN не валидный. Введите другой',
+					detail: 'PIN не валидный либо заказ отсутствует. Введите другой',
 					summary: 'Неверный PIN',
 					life: 3000,
 				})
@@ -62,12 +62,34 @@
 		} catch (error) {
 			toast.add({
 				severity: 'error',
-				detail: 'Что-то пошло не так. Попробуйте ещё раз',
+				detail: 'Что-то пошло не так.',
 				summary: 'Ошибка',
 				life: 3000,
 			})
 		}
 	})
+
+	const cancelOrder = async () => {
+		try {
+			const res = await fetch(config.public.databaseUrl + 'cancelPaymentApi', {
+				method: 'POST',
+				body: JSON.stringify({
+					payment_id: params.id,
+				}),
+			})
+
+			const data = res.json()
+
+			console.log(data)
+		} catch (error) {
+			toast.add({
+				severity: 'error',
+				detail: 'Что-то пошло не так.',
+				summary: 'Ошибка',
+				life: 3000,
+			})
+		}
+	}
 
 	const status = ref([
 		{

@@ -4,6 +4,11 @@
 	const checkoutStore = useCheckoutStore()
 	const config = useRuntimeConfig()
 
+	const formValues = ref('')
+	const isError = ref(false)
+	const isOtpSubmit = ref(false)
+	const otpResendTimeout = ref(0)
+
 	const schema = object({
 		firstName: string().required('Обязательное поле'),
 		lastName: string().required('Обязательное поле'),
@@ -61,7 +66,7 @@
 			.oneOf([true], 'Нужно обязательно подтвердить'),
 	})
 
-	const {isSubmitting, handleSubmit} = useForm({
+	const {isSubmitting, handleSubmit, submitCount} = useForm({
 		validationSchema: schema,
 		initialValues: {
 			deliveryType: 'delivery',
@@ -70,17 +75,30 @@
 	})
 
 	const {value: email} = useField('email')
+	const {value: phone} = useField('phone')
 	const {value: comment} = useField('comment')
 	const {value: firstName} = useField('firstName')
 	const {value: lastName} = useField('lastName')
 	const {value: thirdName} = useField('thirdName')
 
-	const formValues = ref('')
+	const {pause, resume} = useIntervalFn(() => {
+		if (otpResendTimeout.value > 0) {
+			otpResendTimeout.value--
+		} else {
+			pause()
+		}
+	}, 1000)
+
 	const submitForm = handleSubmit(async (values: any) => {
 		try {
-			await checkoutStore.sendCode(email.value)
+			if (submitCount.value === 1) {
+				await checkoutStore.sendCode(email.value)
+				otpResendTimeout.value = 60
+				resume()
+			}
 			checkoutStore.isOtpVisible = true
 			formValues.value = values
+			updateOrderModel()
 		} catch (error) {
 			throw createError({
 				status: 401,
@@ -89,39 +107,70 @@
 		}
 	})
 
-	const isError = ref(false)
-	const isOtpSubmit = ref(false)
+	const orderModel = ref({
+		email: email.value,
+		otpCode: checkoutStore.otpCode,
+		orderDetails: {
+			comment: comment.value,
+			delivery_type: checkoutStore.deliveryType,
+			items: checkoutStore.items,
+		},
+		userDetails: {
+			first_name: firstName.value,
+			last_name: lastName.value,
+			third_name: thirdName.value,
+			phone: phone.value,
+		},
+		paymentMethod: checkoutStore.paymentMethod,
+		checkout_session_id: useRoute().params.id,
+	})
+
+	function updateOrderModel() {
+		orderModel.value.email = email.value
+		orderModel.value.otpCode = checkoutStore.otpCode
+		orderModel.value.orderDetails.comment = comment.value
+		orderModel.value.orderDetails.delivery_type = checkoutStore.deliveryType
+		orderModel.value.orderDetails.items = checkoutStore.items
+
+		// Добавляем discount только если он есть
+		if (checkoutStore.promoCode) {
+			orderModel.value.orderDetails.discount = checkoutStore.promoCode
+		} else {
+			delete orderModel.value.orderDetails.discount
+		}
+
+		// Добавляем gift_card_code только если он есть
+		if (checkoutStore.giftCard) {
+			orderModel.value.orderDetails.gift_card_code = checkoutStore.giftCard
+		} else {
+			delete orderModel.value.orderDetails.gift_card_code
+		}
+
+		orderModel.value.userDetails.first_name = firstName.value
+		orderModel.value.userDetails.last_name = lastName.value
+		orderModel.value.userDetails.third_name = thirdName.value
+		orderModel.value.userDetails.phone = phone.value
+		orderModel.value.paymentMethod = checkoutStore.paymentMethod
+		orderModel.value.checkout_session_id = useRoute().params.id
+	}
+
 	const submitOtp = async () => {
 		isOtpSubmit.value = true
+		updateOrderModel()
+
 		await fetch(config.public.databaseUrl + 'order/create', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({
-				email: email.value,
-				otpCode: checkoutStore.otpCode,
-				orderDetails: {
-					comment: comment.value,
-					status: 'created',
-					delivery_type: checkoutStore.deliveryType,
-					items: checkoutStore.items,
-					promoCode: checkoutStore.promoCode || null,
-					giftCardCode: checkoutStore.giftCard || null,
-				},
-				userDetails: {
-					first_name: firstName.value,
-					last_name: lastName.value,
-					third_name: thirdName.value,
-				},
-				paymentMethod: checkoutStore.paymentMethod,
-				checkout_session_id: useRoute().params.id,
-			}),
+			body: JSON.stringify(orderModel.value),
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				isOtpSubmit.value = false
-				console.log(data)
+				if (data.success) {
+					isOtpSubmit.value = false
+					window.location.href = data.paymentUrl
+				}
 			})
 			.catch(() => {
 				isOtpSubmit.value = false
@@ -131,6 +180,9 @@
 
 	const sendCode = () => {
 		checkoutStore.sendCode(email.value)
+		otpResendTimeout.value = 60
+		updateOrderModel()
+		resume()
 	}
 </script>
 
@@ -168,8 +220,8 @@
 						<div class="flex">
 							<button
 								@click="sendCode"
-								:disabled="checkoutStore.isResendDisabled || isError"
-								class="w-full text-[0.7rem] transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-50 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[35px] tablet:rounded-[1.875rem]"
+								:disabled="otpResendTimeout > 0 || isError"
+								class="w-full text-[0.7rem] disabled:pointer-events-none disabled:opacity-50 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[35px] tablet:rounded-[1.875rem]"
 							>
 								Отправить код заново
 							</button>
@@ -177,6 +229,7 @@
 								:disabled="
 									checkoutStore.otpCode.length < 6 ? true : false || isError
 								"
+								type="submit"
 								@click="submitOtp"
 								class="w-full bg-red2 text-primary transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-50 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[45px] tablet:rounded-[1.875rem]"
 							>
@@ -192,12 +245,9 @@
 								Подтвердить
 							</button>
 						</div>
-						<p
-							v-if="checkoutStore.isResendDisabled || !isError"
-							class="mt-2 text-[0.7rem]"
-						>
-							Можно отправить код через
-							{{ checkoutStore.otpResendTimeout }} секунд
+						<p v-if="otpResendTimeout > 0" class="mt-2 text-[0.7rem]">
+							Повторно отправить код можно через
+							{{ otpResendTimeout }} секунд
 						</p>
 						<p v-if="isError" class="text-red2">
 							Что-то пошло не так. Пожалуйста, попробуйте создать заказ позже
