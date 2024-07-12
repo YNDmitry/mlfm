@@ -147,6 +147,24 @@
 			delete orderModel.value.orderDetails.gift_card_code
 		}
 
+		if (checkoutStore.deliveryType === 'delivery') {
+			const {value: city} = useField('city')
+			const {value: street} = useField('street')
+			const {value: home} = useField('home')
+			const {value: entrance} = useField('entrance')
+			const {value: apartment} = useField('apartment')
+
+			orderModel.value.orderDetails.address_json = [
+				{
+					city: city.value,
+					street: street.value,
+					home: home.value,
+					entrance: entrance.value,
+					apartment: apartment.value,
+				},
+			]
+		}
+
 		orderModel.value.userDetails.first_name = firstName.value
 		orderModel.value.userDetails.last_name = lastName.value
 		orderModel.value.userDetails.third_name = thirdName.value

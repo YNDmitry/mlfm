@@ -55,7 +55,7 @@
 		<!-- Новинки -->
 		<HomeNewProducts
 			:products="data.homepage_products.map((el: any) => (el = el.products_id))"
-			:product-banners="data.homepage_banners"
+			:product-banners="data.homepage_banners_1"
 		/>
 		<!-- /Новинки -->
 

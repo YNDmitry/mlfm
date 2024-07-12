@@ -54,22 +54,19 @@
 
 			<div
 				v-if="productBanners"
-				class="no-scrollbar mx-[-1rem] flex scroll-px-3 gap-[8px] overflow-x-auto px-[1rem] max-tablet:grid max-tablet:grid-cols-[1fr_1fr] max-tablet:gap-4 max-tablet:overflow-x-clip"
+				class="no-scrollbar mx-[-1rem] grid scroll-px-3 grid-cols-[1fr_1fr] gap-[8px] overflow-x-clip px-[1rem] max-tablet:gap-4"
 			>
 				<div
-					v-for="(slide, idx) in isMobile
-						? productBanners.slice(0, 2)
-						: productBanners"
+					v-for="(slide, idx) in productBanners"
 					:key="idx"
-					class="h-[550px] max-w-[26.9rem] flex-shrink-0 max-tablet:h-[250px] max-tablet:w-full max-tablet:max-w-none"
+					class="h-[550px] w-full flex-shrink-0 max-tablet:h-[250px]"
 				>
 					<ProductCardSmall
 						:title="slide.title"
 						:image="slide.image.id"
+						:item="slide.item"
 						:collection="slide.collection"
-						:category="slide.category"
 						class="transition-duration-1000 transition-ease-in-out transition-all max-tablet:h-full"
-						:class="idx % 2 != 0 ? 'col-span-3' : ''"
 					/>
 				</div>
 			</div>

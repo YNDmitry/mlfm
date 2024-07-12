@@ -71,12 +71,18 @@
 
 	const cancelOrder = async () => {
 		try {
-			const res = await fetch(config.public.databaseUrl + 'cancelPaymentApi', {
-				method: 'POST',
-				body: JSON.stringify({
-					payment_id: params.id,
-				}),
-			})
+			const res = await fetch(
+				config.public.databaseUrl + 'order/cancelPaymentApi',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						payment_id: product.value.payment.id,
+					}),
+				},
+			)
 
 			const data = res.json()
 
@@ -194,6 +200,7 @@
 									<div>{{ product?.order_number }}</div>
 								</div>
 								<button
+									@click="cancelOrder"
 									type="button"
 									class="mt-4 flex items-center justify-center gap-3 rounded-[30px] border px-6 py-3 transition-all hover:bg-red2-hover hover:text-[#fff]"
 									v-if="product?.status === 'created'"

@@ -2,8 +2,8 @@
 	interface Props {
 		title: string
 		image: string
-		collection: {title: string; id: string} | null
-		category: {title: string; id: string} | null
+		collection?: string
+		item?: {title: string; id: string} | null
 	}
 	defineProps<Props>()
 </script>
@@ -11,10 +11,10 @@
 <template>
 	<NuxtLink
 		:to="
-			collection
-				? `/catalog?collection=${collection.title}`
-				: category
-					? `/catalog?category=${category.title}`
+			collection === 'collection'
+				? `/catalog?collectionId=${item?.title}`
+				: collection === 'categories'
+					? `/catalog?category=${item?.title}`
 					: '/catalog'
 		"
 		class="relative h-full w-full"

@@ -40,18 +40,21 @@ query Homepage {
 			}
 		}
 	}
-	homepage_banners {
+	homepage_banners_1 {
 		title
 		image {
 			id
 		}
-		collection {
-			id
-			title
-		}
-		category {
-			id
-			title
+		collection
+		item {
+			... on collection {
+				title
+				id
+			}
+			... on categories {
+				title
+				id
+			}
 		}
 	}
 }
