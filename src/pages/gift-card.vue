@@ -59,7 +59,7 @@
 					class="flex items-start gap-7 max-tablet:flex-col max-tablet:gap-4"
 				>
 					<div
-						class="!sticky top-40 max-w-[700px] max-laptop:!static max-laptop:w-full"
+						class="top-40 flex max-w-[700px] flex-col gap-4 max-laptop:w-full"
 						v-if="data.gift_card?.image?.id"
 					>
 						<NuxtImg
@@ -67,10 +67,16 @@
 							:src="data.gift_card?.image.id"
 							class="h-full w-full object-contain"
 						/>
+						<NuxtImg
+							provider="directus"
+							v-for="image in data.gift_card?.images"
+							:src="image?.directus_files_id?.id"
+							class="h-full w-full object-contain"
+						/>
 					</div>
 
 					<div
-						class="flex w-full max-w-[420px] flex-col max-tablet:max-w-none max-tablet:gap-[0.75rem] tablet:gap-[2rem]"
+						class="sticky top-32 flex w-full max-w-[420px] flex-col max-tablet:max-w-none max-tablet:gap-[0.75rem] tablet:gap-[2rem]"
 					>
 						<h1
 							class="text-h1 max-tablet:text-h1Mob max-tablet:font-light tablet:font-extralight"

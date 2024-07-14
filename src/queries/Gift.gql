@@ -6,5 +6,10 @@ query Gift {
 		image {
 			id
 		}
+		images {
+			directus_files_id {
+				id
+			}
+		}
 	}
 }
