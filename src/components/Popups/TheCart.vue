@@ -154,7 +154,7 @@
 						<TabList
 							:pt="{inkbar: 'hidden'}"
 							v-if="
-								useCart.discountAmount === 0 ||
+								useCart.discountPercent === null ||
 								useCart.giftCodeInitialAmount === 0
 							"
 						>
@@ -288,7 +288,9 @@
 						<div class="flex justify-between text-[0.625rem] font-medium">
 							<span
 								>Итого
-								{{ useCart.discount.length > 0 ? '(С учётом скидки)' : '' }}
+								{{
+									useCart.discountPercent !== null ? '(С учётом скидки)' : ''
+								}}
 								{{
 									useCart.giftCodeInitialAmount !== null
 										? '(С учётом подарочной карты)'

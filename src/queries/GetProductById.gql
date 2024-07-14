@@ -3,6 +3,9 @@ query GetProductById($id: ID!) {
 		id
 		title
 		description
+		brand {
+			title
+		}
 		product_variants {
 			id
 			color_id {

@@ -88,7 +88,6 @@
 	await initRandomProducts()
 
 	const handleAddToCart = async () => {
-		const currentProduct = product?.value
 		cartStore.addItem({
 			product_id: currentProduct?.id,
 			quantity: 1,
@@ -133,7 +132,7 @@
 				colorSet.clear()
 				sizeMap.clear()
 
-				newValue.product_variants.forEach((item) => {
+				newValue.product_variants.forEach((item: any) => {
 					const {color_id, size_id} = item
 
 					if (color_id && !colorSet.has(color_id.title)) {
@@ -154,7 +153,7 @@
 
 	watch([currentColor, currentSize], () => {
 		const variant = product.value?.product_variants.find(
-			(variant) =>
+			(variant: any) =>
 				variant?.color_id?.title === currentColor.value &&
 				variant?.size_id?.small_title === currentSize.value,
 		)
@@ -233,6 +232,9 @@
 							>
 								<span v-if="product?.category"
 									>Категория: {{ product?.category?.title }}</span
+								>
+								<span v-if="product?.brand"
+									>Бренд: {{ product?.brand?.title }}</span
 								>
 
 								<template v-if="processedData.colors?.length > 0">
@@ -343,12 +345,12 @@
 						<div
 							class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-[1.25rem]"
 						>
-							<Accordion :multiple="true" v-if="product?.description">
+							<Accordion v-if="product?.description">
 								<AccordionTab class="p-0">
 									<template #header class="p-0">
 										<div class="font-normal">О продукте</div>
 									</template>
-									<p>{{ product?.description }}</p>
+									<p class="pt-3">{{ product?.description }}</p>
 								</AccordionTab>
 							</Accordion>
 						</div>

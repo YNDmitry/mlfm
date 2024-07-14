@@ -23,7 +23,12 @@
 			data-lenis-prevent
 		>
 			<Select
-				@update:modelValue="(value) => emit('update:currentFilter', value)"
+				@update:modelValue="
+					(value: any) => {
+						emit('update:currentFilter', value)
+						useState('mobileFilterModal').value = false
+					}
+				"
 				:modelValue="currentFilter"
 				:options="filters.map((filter) => filter.title)"
 				:placeholder="title"
@@ -36,9 +41,9 @@
 					option:
 						'text-[0.625rem] flex items-center px-2 rounded-main text-black h-[2rem] w-full cursor-pointer my-[0.5rem] transition-all hover:bg-grayLight',
 					input: 'outline-none',
-					overlay: '!top-[23px] !left-0',
+					overlay: '!top-[23px] !left-0 !right-0',
 				}"
-				:append-to="'#filter-wrapper-' + title"
+				:append-to="'self'"
 				unstyled
 				class="flex cursor-pointer justify-between border-0 text-[0.625rem] shadow-none outline-none"
 			>

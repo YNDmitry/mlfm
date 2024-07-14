@@ -1,11 +1,11 @@
 <script setup lang="ts">
 	const useCart = useCartStore()
+	const websiteStore = useWebsiteStore()
+	const toast = useToast()
 	const type = ref('Виртуальная')
 	const nominal = ref<number | null>(null)
 
-	const isDisabled = computed(
-		() => nominal.value === null || nominal.value <= 0,
-	)
+	const isDisabled = computed(() => nominal.value <= 0)
 
 	useSeoMeta({
 		title: 'Подарочная карта | MLFM',
@@ -22,20 +22,36 @@
 		},
 	)
 
-	const addItemToCart = () => {
-		useCart.addGiftCard({
-			title: 'Подарочная карта',
-			image_id: data.value.gift_card?.image.id,
-			category: type.value,
-			price: nominal.value || 0,
-			type: 'gift-card',
-		})
+	const addItemToCart = async () => {
+		try {
+			await useCart.addGiftCard({
+				title: 'Подарочная карта',
+				image_id: data.value.gift_card?.image.id,
+				category: type.value,
+				price: nominal.value || 0,
+				type: 'gift-card',
+			})
+			toast.add({
+				summary: 'Успешно',
+				detail: 'Подарочная карта добавлена в корзину',
+				life: 3000,
+				severity: 'success',
+			})
+			setTimeout(() => websiteStore.handleVisibleCart(), 3000)
+		} catch (error) {
+			toast.add({
+				summary: 'Ошибка',
+				detail: 'Что-то пошло не так',
+				life: 3000,
+				severity: 'error',
+			})
+		}
 	}
 </script>
 
 <template>
 	<div>
-		<Toast />
+		<Toast position="top-right" />
 		<!-- Карточка товара -->
 		<section class="pb-20 pt-[78px] max-tablet:pt-0">
 			<div class="mx-auto my-0 max-w-[1189px] px-[1rem]">
@@ -144,7 +160,6 @@
 								class="flex flex-col max-tablet:my-[1.25rem] max-tablet:gap-[1rem] tablet:gap-[1.313rem]"
 							>
 								<button
-									@click="addItemToCart"
 									:disabled="isDisabled"
 									type="submit"
 									class="w-full rounded-main bg-red2 text-primary transition-all hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-70 max-tablet:min-h-[2rem] max-tablet:text-[0.625rem] tablet:min-h-[3.313rem]"

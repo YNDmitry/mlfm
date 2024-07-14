@@ -17,7 +17,7 @@
 	}
 	const props = defineProps<Props>()
 	const isSortOpen = ref(false)
-	const isFilterOpen = ref(false)
+	const isFilterOpen = useState('mobileFilterModal', () => ref(false))
 	const emits = defineEmits(['update:currentSort', 'updateCollection'])
 
 	const handleSortModal = () => {
