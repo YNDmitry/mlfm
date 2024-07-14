@@ -88,6 +88,7 @@
 	await initRandomProducts()
 
 	const handleAddToCart = async () => {
+		const currentProduct = product?.value
 		cartStore.addItem({
 			product_id: currentProduct?.id,
 			quantity: 1,

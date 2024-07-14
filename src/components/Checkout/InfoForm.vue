@@ -119,7 +119,7 @@
 		userDetails: {
 			first_name: firstName.value,
 			last_name: lastName.value,
-			third_name: thirdName.value,
+			patronymic: thirdName.value,
 			phone: phone.value,
 		},
 		paymentMethod: checkoutStore.paymentMethod,
@@ -167,7 +167,7 @@
 
 		orderModel.value.userDetails.first_name = firstName.value
 		orderModel.value.userDetails.last_name = lastName.value
-		orderModel.value.userDetails.third_name = thirdName.value
+		orderModel.value.userDetails.patronymic = thirdName.value
 		orderModel.value.userDetails.phone = phone.value
 		orderModel.value.paymentMethod = checkoutStore.paymentMethod
 		orderModel.value.checkout_session_id = useRoute().params.id
