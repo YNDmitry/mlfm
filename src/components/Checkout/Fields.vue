@@ -20,8 +20,8 @@
 			</div>
 			<CheckoutInputField
 				name="thirdName"
-				label="Отчество"
-				placeholder="Отчество (опционально)"
+				label="Отчество*"
+				placeholder="Введите отчество"
 			/>
 			<CheckoutInputField
 				name="email"

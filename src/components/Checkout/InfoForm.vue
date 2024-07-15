@@ -13,7 +13,7 @@
 	const schema = object({
 		firstName: string().required('Обязательное поле'),
 		lastName: string().required('Обязательное поле'),
-		thirdName: string(),
+		thirdName: string().required('Обязательное поле'),
 		email: string()
 			.email('Введите валидный email')
 			.required('Обязательное поле'),
@@ -81,6 +81,11 @@
 	const {value: firstName} = useField('firstName')
 	const {value: lastName} = useField('lastName')
 	const {value: thirdName} = useField('thirdName')
+	const {value: city} = useField('city')
+	const {value: street} = useField('street')
+	const {value: home} = useField('home')
+	const {value: entrance} = useField('entrance')
+	const {value: apartment} = useField('apartment')
 
 	const {pause, resume} = useIntervalFn(() => {
 		if (otpResendTimeout.value > 0) {
@@ -148,12 +153,6 @@
 		}
 
 		if (checkoutStore.deliveryType === 'delivery') {
-			const {value: city} = useField('city')
-			const {value: street} = useField('street')
-			const {value: home} = useField('home')
-			const {value: entrance} = useField('entrance')
-			const {value: apartment} = useField('apartment')
-
 			orderModel.value.orderDetails.address_json = [
 				{
 					city: city.value,
@@ -210,6 +209,21 @@
 		updateOrderModel()
 		resume()
 	}
+
+	const isOnlyVirtual = ref(false)
+
+	onMounted(() => {
+		const gift = checkoutStore.items.filter(
+			(item: any) =>
+				item.type === 'gift-card' && item.category === 'Виртуальная',
+		)
+		if (checkoutStore.items.length === 1 && gift.length === 1) {
+			checkoutStore.deliveryType = 'self-delivery'
+			return (isOnlyVirtual.value = true)
+		} else {
+			return (isOnlyVirtual.value = false)
+		}
+	})
 </script>
 
 <template>
@@ -284,7 +298,7 @@
 			</Dialog>
 			<form @submit.prevent="submitForm" class="pt-8">
 				<CheckoutFields />
-				<CheckoutDeliveryOptions />
+				<CheckoutDeliveryOptions v-if="!isOnlyVirtual" />
 				<CheckoutDeliveryAddress
 					v-if="checkoutStore.deliveryType === 'delivery'"
 				/>

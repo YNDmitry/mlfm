@@ -62,8 +62,16 @@ export const useCartStore = defineStore('userCart', {
 				return total + item.price
 			}, 0)
 
+			// Исключаем подарочные карты из расчета скидки
+			let discountableTotal = state.itemsDetails.reduce((total, item) => {
+				if (item.type === 'product' && item.quantity) {
+					return total + item.price * item.quantity
+				}
+				return item.type === 'product' ? total + item.price : total
+			}, 0)
+
 			if (state.discountPercent) {
-				total -= (total * state.discountPercent) / 100
+				discountableTotal -= (discountableTotal * state.discountPercent) / 100
 			}
 
 			if (state.giftCodeCurrentBalance && total > 1) {
@@ -92,14 +100,14 @@ export const useCartStore = defineStore('userCart', {
 				}
 			}
 
-			return total > 0 ? total : 0
+			return discountableTotal > 0 ? discountableTotal : 0
 		},
 		discountAmount: (state) => {
 			const total = state.itemsDetails.reduce((total, item) => {
 				if (item.type === 'product' && item.quantity) {
 					return total + item.price * item.quantity
 				}
-				return total + item.price
+				return item.type === 'product' ? total + item.price : total
 			}, 0)
 			return state.discountPercent ? (total * state.discountPercent) / 100 : 0
 		},

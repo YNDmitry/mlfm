@@ -9,6 +9,12 @@ export const useCheckoutStore = defineStore('checkoutStore', {
 		paymentMethod: 'bank_card',
 	}),
 	actions: {
+		handleDeliveryType() {
+			if (this.$state.deliveryType !== 'self-delivery') {
+				return this.$state.deliveryType === 'self-delivery'
+			}
+			return this.$state.deliveryType === 'delivery'
+		},
 		async sendCode(email: string) {
 			const config = useRuntimeConfig()
 			await fetch(config.public.databaseUrl + 'order/send-otp', {
