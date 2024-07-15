@@ -69,36 +69,6 @@
 		}
 	})
 
-	console.log(product?.value?.payment[0]?.id)
-
-	const cancelOrder = async () => {
-		try {
-			const res = await fetch(
-				config.public.databaseUrl + 'order/cancelPaymentApi',
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({
-						payment_id: product?.value?.payment[0]?.id,
-					}),
-				},
-			)
-
-			const data = res.json()
-
-			console.log(data)
-		} catch (error) {
-			toast.add({
-				severity: 'error',
-				detail: 'Что-то пошло не так.',
-				summary: 'Ошибка',
-				life: 3000,
-			})
-		}
-	}
-
 	const status = ref([
 		{
 			id: 0,
@@ -119,6 +89,19 @@
 			return status.value.findIndex((s) => s.key === product.value.status)
 		}
 		return -1
+	})
+
+	const isDelivery = computed(() => product?.value.delivery_type === 'delivery')
+	const hasDiscount = computed(() => product?.value.discount !== null)
+
+	const finalText = computed(() => {
+		const deliveryText = isDelivery.value ? 'доставки' : ''
+		const discountText = hasDiscount.value ? 'скидки' : ''
+		const combinedText =
+			deliveryText && discountText
+				? `${deliveryText} и ${discountText}`
+				: deliveryText || discountText
+		return combinedText ? `(с учетом ${combinedText})` : ''
 	})
 </script>
 
@@ -202,14 +185,6 @@
 									<div>Номер заказа:</div>
 									<div>{{ product?.order_number }}</div>
 								</div>
-								<button
-									@click="cancelOrder"
-									type="button"
-									class="mt-4 flex items-center justify-center gap-3 rounded-[30px] border px-6 py-3 transition-all hover:bg-red2-hover hover:text-[#fff]"
-									v-if="product?.status === 'created'"
-								>
-									Отменить заказ <iconsClose class="w-[15px]" />
-								</button>
 							</div>
 						</div>
 						<div class="w-full max-w-[420px] max-tablet:max-w-none">
@@ -244,6 +219,29 @@
 									</div>
 								</article>
 								<article
+									v-if="product?.giftcard_product"
+									class="flex max-mobile:gap-[0.625rem] mobile:gap-[0.938rem]"
+								>
+									<NuxtImg
+										:src="
+											$config.public.databaseUrl +
+											'assets/15a28038-7913-48a5-b9bd-91b93a9a0764'
+										"
+										width="130"
+										class="object-cover max-mobile:h-[6.25rem] max-mobile:w-[3.813rem] mobile:h-[6.25rem]"
+									/>
+									<div class="flex w-full items-center justify-between">
+										<div class="flex flex-col gap-1">
+											<span class="text-[0.625rem]">Подарочная карта</span>
+
+											<p class="text-[0.625rem] font-medium">Физическая</p>
+										</div>
+										<span class="text-[0.625rem]"
+											>{{ product.giftcard_product }} ₽</span
+										>
+									</div>
+								</article>
+								<article
 									v-for="item in orderProducts"
 									:key="item"
 									class="flex max-mobile:gap-[0.625rem] mobile:gap-[0.938rem]"
@@ -271,13 +269,9 @@
 									</div>
 								</article>
 								<div class="flex flex-col gap-3">
-									<div class="font-medium">
-										Итоговая цена
-										{{
-											product?.delivery_type === 'delivery'
-												? '(с учетом доставки )'
-												: ''
-										}}: {{ product?.payment[0]?.payment_amount }}Р
+									<div class="text-[0.7rem] font-medium">
+										Итоговая цена {{ finalText }}:
+										{{ product?.payment[0]?.payment_amount }}Р
 									</div>
 								</div>
 							</div>
