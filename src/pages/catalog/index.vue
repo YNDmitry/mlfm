@@ -113,7 +113,7 @@
 				initialState.filter[key] = null
 			}
 		})
-		currentPage.value = 1
+		currentPage.value = 0
 		refresh()
 	}
 
@@ -293,7 +293,7 @@
 						<div v-auto-animate>
 							<p
 								v-if="initialState.filter.brandTitle"
-								class="mb-[3.75rem] rounded-[12px] border-[1px] border-gray p-[9px] text-[0.625rem] leading-[18px] max-laptop:hidden"
+								class="mb-[3.75rem] rounded-[12px] border-[1px] border-gray p-[9px] text-[0.625rem] leading-[18px]"
 							>
 								{{
 									data.brands.find((el) =>

@@ -69,6 +69,8 @@
 		}
 	})
 
+	console.log(product?.value?.payment[0]?.id)
+
 	const cancelOrder = async () => {
 		try {
 			const res = await fetch(
@@ -79,7 +81,7 @@
 						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify({
-						payment_id: product.value.payment.id,
+						payment_id: product?.value?.payment[0]?.id,
 					}),
 				},
 			)
@@ -171,9 +173,7 @@
 								class="my-4"
 								:pt="{text: 'text-[0.7rem]'}"
 								>Оплата в процессе -
-								<NuxtLink
-									:to="product?.payment?.confirmation_url"
-									target="_blank"
+								<NuxtLink :to="product?.payment[0]?.confirm_url" target="_blank"
 									>Перейти к оплате</NuxtLink
 								></Message
 							>
@@ -184,16 +184,19 @@
 								>Трек номер - {{ product?.track_code }}</Message
 							>
 							<div class="mt-6 flex flex-col items-start justify-start gap-4">
-								<div class="grid grid-cols-[150px_1fr] gap-4 text-[12px]">
+								<div
+									class="grid grid-cols-[150px_1fr] gap-4 text-[12px]"
+									v-if="product?.user_created"
+								>
 									<div>ФИО:</div>
-									<div>Метелев Дмитрий Сергеевич</div>
+									<div>{{ product?.user_created }}</div>
 								</div>
 								<div
 									class="grid grid-cols-[150px_1fr] gap-4 text-[12px]"
 									v-if="product?.delivery_type === 'delivery'"
 								>
 									<div>Адрес доставки:</div>
-									<div>Москва, Ленина 88</div>
+									<div>{{ product?.address }}</div>
 								</div>
 								<div class="grid grid-cols-[150px_1fr] gap-4 text-[12px]">
 									<div>Номер заказа:</div>
@@ -211,6 +214,35 @@
 						</div>
 						<div class="w-full max-w-[420px] max-tablet:max-w-none">
 							<div class="flex flex-col gap-5 max-tablet:mt-7">
+								<article
+									v-if="product.giftcard_id"
+									class="flex max-mobile:gap-[0.625rem] mobile:gap-[0.938rem]"
+								>
+									<NuxtImg
+										:src="
+											$config.public.databaseUrl +
+											'assets/15a28038-7913-48a5-b9bd-91b93a9a0764'
+										"
+										width="130"
+										class="object-cover max-mobile:h-[6.25rem] max-mobile:w-[3.813rem] mobile:h-[6.25rem]"
+									/>
+									<div class="flex w-full items-center justify-between">
+										<div class="flex flex-col gap-1">
+											<span class="text-[0.625rem]">Подарочная карта</span>
+
+											<p class="text-[0.625rem] font-medium">
+												Текущий баланс:
+												{{ product?.giftcard_id?.currentAmount }}
+											</p>
+											<p
+												class="text-[0.625rem] font-medium"
+												v-if="product?.giftcard_id?.code"
+											>
+												Код подарочной карты: {{ product?.giftcard_id?.code }}
+											</p>
+										</div>
+									</div>
+								</article>
 								<article
 									v-for="item in orderProducts"
 									:key="item"
@@ -239,23 +271,13 @@
 									</div>
 								</article>
 								<div class="flex flex-col gap-3">
-									<div class="grid grid-cols-[150px_1fr] gap-2 text-[12px]">
-										<div>Скидка:</div>
-										<div>1000Р</div>
-									</div>
-									<div class="grid grid-cols-[150px_1fr] gap-2 text-[12px]">
-										<div>Подарочная карта:</div>
-										<div>1000Р</div>
-									</div>
-									<div
-										class="grid grid-cols-[150px_1fr] gap-2 text-[12px]"
-										v-if="product?.delivery_type === 'delivery'"
-									>
-										<div>Доставка:</div>
-										<div>500Р</div>
-									</div>
 									<div class="font-medium">
-										Итоговая цена: {{ product?.payment?.payment_amount }}Р
+										Итоговая цена
+										{{
+											product?.delivery_type === 'delivery'
+												? '(с учетом доставки )'
+												: ''
+										}}: {{ product?.payment[0]?.payment_amount }}Р
 									</div>
 								</div>
 							</div>
