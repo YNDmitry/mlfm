@@ -55,6 +55,7 @@ export const useCartStore = defineStore('userCart', {
 			return total
 		},
 		totalPriceWithDiscount: (state) => {
+			// Общая стоимость всех товаров
 			let total = state.itemsDetails.reduce((total, item) => {
 				if (item.type === 'product' && item.quantity) {
 					return total + item.price * item.quantity
@@ -62,26 +63,30 @@ export const useCartStore = defineStore('userCart', {
 				return total + item.price
 			}, 0)
 
-			// Исключаем подарочные карты из расчета скидки
-			let discountableTotal = state.itemsDetails.reduce((total, item) => {
+			// Общая стоимость товаров без учета подарочных карт
+			let totalWithoutGiftCards = state.itemsDetails.reduce((total, item) => {
 				if (item.type === 'product' && item.quantity) {
 					return total + item.price * item.quantity
 				}
 				return item.type === 'product' ? total + item.price : total
 			}, 0)
 
+			// Применяем скидку только на товары
 			if (state.discountPercent) {
-				discountableTotal -= (discountableTotal * state.discountPercent) / 100
+				totalWithoutGiftCards -=
+					(totalWithoutGiftCards * state.discountPercent) / 100
 			}
 
-			if (state.giftCodeCurrentBalance && total > 1) {
-				let totalWithoutGiftCards = total
-				if (state.items.some((item) => item.type === 'gift-card')) {
-					totalWithoutGiftCards -= state.itemsDetails
-						.filter((item) => item.type === 'gift-card')
-						.reduce((sum, item) => sum + item.price, 0)
-				}
+			// Добавляем стоимость подарочных карт обратно к общей сумме
+			let giftCardTotal = state.itemsDetails.reduce((total, item) => {
+				return item.type === 'gift-card' ? total + item.price : total
+			}, 0)
 
+			// Итоговая сумма с учетом скидок и подарочных карт
+			total = totalWithoutGiftCards + giftCardTotal
+
+			// Применяем баланс подарочной карты
+			if (state.giftCodeCurrentBalance && total > 1) {
 				const giftCardAmountToApply = Math.min(
 					totalWithoutGiftCards,
 					state.giftCodeCurrentBalance,
@@ -100,7 +105,7 @@ export const useCartStore = defineStore('userCart', {
 				}
 			}
 
-			return discountableTotal > 0 ? discountableTotal : 0
+			return total > 0 ? total : 0
 		},
 		discountAmount: (state) => {
 			const total = state.itemsDetails.reduce((total, item) => {
