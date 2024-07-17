@@ -16,14 +16,14 @@
 	)
 
 	useSeoMeta({
-		title: data.value.contacts?.meta_title,
-		ogTitle: data.value.contacts?.meta_title,
-		description: data.value.contacts?.meta_description,
-		ogDescription: data.value.contacts?.meta_description,
+		title: data.value.contacts?.SEO?.meta_title,
+		ogTitle: data.value.contacts?.SEO?.meta_title,
+		description: data.value.contacts?.SEO?.meta_description,
+		ogDescription: data.value.contacts?.SEO?.meta_description,
 		ogImage:
 			appConfig.public.databaseUrl +
 			'assets/' +
-			data.value.contacts?.og_image?.id,
+			data.value.contacts?.SEO?.og_image?.id,
 	})
 
 	const websiteStore = useWebsiteStore()

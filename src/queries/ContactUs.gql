@@ -1,9 +1,11 @@
 query ContactUs {
 	contacts {
-		meta_title
-		meta_description
-		og_image {
-			id
+		SEO {
+			meta_title
+			meta_description
+			og_image {
+				id
+			}
 		}
 	}
 }
