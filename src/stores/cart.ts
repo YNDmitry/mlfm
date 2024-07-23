@@ -58,7 +58,7 @@ export const useCartStore = defineStore('userCart', {
 			// Общая стоимость всех товаров
 			let total = state.itemsDetails.reduce((total, item) => {
 				if (item.type === 'product' && item.quantity) {
-					return total + item.price * item.quantity
+					return total + item.product_variants[0]?.price * item.quantity
 				}
 				return total + item.price
 			}, 0)
@@ -66,9 +66,11 @@ export const useCartStore = defineStore('userCart', {
 			// Общая стоимость товаров без учета подарочных карт
 			let totalWithoutGiftCards = state.itemsDetails.reduce((total, item) => {
 				if (item.type === 'product' && item.quantity) {
-					return total + item.price * item.quantity
+					return total + item.product_variants[0]?.price * item.quantity
 				}
-				return item.type === 'product' ? total + item.price : total
+				return item.type === 'product'
+					? total + item.product_variants[0]?.price
+					: total
 			}, 0)
 
 			// Применяем скидку только на товары
@@ -345,7 +347,11 @@ export const useCartStore = defineStore('userCart', {
 				this.giftCodeCurrentBalance = parseFloat(res.data[0].current_balance)
 				const totalWithoutGiftCards = this.itemsDetails
 					.filter((item) => item.type === 'product')
-					.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0)
+					.reduce(
+						(sum, item) =>
+							sum + item.product_variants[0]?.price * (item.quantity || 1),
+						0,
+					)
 				this.giftCodeRemainingBalance =
 					this.giftCodeCurrentBalance - totalWithoutGiftCards
 				if (this.giftCodeRemainingBalance < 0) this.giftCodeRemainingBalance = 0

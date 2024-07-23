@@ -3,7 +3,13 @@
 		id: string
 		title: string
 		main_image: {id: string}
-		price: number
+		product_variants: [
+			{
+				price: number
+				id: string
+				image: {id: string}
+			},
+		]
 	}
 
 	interface Props {
@@ -47,8 +53,10 @@
 				<ProductCard
 					:id="product.id"
 					:title="product?.title"
-					:imgSrc="product.main_image?.id"
-					:price="product?.price"
+					:imgSrc="
+						product?.main_image?.id || product?.product_variants[0]?.image?.id
+					"
+					:price="product?.product_variants[0]?.price"
 					:class="{
 						'max-tablet:col-span-full':
 							index === displayedProducts.length - 1 &&
@@ -113,8 +121,8 @@
 		>
 			<Paginator
 				id="pagination"
-				@page="($event) => $emit('updatePage', $event)"
-				@update:rows="($event) => $emit('updateLimit', $event)"
+				@page="($event: any) => $emit('updatePage', $event)"
+				@update:rows="($event: any) => $emit('updateLimit', $event)"
 				:rows="props.currentLimit"
 				:totalRecords="props.totalProducts"
 				template="PrevPageLink CurrentPageReport JumpToPageDropdown RowsPerPageDropdown NextPageLink"

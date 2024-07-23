@@ -45,7 +45,9 @@
 							>
 								<NuxtImg
 									:src="
-										config.public.databaseUrl + 'assets/' + item?.main_image.id
+										config.public.databaseUrl +
+										'assets/' +
+										item?.product_variants[0]?.image?.id
 									"
 									width="130"
 									class="object-cover max-mobile:h-[6.25rem] max-mobile:w-[3.813rem] mobile:h-[6.25rem]"
@@ -88,10 +90,7 @@
 									</div>
 
 									<span class="text-[0.625rem]">{{
-										Intl.NumberFormat('ru-RU', {
-											style: 'currency',
-											currency: 'RUB',
-										}).format(item.price)
+										usePrice(item?.product_variants[0]?.price)
 									}}</span>
 								</div>
 							</article>
@@ -298,12 +297,7 @@
 								}}
 							</span>
 
-							<span>{{
-								Intl.NumberFormat('ru-RU', {
-									style: 'currency',
-									currency: 'RUB',
-								}).format(useCart.totalPriceWithDiscount)
-							}}</span>
+							<span>{{ usePrice(useCart.totalPriceWithDiscount) }}</span>
 						</div>
 					</div>
 					<!--  /Скидка/Итого -->

@@ -12,7 +12,7 @@
 	<NuxtLink
 		:to="
 			collection === 'collection'
-				? `/catalog?collectionId=${item?.title}`
+				? `/catalog?collection=${item?.title}`
 				: collection === 'categories'
 					? `/catalog?category=${item?.title}`
 					: '/catalog'

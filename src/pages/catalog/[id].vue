@@ -108,12 +108,7 @@
 		}, 1000)
 	}
 
-	const price = computed(() =>
-		Intl.NumberFormat('ru-RU', {
-			style: 'currency',
-			currency: 'RUB',
-		}).format(product?.value?.price as number),
-	)
+	const price = usePrice(product?.value?.price)
 
 	const processedData = ref({
 		colors: [],
@@ -162,9 +157,35 @@
 	})
 
 	const isProductOutOfStock = computed(() => {
-		return product.value?.product_variants?.find(
+		const availability = product.value?.product_variants?.find(
 			(el: any) => el.id === currentVariantId.value,
-		).availability
+		)
+		if (availability) {
+			return availability.availability
+		}
+		return 'out_of_stock'
+	})
+
+	const currentPrice = computed(() => {
+		const price = product.value?.product_variants?.find(
+			(el: any) => el.id === currentVariantId.value,
+		)
+		if (price) {
+			return usePrice(price.price)
+		}
+		return '-'
+	})
+
+	const img = useImage()
+	const currentImage = computed(() => {
+		const cI = product.value?.product_variants?.find(
+			(el: any) => el.id === currentVariantId.value,
+		)
+
+		if (cI) {
+			return img(cI.image?.id, {}, {provider: 'directus'})
+		}
+		return img(product.value?.main_image?.id, {}, {provider: 'directus'})
 	})
 </script>
 
@@ -175,48 +196,26 @@
 		<section class="pt-[78px] max-tablet:pt-0">
 			<div class="mx-auto my-0 max-w-[1189px] px-[1rem]">
 				<div class="flex gap-7 max-tablet:flex-col max-tablet:gap-4">
-					<Swiper
-						class="!sticky top-40 max-h-[650px] max-w-[700px] max-laptop:!static max-laptop:w-full max-tablet:h-[500px]"
-						:slides-per-view="1"
-						:autoplay="{
-							delay: 8000,
-							disableOnInteraction: true,
-						}"
-						:loop="true"
+					<div
+						class="!sticky top-40 max-h-[650px] min-w-[700px] max-w-[700px] max-laptop:!static max-laptop:w-full max-tablet:h-[500px]"
 					>
-						<SwiperSlide v-for="slide in 3" :key="slide">
-							<Image
-								preview
-								:pt="{
-									zoomoutbutton: 'text-primary',
-									zoominbutton: 'text-primary',
-									closebutton: 'text-primary',
-									rotateleftbutton: 'hidden',
-									rotaterightbutton: 'hidden',
-									button: 'p-2 bg-black/10 transition-all',
-								}"
-								class="h-full w-full text-primary"
-							>
-								<template #image>
-									<NuxtImg
-										provider="directus"
-										class="h-full w-full object-cover"
-										:src="product?.main_image?.id"
-									/>
-								</template>
-								<template #preview="slotProps">
-									<NuxtImg
-										provider="directus"
-										class="h-full w-full object-cover"
-										width="720"
-										:src="product?.main_image?.id"
-										:style="slotProps.style"
-										@click="slotProps.onClick"
-									/>
-								</template>
-							</Image>
-						</SwiperSlide>
-					</Swiper>
+						<Image
+							preview
+							:pt="{
+								zoomoutbutton: 'text-primary',
+								zoominbutton: 'text-primary',
+								closebutton: 'text-primary',
+								rotateleftbutton: 'hidden',
+								rotaterightbutton: 'hidden',
+								button: 'p-2 bg-black/10 transition-all',
+							}"
+							class="h-full w-full text-primary"
+						>
+							<template #image>
+								<img class="h-full w-full object-cover" :src="currentImage" />
+							</template>
+						</Image>
+					</div>
 
 					<div
 						class="flex w-full max-w-[420px] flex-col max-tablet:max-w-none max-tablet:gap-[0.75rem] tablet:gap-[2rem]"
@@ -302,7 +301,7 @@
 						</div>
 
 						<span class="max-tablet:text-[0.625rem] tablet:text-[0.875rem]"
-							>Цена: {{ price }}</span
+							>Цена: {{ currentPrice }}</span
 						>
 
 						<!-- Кнопки "Добавить" -->

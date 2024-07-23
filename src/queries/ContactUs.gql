@@ -7,5 +7,15 @@ query ContactUs {
 				id
 			}
 		}
+		blocks {
+			item {
+				... on contact_us_blocks {
+					icon {
+						id
+					}
+					text
+				}
+			}
+		}
 	}
 }

@@ -7,9 +7,15 @@ query Products(
 	products(filter: $filter, sort: $sort, limit: $limit, page: $page) {
 		id
 		title
-		price
 		main_image {
 			id
+		}
+		product_variants {
+			id
+			price
+			image {
+				id
+			}
 		}
 	}
 }
@@ -29,6 +35,9 @@ query GetProductsByIds($ids: [String]) {
 			}
 			size_id {
 				small_title
+			}
+			image {
+				id
 			}
 			qunatity
 		}
@@ -51,6 +60,10 @@ query GetCartProductsByIds($ids: [String], $variant_ids: [String]) {
 			size_id {
 				small_title
 			}
+			image {
+				id
+			}
+			price
 			qunatity
 		}
 	}

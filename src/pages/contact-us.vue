@@ -25,8 +25,6 @@
 			'assets/' +
 			data.value.contacts?.SEO?.og_image?.id,
 	})
-
-	const websiteStore = useWebsiteStore()
 </script>
 
 <template>
@@ -46,32 +44,18 @@
 
 			<div class="font-roboto flex flex-col gap-4 pt-[2rem]">
 				<div
+					v-for="(item, idx) in data.contacts?.blocks"
+					:key="idx"
 					class="flex items-center justify-center gap-4 font-light max-tablet:text-[12px] max-mobile:text-[0.625rem]"
 				>
-					<IconsEmail />
+					<NuxtImg
+						:src="item?.item?.icon?.id"
+						width="25"
+						height="25"
+						provider="directus"
+					/>
 
-					<NuxtLink :to="'mail:' + websiteStore.siteSettings?.current_email">{{
-						websiteStore.siteSettings?.current_email
-					}}</NuxtLink>
-				</div>
-
-				<div
-					class="flex items-center justify-center gap-4 font-light max-tablet:text-[12px] max-mobile:text-[0.625rem]"
-				>
-					<IconsPhone />
-
-					<NuxtLink
-						:to="'tel:' + websiteStore.siteSettings?.current_phone_number"
-						>{{ websiteStore.siteSettings?.current_phone_number }}</NuxtLink
-					>
-				</div>
-
-				<div
-					class="flex items-center justify-center gap-4 font-light max-tablet:text-[12px] max-mobile:text-[0.625rem]"
-				>
-					<IconsMap />
-
-					<div>{{ websiteStore.siteSettings?.current_address }}</div>
+					<span>{{ item?.item?.text }}</span>
 				</div>
 			</div>
 		</div>

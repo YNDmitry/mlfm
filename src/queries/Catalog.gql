@@ -51,4 +51,8 @@ query Catalog {
 		title
 		id
 	}
+	categories {
+		title
+		id
+	}
 }
