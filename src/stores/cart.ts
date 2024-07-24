@@ -112,9 +112,11 @@ export const useCartStore = defineStore('userCart', {
 		discountAmount: (state) => {
 			const total = state.itemsDetails.reduce((total, item) => {
 				if (item.type === 'product' && item.quantity) {
-					return total + item.price * item.quantity
+					return total + item.product_variants[0]?.price * item.quantity
 				}
-				return item.type === 'product' ? total + item.price : total
+				return item.type === 'product'
+					? total + item.product_variants[0]?.price
+					: total
 			}, 0)
 			return state.discountPercent ? (total * state.discountPercent) / 100 : 0
 		},
