@@ -1,29 +1,53 @@
-import {ref, computed} from 'vue'
-import {useAsyncData} from '#imports'
+export function useProducts(currentSort: any) {
+	const currentPage = useState('currentPage', () => 0)
+	const currentLimit = useState('currentLimit', () => 9)
+	const route = useRoute()
 
-export function useProducts(
-	filters: any,
-	currentPage: any,
-	currentLimit: any,
-	currentSort: any,
-) {
-	const {data: products, refresh} = useAsyncData('products', () => {
-		const filterObj = Object.keys(filters).reduce((acc, key) => {
-			if (filters[key]) {
-				acc[key] = filters[key]
+	const filterObj = computed(() => {
+		const obj = ref({})
+
+		if (route.query.brand) {
+			obj.value.brand = {title: {_eq: route.query.brand}}
+		}
+
+		if (route.query.collectionId) {
+			obj.value.collection = {title: {_eq: route.query.collectionId}}
+		}
+
+		if (route.query.color) {
+			obj.value.colors = {colors_id: {title: {_eq: route.query.color}}}
+		}
+
+		if (route.query.size) {
+			obj.value.sizes = {sizes_id: {small_title: {_eq: route.query.size}}}
+		}
+
+		if (route.query.category && route.query.category.length > 0) {
+			obj.value.category = {title: {_in: route.query.category}}
+		}
+
+		if (route.query.minPrice) {
+			obj.value.price = {_gte: route.query.minPrice}
+		}
+
+		if (route.query.maxPrice) {
+			obj.value.price = {
+				...(obj.value.price || {}),
+				_lte: route.query.maxPrice,
 			}
-			return acc
-		}, {})
-		return GqlProducts({
+		}
+
+		return obj
+	})
+
+	const {data: products, refresh} = useAsyncData('products', () =>
+		GqlProducts({
 			page: currentPage.value + 1,
 			limit: currentLimit.value,
-			sort:
-				currentSort?.value.length === 0
-					? ['-date_created']
-					: currentSort.value?.code,
-			filter: filterObj,
-		})
-	})
+			sort: currentSort?.value.code,
+			filter: filterObj.value.value,
+		}),
+	)
 
 	return {
 		products,

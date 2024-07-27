@@ -100,6 +100,34 @@ export const useUserStore = defineStore('userStore', {
 			this.isEmailVerify = user?.value.is_email_verified
 		},
 
+		async transferGuestSession() {
+			const sessionId = localStorage.getItem('sessionId')
+			if (sessionId) {
+				const sessionData = await this.fetchSessionData(sessionId)
+				await this.saveSessionDataToUser(this.id, sessionData)
+				await this.clearGuestSession(sessionId)
+				localStorage.removeItem('session_id')
+			}
+		},
+
+		async fetchSessionData(sessionId: string) {
+			const {$directus} = useNuxtApp()
+			const response = await $directus
+				.items('guest_sessions')
+				.readOne(sessionId)
+			return response
+		},
+
+		async saveSessionDataToUser(userId: string, sessionData: any) {
+			const {$directus} = useNuxtApp()
+			await $directus.items('users').updateOne(userId, {sessionData})
+		},
+
+		async clearGuestSession(sessionId: string) {
+			const {$directus} = useNuxtApp()
+			await $directus.items('guest_sessions').deleteOne(sessionId)
+		},
+
 		async updateUserInfo(firstName: string, lastName: string, phone: string) {
 			const {updateUser} = useDirectusUsers()
 			await updateUser({
@@ -131,7 +159,20 @@ export const useUserStore = defineStore('userStore', {
 				.then(() => {
 					navigateTo('/auth/log-in')
 				})
-				.then(() => this.$reset())
+				.then(() => {
+					this.$reset()
+					this.saveSessionToLocal()
+				})
+		},
+
+		saveSessionToLocal() {
+			const sessionId = this.generateNewSessionId()
+			localStorage.setItem('sessionId', sessionId)
+		},
+
+		generateNewSessionId() {
+			// Генерация нового session ID
+			return 'new-session-id'
 		},
 
 		handleChangeUserDetailsPopup() {

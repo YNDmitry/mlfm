@@ -7,7 +7,6 @@
 	interface Props {
 		currentSort: any
 		sortOptions: any
-		totalProducts: number
 		categories: Category[]
 		filters: any
 		data: any
@@ -62,7 +61,6 @@
 			}"
 		>
 			<CatalogDesktopFilterSidebar
-				:totalProducts="totalProducts"
 				:categories="categories"
 				:filters="filters"
 				:data="data"

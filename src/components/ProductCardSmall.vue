@@ -5,20 +5,30 @@
 		collection?: string
 		item?: {title: string; id: string} | null
 	}
-	defineProps<Props>()
+	const props = defineProps<Props>()
+
+	const generateLink = computed(() => {
+		if (props.collection === 'collection') {
+			return {
+				path: '/catalog',
+				query: {collectionId: props.item?.title},
+			}
+		} else if (props.collection !== 'collection') {
+			const categories = Array.isArray(props.item?.title)
+				? props.item.title
+				: [props.item?.title]
+			return {
+				path: '/catalog',
+				query: {category: categories},
+			}
+		} else {
+			return {path: '/catalog'}
+		}
+	})
 </script>
 
 <template>
-	<NuxtLink
-		:to="
-			collection === 'collection'
-				? `/catalog?collection=${item?.title}`
-				: collection === 'categories'
-					? `/catalog?category=${item?.title}`
-					: '/catalog'
-		"
-		class="relative h-full w-full"
-	>
+	<NuxtLink :to="generateLink" class="relative h-full w-full">
 		<NuxtImg
 			provider="directus"
 			class="h-full w-full object-cover"

@@ -41,6 +41,13 @@
 			return Math.floor(overallIndex / 3)
 		}
 	}
+
+	const route = useRoute()
+	const router = useRouter()
+
+	const changeCollection = (collectionName: string) => {
+		router.push({...route.query, query: {collectionId: collectionName}})
+	}
 </script>
 
 <template>
@@ -84,8 +91,7 @@
 						<button
 							type="button"
 							@click="
-								$emit(
-									'updateCollection',
+								changeCollection(
 									props.data.catalog.random_banners_collection[
 										getBannerIndex(
 											index + props.currentPage * props.currentLimit,
@@ -121,8 +127,16 @@
 		>
 			<Paginator
 				id="pagination"
-				@page="($event: any) => $emit('updatePage', $event)"
-				@update:rows="($event: any) => $emit('updateLimit', $event)"
+				@page="
+					($event: any) => {
+						$emit('updatePage', $event)
+					}
+				"
+				@update:rows="
+					($event: any) => {
+						$emit('updateLimit', $event)
+					}
+				"
 				:rows="props.currentLimit"
 				:totalRecords="props.totalProducts"
 				template="PrevPageLink CurrentPageReport JumpToPageDropdown RowsPerPageDropdown NextPageLink"

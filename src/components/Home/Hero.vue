@@ -1,11 +1,20 @@
 <script setup lang="ts">
-	defineProps({
+	const props = defineProps({
 		image: {
 			type: String,
 		},
 		title: {
 			type: String,
 		},
+	})
+
+	const link = computed(() => {
+		return {
+			path: '/catalog',
+			query: {
+				collectionId: props.title,
+			},
+		}
 	})
 </script>
 <template>
@@ -33,7 +42,7 @@
 			</h1>
 
 			<NuxtLink
-				:to="'/catalog?collection=' + title"
+				:to="link"
 				class="flex h-11 w-full min-w-[10.625rem] max-w-[10.625rem] items-center justify-center rounded-main bg-red2 px-4 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] transition-colors hover:bg-red2-hover max-tablet:h-8"
 			>
 				Купить

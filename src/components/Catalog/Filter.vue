@@ -7,10 +7,19 @@
 		]
 		currentFilter: any
 		title: string
+		routeTitle: string
 	}
-	defineProps<Props>()
+	const props = defineProps<Props>()
 
 	const emit = defineEmits(['update:currentFilter'])
+
+	const route = useRoute()
+	const router = useRouter()
+
+	const update = (value: string) => {
+		router.replace({query: {...route.query, [props.routeTitle]: value}})
+		useState('mobileFilterModal').value = false
+	}
 </script>
 
 <template>
@@ -23,12 +32,7 @@
 			data-lenis-prevent
 		>
 			<Select
-				@update:modelValue="
-					(value: any) => {
-						emit('update:currentFilter', value)
-						useState('mobileFilterModal').value = false
-					}
-				"
+				@update:modelValue="(value: any) => update(value)"
 				:modelValue="currentFilter"
 				:options="filters.map((filter) => filter.title)"
 				:placeholder="title"

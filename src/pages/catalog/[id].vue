@@ -57,13 +57,11 @@
 			appConfig.public.databaseUrl + 'assets/' + product?.value?.main_image?.id,
 	})
 
-	const currentColor = ref(
-		product?.value?.product_variants?.at(0)?.color_id?.title,
-	)
+	const currentVariantId = ref(product?.value?.product_variants[0]?.id)
+	const currentColor = ref(product?.value?.product_variants[0]?.color_id?.title)
 	const currentSize = ref(
-		product?.value?.product_variants?.at(0)?.size_id?.small_title,
+		product?.value?.product_variants[0]?.size_id?.small_title,
 	)
-	const currentVariantId = ref(product?.value?.product_variants.at(0).id)
 
 	const initRandomProducts = async () => {
 		try {
@@ -107,8 +105,6 @@
 			toast.removeAllGroups()
 		}, 1000)
 	}
-
-	const price = usePrice(product?.value?.price)
 
 	const processedData = ref({
 		colors: [],
@@ -197,7 +193,7 @@
 			<div class="mx-auto my-0 max-w-[1189px] px-[1rem]">
 				<div class="flex gap-7 max-tablet:flex-col max-tablet:gap-4">
 					<div
-						class="!sticky top-40 max-h-[650px] min-w-[700px] max-w-[700px] max-laptop:!static max-laptop:w-full max-tablet:h-[500px]"
+						class="!sticky top-40 max-h-[650px] max-w-[700px] max-laptop:!static max-laptop:w-full max-tablet:h-[500px]"
 					>
 						<Image
 							preview
@@ -246,7 +242,6 @@
 											:key="idx"
 										>
 											<input
-												checked
 												type="radio"
 												name="color"
 												:value="color.title"
@@ -280,7 +275,6 @@
 										:key="idx"
 									>
 										<input
-											checked
 											type="radio"
 											name="size"
 											:value="size.small_title"

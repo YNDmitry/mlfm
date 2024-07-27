@@ -23,8 +23,6 @@
 	}
 
 	defineProps<Props>()
-
-	const isMobile = useMediaQuery('(max-width: 479px)')
 </script>
 
 <template>

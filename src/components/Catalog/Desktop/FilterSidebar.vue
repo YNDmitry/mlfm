@@ -6,34 +6,40 @@
 	}
 
 	interface Props {
-		totalProducts: number
-		categories: Category[]
-		filters: any
 		data: any
 		resetFilters: () => void
 		minPrice: string
 		maxPrice: string
+		totalProducts: string | number
 	}
 
 	const props = defineProps<Props>()
+	const minPrice = defineModel('minPrice')
+	const maxPrice = defineModel('maxPrice')
 	const emit = defineEmits(['updateCollection'])
+
+	const categories: any = useState('categories')
+	const route = useRoute()
+	const currentCategories = ref(route.query.category || [])
+
+	const router = useRouter()
 </script>
 
 <template>
 	<aside class="pb-[4.375rem]">
 		<div class="relative">
 			<p
-				v-if="props.totalProducts"
+				v-if="totalProducts"
 				class="relative mb-[1.875rem] pb-[35px] text-[12px] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-['']"
 			>
-				{{ props.totalProducts }} Товаров
+				{{ totalProducts }} Товаров
 			</p>
 
 			<!-- Чекбоксы -->
 			<div
 				class="relative pb-[1.25rem] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-['']"
 				data-lenis-prevent
-				v-if="props.categories.length"
+				v-if="categories.length"
 			>
 				<p class="pb-[1.25rem] text-[0.875rem]">Категория</p>
 
@@ -41,14 +47,21 @@
 					<div class="flex flex-col gap-[0.625rem] text-[0.625rem]">
 						<label
 							class="flex cursor-pointer items-center gap-[0.625rem]"
-							v-for="category in props.categories"
+							v-for="category in categories"
 							:key="category.id"
 						>
 							<input
 								type="checkbox"
 								class="absolute h-5 w-5 cursor-pointer opacity-0"
 								:value="category.title"
-								v-model="props.filters.categories"
+								name="category"
+								v-model="currentCategories"
+								@change="
+									(value) =>
+										router.replace({
+											query: {...route.query, category: currentCategories},
+										})
+								"
 							/>
 
 							<div
@@ -80,8 +93,9 @@
 			<CatalogFilter
 				:filters="props.data?.collection"
 				:title="`Коллекция`"
-				:currentFilter="props.filters.collectionId"
-				@update:currentFilter="props.filters.collectionId = $event"
+				:routeTitle="'collectionId'"
+				:currentFilter="route.query.collectionId"
+				@update:currentFilter="route.query.collectionId = $event"
 			/>
 			<!-- /Коллекция -->
 
@@ -89,8 +103,9 @@
 			<CatalogFilter
 				:filters="props.data?.colors"
 				:title="`Цвет`"
-				:currentFilter="props.filters.colors"
-				@update:currentFilter="props.filters.colors = $event"
+				:routeTitle="'color'"
+				:currentFilter="route.query.color"
+				@update:currentFilter="route.query.color = $event"
 			/>
 			<!-- /Цвет -->
 
@@ -98,8 +113,9 @@
 			<CatalogFilter
 				:filters="props.data?.sizes.map((el: any) => ({title: el.small_title}))"
 				:title="`Размер`"
-				:currentFilter="props.filters.size"
-				@update:currentFilter="props.filters.size = $event"
+				:routeTitle="'size'"
+				:currentFilter="route.query.size"
+				@update:currentFilter="route.query.size = $event"
 			/>
 			<!-- /Размер -->
 
@@ -107,8 +123,9 @@
 			<CatalogFilter
 				:filters="props.data?.brands"
 				:title="`Бренд`"
-				:currentFilter="props.filters.brandTitle"
-				@update:currentFilter="props.filters.brandTitle = $event"
+				:routeTitle="'brand'"
+				:currentFilter="route.query.brand"
+				@update:currentFilter="route.query.brand = $event"
 			/>
 			<!-- /Бренды -->
 
@@ -132,7 +149,7 @@
 							:placeholder="props.minPrice"
 							:min="props.minPrice"
 							:max="props.maxPrice"
-							v-model="props.filters.minPrice"
+							v-model="minPrice"
 						/>
 					</label>
 
@@ -149,7 +166,7 @@
 							:placeholder="props.maxPrice"
 							:min="props.minPrice"
 							:max="props.maxPrice"
-							v-model="props.filters.maxPrice"
+							v-model="maxPrice"
 						/>
 					</label>
 				</div>

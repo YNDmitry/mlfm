@@ -2,17 +2,15 @@
 	import {options} from '../../components/Catalog/constans'
 
 	const appConfig = useRuntimeConfig()
-	const isMobile = useMediaQuery('(max-width: 768px)')
 	const router = useRouter()
+	const route = useRoute()
 	const sortOptions = ref(options)
 
-	const {currentPage, currentLimit, currentSort, filters} = useFilters()
-	const {products, refresh} = useProducts(
-		filters,
-		currentPage,
-		currentLimit,
-		currentSort,
-	)
+	const currentPage = ref(route.query.page || 0)
+	const currentLimit = ref(route.query.limit || 9)
+	const currentSort = ref(options[3])
+
+	const {products, refresh} = useProducts(currentSort)
 
 	const {data} = await useAsyncGql(
 		'Catalog',
@@ -22,6 +20,16 @@
 				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
 			},
 		},
+	)
+
+	// Обновляем фильтры, если изменяются параметры маршрута
+	watch(
+		() => route.query,
+		() => {
+			refresh()
+			console.log(route.query)
+		},
+		{immediate: true, deep: true},
 	)
 
 	useSeoMeta({
@@ -41,36 +49,36 @@
 
 	function resetFilters() {
 		router.replace({query: {}})
-		Object.keys(filters).forEach((key) => {
-			if (Array.isArray(filters[key])) {
-				filters[key] = null || []
-			} else {
-				filters[key] = null
-			}
-		})
 		currentPage.value = 0
 		refresh()
 	}
 
 	function updateLimit(newLimit: number) {
 		currentLimit.value = newLimit
+		router.push({...route.query, query: {limit: newLimit.limit}})
 		refresh()
 	}
 
 	function updatePage(newPage: number) {
 		currentPage.value = newPage
+		router.push({...route.query, query: {page: newPage.page + 1}})
 		refresh()
 		window.scrollTo(0, 0)
 	}
 
-	function updateCollection(newCollection: string) {
-		filters.collectionId = newCollection
-	}
-
 	const minPrice = usePrice(data?.value.products_aggregated[0]?.min?.price)
 	const maxPrice = usePrice(data.value.products_aggregated[0]?.max?.price)
-	const totalProducts = computed(
-		() => data?.value?.products_aggregated[0].count?.id,
+	const minPriceValue = useRouteQuery('minPrice', null)
+	const maxPriceValue = useRouteQuery('maxPrice', null)
+	const totalProducts = ref(data?.value?.products_aggregated[0].count?.id)
+	const categories = useState('categories', () => data.value.categories)
+
+	watchDebounced(
+		[minPriceValue, maxPriceValue],
+		async () => {
+			await refresh()
+		},
+		{debounce: 500, maxWait: 1000},
 	)
 </script>
 
@@ -81,30 +89,27 @@
 				<div class="laptop:grid laptop:grid-cols-aside laptop:gap-20">
 					<!-- Кнопки для фильтров (На Мобилках) -->
 					<CatalogMobileFilterSidebar
+						v-if="$device.isMobileOrTablet"
 						:currentSort="currentSort"
 						@update:currentSort="($event) => (currentSort = $event)"
-						:totalProducts="totalProducts"
-						:categories="data?.categories"
-						:filters="filters"
 						:data="data"
 						:resetFilters="resetFilters"
 						:minPrice="minPrice"
 						:maxPrice="maxPrice"
-						@updateCollection="updateCollection"
 						:sort-options="sortOptions"
 					/>
 					<!-- Кнопки для фильтров (На Мобилках) -->
 
 					<!-- Боковое меню (На ПК) -->
 					<CatalogDesktopFilterSidebar
-						:totalProducts="totalProducts"
-						:categories="data?.categories"
-						:filters="filters"
+						v-if="$device.isDesktop"
 						:data="data"
 						:resetFilters="resetFilters"
+						:totalProducts="totalProducts"
 						:minPrice="minPrice"
 						:maxPrice="maxPrice"
-						@updateCollection="updateCollection"
+						v-model:min-price="minPriceValue"
+						v-model:max-price="maxPriceValue"
 						class="max-tablet:hidden"
 					/>
 					<!-- /Боковое меню (На ПК)-->
@@ -123,6 +128,11 @@
 								<Select
 									v-model="currentSort"
 									:options="sortOptions"
+									@update:modelValue="
+										router.replace({
+											query: {...route.query, sort: currentSort.code},
+										})
+									"
 									optionLabel="sort"
 									placeholder="Сортировка"
 									:pt="{
@@ -137,7 +147,13 @@
 								>
 									<template #value="slotProps">
 										<div v-if="slotProps" class="align-items-center flex">
-											<div>{{ slotProps.name }}</div>
+											<div>
+												{{
+													slotProps?.value?.name
+														? slotProps?.value?.name
+														: 'Сортировка'
+												}}
+											</div>
 										</div>
 										<span v-else>
 											{{ slotProps.placeholder }}
@@ -156,11 +172,11 @@
 						<!-- О бренде -->
 						<div v-auto-animate>
 							<p
-								v-if="filters.brandTitle"
+								v-if="route.query.brand"
 								class="mb-[3.75rem] rounded-[12px] border-[1px] border-gray p-[9px] text-[0.625rem] leading-[18px]"
 							>
 								{{
-									data.brands.find((el) => el.title === filters.brandTitle)
+									data.brands.find((el) => el.title === route.query.brand)
 										?.description
 								}}
 							</p>
@@ -171,13 +187,12 @@
 							:products="products?.products"
 							:totalProducts="totalProducts"
 							:data="data"
+							:isMobile="$device.isMobile"
 							:currentPage="currentPage"
 							:currentLimit="currentLimit"
-							:isMobile="isMobile"
 							@resetFilters="resetFilters"
 							@updateLimit="updateLimit"
 							@updatePage="updatePage"
-							@updateCollection="updateCollection"
 						/>
 					</div>
 				</div>
@@ -185,3 +200,13 @@
 		</section>
 	</div>
 </template>
+
+<style>
+	#sort-wrapper .p-select-option.p-select-option-selected {
+		@apply bg-red2 text-primary;
+	}
+
+	[data-pc-section='listcontainer'] .p-select-option.p-select-option-selected {
+		@apply bg-red2 text-primary;
+	}
+</style>
