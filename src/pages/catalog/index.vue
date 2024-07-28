@@ -8,7 +8,8 @@
 
 	const currentPage = ref(route.query.page || 0)
 	const currentLimit = ref(route.query.limit || 9)
-	const currentSort = ref(options[3])
+	const currentSort = ref(options[0])
+	const isProductsLoading = ref(false)
 
 	const {products, refresh} = useProducts(currentSort)
 
@@ -22,14 +23,20 @@
 		},
 	)
 
-	// Обновляем фильтры, если изменяются параметры маршрута
 	watch(
 		() => route.query,
 		() => {
-			refresh()
-			console.log(route.query)
+			isProductsLoading.value = true
 		},
-		{immediate: true, deep: true},
+	)
+
+	// Обновляем фильтры, если изменяются параметры маршрута
+	watchDebounced(
+		() => route.query,
+		async () => {
+			await refresh().then(() => (isProductsLoading.value = false))
+		},
+		{debounce: 500, maxWait: 500},
 	)
 
 	useSeoMeta({
@@ -50,19 +57,16 @@
 	function resetFilters() {
 		router.replace({query: {}})
 		currentPage.value = 0
-		refresh()
 	}
 
 	function updateLimit(newLimit: number) {
 		currentLimit.value = newLimit
 		router.push({...route.query, query: {limit: newLimit.limit}})
-		refresh()
 	}
 
 	function updatePage(newPage: number) {
 		currentPage.value = newPage
 		router.push({...route.query, query: {page: newPage.page + 1}})
-		refresh()
 		window.scrollTo(0, 0)
 	}
 
@@ -72,14 +76,6 @@
 	const maxPriceValue = useRouteQuery('maxPrice', null)
 	const totalProducts = ref(data?.value?.products_aggregated[0].count?.id)
 	const categories = useState('categories', () => data.value.categories)
-
-	watchDebounced(
-		[minPriceValue, maxPriceValue],
-		async () => {
-			await refresh()
-		},
-		{debounce: 500, maxWait: 1000},
-	)
 </script>
 
 <template>
@@ -184,6 +180,7 @@
 						<!-- /О бренде -->
 
 						<CatalogProductList
+							:isLoading="isProductsLoading"
 							:products="products?.products"
 							:totalProducts="totalProducts"
 							:data="data"

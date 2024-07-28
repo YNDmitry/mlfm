@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+	import Skeleton from 'primevue/skeleton'
+
 	interface Product {
 		id: string
 		title: string
@@ -19,6 +21,7 @@
 		currentPage: number
 		currentLimit: number
 		isMobile: boolean
+		isLoading: boolean
 	}
 
 	const props = defineProps<Props>()
@@ -56,7 +59,20 @@
 		<div
 			class="grid grid-cols-[repeat(auto-fill,minmax(250px,_1fr))] gap-[1.875rem] pb-[3.75rem] max-tablet:grid-cols-[repeat(auto-fill,minmax(150px,_1fr))]"
 		>
-			<template v-for="(product, index) in displayedProducts" :key="product.id">
+			<template v-if="isLoading" v-for="(item, idx) in 6" :key="idx">
+				<div>
+					<Skeleton width="100%" height="25rem" />
+					<div class="mt-5">
+						<Skeleton />
+						<Skeleton class="mt-2" width="5rem" />
+					</div>
+				</div>
+			</template>
+			<template
+				v-else
+				v-for="(product, index) in displayedProducts"
+				:key="product.id"
+			>
 				<ProductCard
 					:id="product.id"
 					:title="product?.title"

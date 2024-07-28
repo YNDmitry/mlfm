@@ -1,4 +1,3 @@
-<!-- components/FilterSidebar.vue -->
 <script lang="ts" setup>
 	interface Category {
 		id: number
@@ -14,8 +13,8 @@
 	}
 
 	const props = defineProps<Props>()
-	const minPrice = defineModel('minPrice')
-	const maxPrice = defineModel('maxPrice')
+	const minPrice = defineModel('minPrice', {default: 0})
+	const maxPrice = defineModel('maxPrice', {default: 0})
 	const emit = defineEmits(['updateCollection'])
 
 	const categories: any = useState('categories')
@@ -57,7 +56,7 @@
 								name="category"
 								v-model="currentCategories"
 								@change="
-									(value) =>
+									() =>
 										router.replace({
 											query: {...route.query, category: currentCategories},
 										})

@@ -1,10 +1,29 @@
+interface filterObject {
+	brand: {
+		title: {}
+	}
+	collection: {
+		title: {}
+	}
+	colors: {
+		colors_id: {}
+	}
+	sizes: {
+		sizes_id: {}
+	}
+	category: {
+		title: {}
+	}
+	price: {}
+}
+
 export function useProducts(currentSort: any) {
+	const route = useRoute()
 	const currentPage = useState('currentPage', () => 0)
 	const currentLimit = useState('currentLimit', () => 9)
-	const route = useRoute()
 
 	const filterObj = computed(() => {
-		const obj = ref({})
+		const obj = ref({} as filterObject)
 
 		if (route.query.brand) {
 			obj.value.brand = {title: {_eq: route.query.brand}}
