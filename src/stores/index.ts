@@ -24,14 +24,12 @@ export const useWebsiteStore = defineStore('websiteStore', {
 			this.isSearchPopup = !this.isSearchPopup
 		},
 
-		async handleNewsletterSubscribe(values: {
-			footerEmail: string
-		}): Promise<void> {
+		async handleNewsletterSubscribe(email: string): Promise<void> {
 			const {$directus} = useNuxtApp()
 			await $directus
 				.request(
 					createItem('newsletter_list', {
-						email: values.footerEmail,
+						email: email,
 					} as INewsletterList),
 				)
 				.then((result) => {

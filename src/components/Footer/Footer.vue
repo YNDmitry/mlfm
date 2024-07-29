@@ -8,7 +8,7 @@
 			.email('Некорректная почта'),
 	})
 
-	const {handleSubmit, setErrors, setFieldValue} = useForm({
+	const {handleSubmit} = useForm({
 		validationSchema: schema,
 	})
 
@@ -22,15 +22,17 @@
 		},
 	)
 
-	const onSubmit = handleSubmit(async (values) => {
-		await websiteStore.handleNewsletterSubscribe(values).catch((err) => {
-			if (err.errors[0].extensions.code === 'RECORD_NOT_UNIQUE') {
-				setErrors({
-					footerEmail: 'Пользователь с этим email уже подписан',
-				})
-				setFieldValue('footerEmail', '')
-			}
-		})
+	const onSubmit = handleSubmit(async (values, actions) => {
+		await websiteStore
+			.handleNewsletterSubscribe(values.footerEmail)
+			.catch((err) => {
+				if (err.errors[0].extensions.code === 'RECORD_NOT_UNIQUE') {
+					actions.setFieldError(
+						'footerEmail',
+						'Пользователь с этим email уже подписан',
+					)
+				}
+			})
 	})
 </script>
 <template>
