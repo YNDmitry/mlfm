@@ -11,7 +11,11 @@
 	const currentSort = ref(options[0])
 	const isProductsLoading = ref(false)
 
-	const {products, refresh} = useProducts(currentSort)
+	const {products, refresh} = useProducts(
+		currentSort,
+		currentPage.value,
+		currentLimit.value,
+	)
 
 	const {data} = await useAsyncGql(
 		'Catalog',
@@ -60,13 +64,11 @@
 	}
 
 	function updateLimit(newLimit: number) {
-		currentLimit.value = newLimit
-		router.push({...route.query, query: {limit: newLimit.limit}})
+		router.push({query: {...route.query, limit: newLimit}})
 	}
 
 	function updatePage(newPage: number) {
-		currentPage.value = newPage
-		router.push({...route.query, query: {page: newPage.page + 1}})
+		router.push({query: {...route.query, page: newPage.page + 1}})
 		window.scrollTo(0, 0)
 	}
 
@@ -74,7 +76,9 @@
 	const maxPrice = usePrice(data.value.products_aggregated[0]?.max?.price)
 	const minPriceValue = useRouteQuery('minPrice', null)
 	const maxPriceValue = useRouteQuery('maxPrice', null)
-	const totalProducts = ref(data?.value?.products_aggregated[0].count?.id)
+	const totalProducts = ref(
+		data?.value?.products_aggregated[0].count?.id as number,
+	)
 	const categories = useState('categories', () => data.value.categories)
 </script>
 

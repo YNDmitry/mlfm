@@ -32,8 +32,11 @@
 		'updateCollection',
 	])
 
-	const initialLimit = ref(props.currentLimit)
-	const newProductsLimit = ref(props.currentLimit)
+	const router = useRouter()
+	const route = useRoute()
+
+	const initialLimit = ref(props.currentLimit || route.query.limit)
+	const newProductsLimit = ref(props.currentLimit || route.query.limit)
 
 	const displayedProducts = computed(() => props.products)
 
@@ -45,11 +48,8 @@
 		}
 	}
 
-	const route = useRoute()
-	const router = useRouter()
-
 	const changeCollection = (collectionName: string) => {
-		router.push({...route.query, query: {collectionId: collectionName}})
+		router.push({query: {...route.query, collectionId: collectionName}})
 	}
 </script>
 
@@ -61,7 +61,10 @@
 		>
 			<template v-if="isLoading" v-for="(item, idx) in 6" :key="idx">
 				<div>
-					<Skeleton width="100%" height="25rem" />
+					 <Skeleton
+						width="100%"
+						:height="$device.isMobile ? '12rem' : '25rem'"
+					/>
 					<div class="mt-5">
 						<Skeleton />
 						<Skeleton class="mt-2" width="5rem" />

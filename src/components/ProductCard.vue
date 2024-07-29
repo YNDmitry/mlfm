@@ -26,6 +26,10 @@
 	)
 
 	const wishlistStore = useWishlistStore()
+
+	const isInsideOnWishlist = computed(() =>
+		wishlistStore.isOnWishlist(props.id),
+	)
 </script>
 
 <template>
@@ -44,7 +48,13 @@
 			<ClientOnly>
 				<IconsHearth
 					class="absolute right-3 top-3 h-5 w-5 transition-all"
-					:is-on-wishlist="wishlistStore.isOnWishlist(id)"
+					:is-on-wishlist="isInsideOnWishlist"
+					v-tooltip.bottom="{
+						value: !isInsideOnWishlist
+							? 'Добавить в изобранное'
+							: 'Удалить из избранного',
+						pt: {text: 'text-[0.5rem] bg-red2 text-primary'},
+					}"
 					@click.prevent="
 						!wishlistStore.isOnWishlist(id)
 							? wishlistStore.addItemToWishlist(id)

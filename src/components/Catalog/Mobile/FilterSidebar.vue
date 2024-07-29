@@ -26,6 +26,9 @@
 	const handleFilterModal = () => {
 		return (isFilterOpen.value = !isFilterOpen.value)
 	}
+
+	const router = useRouter()
+	const route = useRoute()
 </script>
 
 <template>
@@ -45,7 +48,13 @@
 				v-for="item in sortOptions"
 				:key="item"
 				:class="{'text-red': currentSort.code === item.code}"
-				@click="$emit('update:currentSort', item), handleSortModal()"
+				@click="
+					$emit('update:currentSort', item),
+						handleSortModal(),
+						router.replace({
+							query: {...route.query, sort: props.currentSort.code},
+						})
+				"
 				class="py-2"
 			>
 				{{ item.name }}

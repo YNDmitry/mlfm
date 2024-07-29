@@ -17,10 +17,12 @@ interface filterObject {
 	price: {}
 }
 
-export function useProducts(currentSort: any) {
+export function useProducts(
+	currentSort: any,
+	currentPage: any,
+	currentLimit: any,
+) {
 	const route = useRoute()
-	const currentPage = useState('currentPage', () => 0)
-	const currentLimit = useState('currentLimit', () => 9)
 
 	const filterObj = computed(() => {
 		const obj = ref({} as filterObject)
@@ -61,8 +63,8 @@ export function useProducts(currentSort: any) {
 
 	const {data: products, refresh} = useAsyncData('products', () =>
 		GqlProducts({
-			page: currentPage.value + 1,
-			limit: currentLimit.value,
+			page: Number(route.query.page) || currentPage + 1,
+			limit: Number(route.query.limit) || currentLimit,
 			sort: currentSort?.value.code,
 			filter: filterObj.value.value,
 		}),
