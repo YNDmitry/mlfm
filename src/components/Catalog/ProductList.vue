@@ -25,18 +25,15 @@
 	}
 
 	const props = defineProps<Props>()
-	const emit = defineEmits([
-		'resetFilters',
-		'updateLimit',
-		'updatePage',
-		'updateCollection',
-	])
+	const emit = defineEmits(['resetFilters', 'updatePage', 'updateCollection'])
 
 	const router = useRouter()
 	const route = useRoute()
 
-	const initialLimit = ref(props.currentLimit || route.query.limit)
-	const newProductsLimit = ref(props.currentLimit || route.query.limit)
+	const initialLimit = ref(Number(route.query.limit) || props.currentLimit)
+	const newProductsLimit = ref(
+		Number(route.query.limit) || (props.currentLimit as number),
+	)
 
 	const displayedProducts = computed(() => props.products)
 
@@ -61,7 +58,7 @@
 		>
 			<template v-if="isLoading" v-for="(item, idx) in 6" :key="idx">
 				<div>
-					 <Skeleton
+					<Skeleton
 						width="100%"
 						:height="$device.isMobile ? '12rem' : '25rem'"
 					/>
@@ -151,20 +148,14 @@
 						$emit('updatePage', $event)
 					}
 				"
-				@update:rows="
-					($event: any) => {
-						$emit('updateLimit', $event)
-					}
-				"
 				:rows="props.currentLimit"
 				:totalRecords="props.totalProducts"
 				template="PrevPageLink CurrentPageReport JumpToPageDropdown RowsPerPageDropdown NextPageLink"
 				:rowsPerPageOptions="[
-					initialLimit,
+					newProductsLimit,
 					newProductsLimit * 2,
 					newProductsLimit * 3,
 				]"
-				:alwaysShow="false"
 				:currentPageReportTemplate="
 					!props.isMobile
 						? '{currentPage} из {totalPages}'

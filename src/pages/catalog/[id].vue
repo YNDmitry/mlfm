@@ -210,6 +210,14 @@
 							<template #image>
 								<img class="h-full w-full object-cover" :src="currentImage" />
 							</template>
+							<template #preview="slotProps">
+								<img
+									:src="currentImage"
+									alt="Превью"
+									:style="slotProps.style"
+									@click="slotProps.onClick"
+								/>
+							</template>
 						</Image>
 					</div>
 

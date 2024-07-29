@@ -6,8 +6,8 @@
 	const route = useRoute()
 	const sortOptions = ref(options)
 
-	const currentPage = ref(route.query.page || 0)
-	const currentLimit = ref(route.query.limit || 9)
+	const currentPage = ref(Number(route.query.page) || 0)
+	const currentLimit = ref(Number(route.query.limit) || 9)
 	const currentSort = ref(options[0])
 	const isProductsLoading = ref(false)
 
@@ -63,12 +63,10 @@
 		currentPage.value = 0
 	}
 
-	function updateLimit(newLimit: number) {
-		router.push({query: {...route.query, limit: newLimit}})
-	}
-
 	function updatePage(newPage: number) {
-		router.push({query: {...route.query, page: newPage.page + 1}})
+		router.replace({
+			query: {...route.query, page: newPage.page + 1, limit: newPage.rows},
+		})
 		window.scrollTo(0, 0)
 	}
 
@@ -192,7 +190,6 @@
 							:currentPage="currentPage"
 							:currentLimit="currentLimit"
 							@resetFilters="resetFilters"
-							@updateLimit="updateLimit"
 							@updatePage="updatePage"
 						/>
 					</div>
