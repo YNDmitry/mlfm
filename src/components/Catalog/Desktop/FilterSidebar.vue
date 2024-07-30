@@ -191,6 +191,7 @@
 						height="485"
 						format="webp"
 						class="max-tablet:w-full"
+						placeholder
 					/>
 				</button>
 			</div>

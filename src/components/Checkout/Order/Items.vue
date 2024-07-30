@@ -24,6 +24,7 @@
 				:src="giftCard?.image_id"
 				format="webp"
 				class="max-mobile:h-[3.75rem] max-mobile:w-[6.563rem] mobile:h-[6.25rem]"
+				placeholder
 			/>
 			<div class="flex w-full items-center justify-between">
 				<div class="flex flex-col gap-1">

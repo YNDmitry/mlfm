@@ -37,6 +37,7 @@
 			height="550"
 			fit="cover"
 			format="webp"
+			placeholder
 		/>
 
 		<div

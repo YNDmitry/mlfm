@@ -1,75 +1,115 @@
-# Nuxt 3 Minimal Starter
+# MLFM - Online Jewelry Store
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+MLFM is an online jewelry store that offers a wide range of beautiful and high-quality jewelry pieces. This project is built using Nuxt.js, a powerful framework for creating modern web applications.
 
-## Setup
+## Table of Contents
 
-Make sure to install the dependencies:
+- [MLFM - Online Jewelry Store](#mlfm---online-jewelry-store)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Scripts](#scripts)
+  - [Development](#development)
+  - [Build and Deployment](#build-and-deployment)
+  - [Contributing](#contributing)
 
-```bash
-# npm
-npm install
+## Features
 
-# pnpm
-pnpm install
+- Modern and responsive design
+- High-quality images of jewelry
+- User authentication and management
+- Product search and filtering
+- Secure checkout process
+- SEO friendly with sitemap and robots.txt
+- Linting and formatting with ESLint and Prettier
+- Unit and integration testing
 
-# yarn
-yarn install
+## Installation
 
-# bun
-bun install
-```
+To get started with MLFM, follow these steps:
 
-## Development Server
+1. **Clone the repository:**
 
-Start the development server on `http://localhost:3000`:
+   ```sh
+   git clone https://github.com/your-username/mlfm.git
+   ```
 
-```bash
-# npm
+2. **Navigate to the project directory:**
+
+   ```sh
+   cd mlfm
+   ```
+
+3. **Install dependencies:**
+
+   ```sh
+   npm install
+   ```
+
+## Usage
+
+To start the development server, run the following command:
+
+```sh
 npm run dev
 
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+This will start the server at http://localhost:3000, where you can view the application in your browser.
 
-Build the application for production:
+## Scripts
 
-```bash
-# npm
+The following scripts are available:
+
+- build: Builds the application for production
+- dev: Starts the development server
+- generate: Generates a static version of the site
+- preview: Previews the production build
+- postinstall: Prepares the application after installation
+- lint: Lints the codebase using ESLint
+
+You can run these scripts using npm run <script-name>.
+
+## Development
+
+For development, ensure you have the necessary tools installed and configured. This project uses the following key dependencies:
+
+- Nuxt.js: A powerful Vue.js framework
+- Tailwind CSS: A utility-first CSS framework
+- PrimeVue: A rich set of Vue UI components
+- Pinia: A lightweight state management library
+- TypeScript: A typed superset of JavaScript
+- ESLint: A pluggable linting utility for JavaScript and TypeScript
+- Prettier: A code formatter
+
+## Build and Deployment
+
+**To build the application for production, run:**
+
+```sh
 npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
 ```
 
-Locally preview production build:
+**To preview the production build, run:**
 
-```bash
-# npm
+```sh
 npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## Contributing
+
+Contributions are welcome! If you'd like to contribute to MLFM, please follow these steps:
+
+- 1. Fork the repository.
+- 2. Create a new branch with your feature or bug fix:
+
+  ```sh
+  git checkout -b feature-name
+  ```
+
+- 3. Commit your changes:
+
+  ```sh
+  git commit -m 'Add some feature'
+  ```

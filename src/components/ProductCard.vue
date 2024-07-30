@@ -43,6 +43,7 @@
 				height="410"
 				:alt="title"
 				format="webp"
+				placeholder
 			/>
 
 			<ClientOnly>

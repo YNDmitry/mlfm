@@ -61,6 +61,7 @@
 					provider="directus"
 					src="d003febc-e2ff-4b09-9ef8-df2d44ec7a85"
 					width="620"
+					placeholder
 				/>
 			</div>
 

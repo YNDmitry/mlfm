@@ -50,6 +50,7 @@
 										item?.product_variants[0]?.image?.id
 									"
 									width="130"
+									placeholder
 									class="object-cover max-mobile:h-[6.25rem] max-mobile:w-[3.813rem] mobile:h-[6.25rem]"
 								/>
 

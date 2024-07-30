@@ -29,6 +29,7 @@
 				width="1440"
 				height="600"
 				format="webp"
+				placeholder
 			/>
 		</div>
 		<div

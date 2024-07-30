@@ -48,6 +48,7 @@
 						height="461"
 						class="max-tablet:w-full"
 						format="webp"
+						placeholder
 					/>
 				</div>
 			</div>

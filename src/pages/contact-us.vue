@@ -53,6 +53,7 @@
 						width="25"
 						height="25"
 						provider="directus"
+						placeholder
 					/>
 
 					<span>{{ item?.item?.text }}</span>

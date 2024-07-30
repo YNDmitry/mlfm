@@ -198,6 +198,7 @@
 											$config.public.databaseUrl +
 											'assets/15a28038-7913-48a5-b9bd-91b93a9a0764'
 										"
+										placeholder
 										width="130"
 										class="object-cover max-mobile:h-[6.25rem] max-mobile:w-[3.813rem] mobile:h-[6.25rem]"
 									/>

@@ -66,12 +66,14 @@
 							provider="directus"
 							:src="data.gift_card?.image.id"
 							class="h-full w-full object-contain"
+							placeholder
 						/>
 						<NuxtImg
 							provider="directus"
 							v-for="image in data.gift_card?.images"
 							:src="image?.directus_files_id?.id"
 							class="h-full w-full object-contain"
+							placeholder
 						/>
 					</div>
 

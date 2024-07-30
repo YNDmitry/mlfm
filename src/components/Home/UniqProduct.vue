@@ -26,6 +26,7 @@
 							width="368"
 							height="442"
 							format="webp"
+							placeholder
 						/>
 					</div>
 

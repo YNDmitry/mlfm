@@ -37,6 +37,7 @@
 						:src="image"
 						width="678"
 						format="webp"
+						placeholder
 					/>
 				</div>
 

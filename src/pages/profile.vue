@@ -103,6 +103,7 @@
 										<NuxtImg
 											src="https://admin.mlfm.store/assets/ebdb3d4d-09ad-4433-8902-68f3066e1828"
 											width="130"
+											placeholder
 											class="object-cover max-mobile:h-[6.25rem] max-mobile:w-[3.813rem] mobile:h-[6.25rem]"
 										/>
 

@@ -128,6 +128,7 @@
 								class="h-auto max-w-full"
 								width="955"
 								format="webp"
+								placeholder
 							/>
 						</button>
 					</div>

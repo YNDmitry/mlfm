@@ -35,6 +35,7 @@
 			width="300"
 			height="410"
 			format="webp"
+			placeholder
 		/>
 
 		<div class="flex flex-col items-center justify-center">
