@@ -33,9 +33,6 @@
 		<ProfileUpdateUserDetailsPopup />
 		<ProfileAddAddressPopup />
 		<section class="pb-16 pt-20 max-tablet:pt-11">
-			<div class="container mb-7 text-center" v-if="!userStore.isEmailVerify">
-				Пожалуйста, подтвердрите ваш email адресс
-			</div>
 			<ProfileDesktopHead v-if="!isMobile" />
 			<ProfileMobileHead v-else />
 		</section>

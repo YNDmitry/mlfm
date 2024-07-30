@@ -23,7 +23,7 @@
 
 	const isDone = ref(false)
 	const isError = ref(false)
-	const refresh_token = useRoute().query.token
+	const refresh_token = useRoute().query.token as string
 
 	const {handleSubmit, isSubmitting} = useForm({validationSchema: schema})
 
@@ -77,8 +77,8 @@
 				</div>
 			</div>
 		</form>
-		<div v-else>
-			<span class="mb-4 text-center"
+		<div v-else class="flex flex-col">
+			<span class="mx-auto mb-4 text-center"
 				>Успешно! Теперь можете зайти в личный кабинет!</span
 			>
 			<NuxtLink
