@@ -29,13 +29,19 @@
 
 	useSeoMeta({
 		title: websiteStore.siteSettings?.meta_title,
+		twitterTitle: websiteStore.siteSettings?.meta_title,
 		ogTitle: websiteStore.siteSettings?.meta_title,
 		description: websiteStore.siteSettings?.meta_description,
+		twitterDescription: websiteStore.siteSettings?.meta_description,
 		ogDescription: websiteStore.siteSettings?.meta_description,
+		twitterImage:
+			appConfig.public.databaseUrl +
+			'assets/' +
+			websiteStore.siteSettings?.meta_thumbnail?.id,
 		ogImage:
 			appConfig.public.databaseUrl +
 			'assets/' +
-			websiteStore.siteSettings?.meta_thumbnail,
+			websiteStore.siteSettings?.meta_thumbnail?.id,
 	})
 </script>
 

@@ -49,12 +49,16 @@
 	useSeoMeta({
 		title: product?.value?.title + ' | MLFM',
 		ogTitle: product?.value?.title + ' | MLFM',
+		twitterTitle: product?.value?.title + ' | MLFM',
 		description: product?.value?.description,
 		ogDescription: product?.value?.description,
+		ogUrl: 'https://www.mlfm.store' + useRoute().path,
+		twitterDescription: product?.value?.description,
 		ogImage:
 			appConfig.public.databaseUrl + 'assets/' + product?.value?.main_image?.id,
 		twitterImage:
 			appConfig.public.databaseUrl + 'assets/' + product?.value?.main_image?.id,
+		twitterCard: 'summary',
 	})
 
 	const currentVariantId = ref(product?.value?.product_variants[0]?.id)

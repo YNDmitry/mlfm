@@ -1,10 +1,12 @@
 query GlobalConfig {
 	site {
-		meta_title
-		meta_thumbnail {
-			id
+		seo {
+			meta_title
+			og_image {
+				id
+			}
+			meta_description
 		}
-		meta_description
 		general_message
 		current_phone_number
 		current_address

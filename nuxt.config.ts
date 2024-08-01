@@ -136,4 +136,13 @@ export default defineNuxtConfig({
 		url: 'https://www.mlfm.store',
 		name: 'MLFM',
 	},
+
+	schemaOrg: {
+		identity: {
+			type: 'Organization',
+			name: 'My Company',
+			url: 'https://example.com',
+			logo: 'https://example.com/logo.png',
+		},
+	},
 })

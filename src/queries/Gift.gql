@@ -11,5 +11,12 @@ query Gift {
 				id
 			}
 		}
+		seo {
+			meta_title
+			meta_description
+			og_image {
+				id
+			}
+		}
 	}
 }
