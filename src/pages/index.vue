@@ -28,20 +28,20 @@
 	)
 
 	useSeoMeta({
-		title: websiteStore.siteSettings?.meta_title,
-		twitterTitle: websiteStore.siteSettings?.meta_title,
-		ogTitle: websiteStore.siteSettings?.meta_title,
-		description: websiteStore.siteSettings?.meta_description,
-		twitterDescription: websiteStore.siteSettings?.meta_description,
-		ogDescription: websiteStore.siteSettings?.meta_description,
+		title: websiteStore.siteSettings?.seo?.meta_title,
+		twitterTitle: websiteStore.siteSettings?.seo.meta_title,
+		ogTitle: websiteStore.siteSettings?.seo.meta_title,
+		description: websiteStore.siteSettings?.seo.meta_description,
+		twitterDescription: websiteStore.siteSettings?.seo.meta_description,
+		ogDescription: websiteStore.siteSettings?.seo.meta_description,
 		twitterImage:
 			appConfig.public.databaseUrl +
 			'assets/' +
-			websiteStore.siteSettings?.meta_thumbnail?.id,
+			websiteStore.siteSettings?.seo.og_image?.id,
 		ogImage:
 			appConfig.public.databaseUrl +
 			'assets/' +
-			websiteStore.siteSettings?.meta_thumbnail?.id,
+			websiteStore.siteSettings?.seo.og_image?.id,
 	})
 </script>
 
