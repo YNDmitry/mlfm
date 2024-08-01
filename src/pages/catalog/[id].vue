@@ -183,6 +183,36 @@
 		}
 		return img(product.value?.main_image?.id, {}, {provider: 'directus'})
 	})
+
+	// Schema.org Product Schema
+	useSchemaOrg([
+		{
+			'@type': 'Product',
+			name: product.value?.title,
+			image: [
+				appConfig.public.databaseUrl +
+					'assets/' +
+					product.value?.main_image?.id,
+			],
+			description: product.value?.description,
+			brand: {
+				'@type': 'Brand',
+				name: product.value?.brand?.title,
+			},
+			offers: {
+				'@type': 'Offer',
+				url: window.location.href,
+				priceCurrency: 'RUB',
+				price: product.value?.price,
+				itemCondition: 'https://schema.org/NewCondition',
+				availability: 'https://schema.org/InStock',
+				seller: {
+					'@type': 'Organization',
+					name: 'MLFM',
+				},
+			},
+		},
+	])
 </script>
 
 <template>

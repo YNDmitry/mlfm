@@ -9,9 +9,8 @@
 	const currentPage = ref(Number(route.query.page) || 0)
 	const currentLimit = ref(Number(route.query.limit) || 9)
 	const currentSort = ref(options[0])
-	const isProductsLoading = ref(false)
 
-	const {products, refresh} = useProducts(
+	const {products, refresh, isProductLoading} = useProducts(
 		currentSort,
 		currentPage.value,
 		currentLimit.value,
@@ -30,15 +29,15 @@
 	watch(
 		() => route.query,
 		() => {
-			isProductsLoading.value = true
+			isProductLoading.value = true
 		},
 	)
 
 	// Обновляем фильтры, если изменяются параметры маршрута
 	watchDebounced(
 		() => route.query,
-		async () => {
-			await refresh().then(() => (isProductsLoading.value = false))
+		() => {
+			refresh()
 		},
 		{debounce: 500, maxWait: 500},
 	)
@@ -78,6 +77,10 @@
 		data?.value?.products_aggregated[0].count?.id as number,
 	)
 	const categories = useState('categories', () => data.value.categories)
+
+	onMounted(async () => {
+		await refresh()
+	})
 </script>
 
 <template>
@@ -182,8 +185,8 @@
 						<!-- /О бренде -->
 
 						<CatalogProductList
-							:isLoading="isProductsLoading"
-							:products="products?.products"
+							:isLoading="isProductLoading"
+							:products="products"
 							:totalProducts="totalProducts"
 							:data="data"
 							:isMobile="$device.isMobile"

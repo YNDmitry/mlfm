@@ -61,17 +61,23 @@ export function useProducts(
 		return obj
 	})
 
-	const {data: products, refresh} = useAsyncData('products', () =>
-		GqlProducts({
+	const products: any = ref(null)
+	const isProductLoading = ref(true)
+	const refresh = async () => {
+		await GqlProducts({
 			page: Number(route.query.page) || currentPage + 1,
 			limit: Number(route.query.limit) || currentLimit,
 			sort: currentSort?.value.code,
 			filter: filterObj.value.value,
-		}),
-	)
+		}).then((res) => {
+			products.value = res.products
+			isProductLoading.value = false
+		})
+	}
 
 	return {
 		products,
 		refresh,
+		isProductLoading,
 	}
 }
