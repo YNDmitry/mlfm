@@ -7,21 +7,41 @@
 	interface Props {
 		data: any
 		resetFilters: () => void
-		minPrice: string
-		maxPrice: string
+		minPrice: number
+		maxPrice: number
 		totalProducts: string | number
 	}
 
-	const props = defineProps<Props>()
-	const minPrice = defineModel('minPrice', {default: 0})
-	const maxPrice = defineModel('maxPrice', {default: 0})
-	const emit = defineEmits(['updateCollection'])
-
-	const categories: any = useState('categories')
+	const router = useRouter()
 	const route = useRoute()
+	const props = defineProps<Props>()
+	const minPriceValue = defineModel('minPrice', {default: 0})
+	const maxPriceValue = defineModel('maxPrice', {default: 0})
+	const categories: any = useState('categories')
 	const currentCategories = ref(route.query.category || [])
 
-	const router = useRouter()
+	watch(
+		() => route.query.minPrice,
+		() => {
+			if (!route.query.minPrice) minPriceValue.value = props.minPrice
+		},
+	)
+
+	watch(
+		() => route.query.maxPrice,
+		() => {
+			if (!route.query.maxPrice) maxPriceValue.value = props.maxPrice
+		},
+	)
+
+	const changeCollection = (collectionName: string) => {
+		return router.push({
+			query: {
+				...route.query,
+				collectionId: collectionName,
+			},
+		})
+	}
 </script>
 
 <template>
@@ -42,32 +62,25 @@
 			>
 				<p class="pb-[1.25rem] text-[0.875rem]">Категория</p>
 
-				<ScrollPanel style="width: 100%; height: 140px">
+				<ScrollPanel style="width: 100%; height: 140px" class="overflow-hidden">
 					<div class="flex flex-col gap-[0.625rem] text-[0.625rem]">
 						<label
 							class="flex cursor-pointer items-center gap-[0.625rem]"
 							v-for="category in categories"
 							:key="category.id"
+							:for="category.id"
 						>
-							<input
-								type="checkbox"
-								class="absolute h-5 w-5 cursor-pointer opacity-0"
-								:value="category.title"
-								name="category"
+							<Checkbox
 								v-model="currentCategories"
-								@change="
-									() =>
-										router.replace({
-											query: {...route.query, category: currentCategories},
-										})
+								:inputId="category.id"
+								:name="category.title"
+								:value="category.title"
+								@update:model-value="
+									router.replace({
+										query: {...route.query, category: currentCategories},
+									})
 								"
 							/>
-
-							<div
-								class="flex h-5 w-5 cursor-pointer items-center justify-center border-[1px] border-grayLight"
-							>
-								<IconsCheckbox />
-							</div>
 
 							<span>{{ category.title }}</span>
 						</label>
@@ -136,19 +149,27 @@
 
 				<div class="flex justify-between gap-[0.625rem] text-[0.625rem]">
 					<label
-						class="rounded-full flex min-h-[46px] w-full cursor-pointer items-center justify-center gap-[2px] border"
+						class="rounded-full flex min-h-[46px] w-full cursor-pointer items-center justify-center gap-[2px] border px-3"
 					>
 						<span class="pointer-events-none whitespace-nowrap text-nowrap"
 							>От -</span
 						>
 
-						<input
-							class="w-[72px] focus:outline-none"
-							type="number"
-							:placeholder="props.minPrice"
-							:min="props.minPrice"
-							:max="props.maxPrice"
-							v-model="minPrice"
+						<InputNumber
+							v-model="minPriceValue"
+							fluid
+							mode="currency"
+							:min="minPrice"
+							:max="maxPrice"
+							currency="RUB"
+							unstyled
+							locale="ru-RU"
+							:placeholder="String(minPrice)"
+							aria-label="Минимальная цена"
+							:class="'inputnumber'"
+							v-on:update:model-value="
+								router.push({query: {...route.query, minPrice: minPriceValue}})
+							"
 						/>
 					</label>
 
@@ -159,13 +180,21 @@
 							>До -</span
 						>
 
-						<input
-							class="w-[72px] focus:outline-none"
-							type="number"
-							:placeholder="props.maxPrice"
-							:min="props.minPrice"
-							:max="props.maxPrice"
-							v-model="maxPrice"
+						<InputNumber
+							v-model="maxPriceValue"
+							fluid
+							mode="currency"
+							:min="minPrice"
+							:max="maxPrice"
+							currency="RUB"
+							unstyled
+							locale="ru-RU"
+							:placeholder="String(maxPrice)"
+							aria-label="Максимальная цена"
+							:class="'inputnumber'"
+							v-on:update:model-value="
+								router.push({query: {...route.query, maxPrice: maxPriceValue}})
+							"
 						/>
 					</label>
 				</div>
@@ -178,10 +207,7 @@
 					class="max-tablet:w-full"
 					type="button"
 					@click="
-						$emit(
-							'updateCollection',
-							props.data?.catalog?.main_banner_collection?.title,
-						)
+						changeCollection(props.data?.catalog?.main_banner_collection?.title)
 					"
 				>
 					<NuxtImg
@@ -199,3 +225,13 @@
 		</div>
 	</aside>
 </template>
+
+<style>
+	.inputnumber input {
+		@apply max-w-[85px] outline-none;
+	}
+
+	.p-checkbox {
+		@apply !shadow-none;
+	}
+</style>

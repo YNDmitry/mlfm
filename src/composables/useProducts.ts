@@ -62,21 +62,24 @@ export function useProducts(
 	})
 
 	const products: any = ref(null)
+	const productCount: any = ref(null)
 	const isProductLoading = ref(true)
 	const refresh = async () => {
 		await GqlProducts({
 			page: Number(route.query.page) || currentPage + 1,
 			limit: Number(route.query.limit) || currentLimit,
-			sort: currentSort?.value.code,
+			sort: route.query.sort || ['-date_created'],
 			filter: filterObj.value.value,
 		}).then((res) => {
 			products.value = res.products
+			productCount.value = res.products_aggregated[0].count.id
 			isProductLoading.value = false
 		})
 	}
 
 	return {
 		products,
+		productCount,
 		refresh,
 		isProductLoading,
 	}

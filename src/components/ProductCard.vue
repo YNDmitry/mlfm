@@ -16,6 +16,11 @@
 			type: String,
 			required: false,
 		},
+		slug: {
+			type: String,
+			required: true,
+			default: '',
+		},
 	})
 
 	const priceFormated = computed(() =>
@@ -28,12 +33,12 @@
 	const wishlistStore = useWishlistStore()
 
 	const isInsideOnWishlist = computed(() =>
-		wishlistStore.isOnWishlist(props.id),
+		wishlistStore.isOnWishlist(props.id as string),
 	)
 </script>
 
 <template>
-	<NuxtLink :to="'/catalog/' + id" class="product_card w-full">
+	<NuxtLink :to="'/catalog/' + slug" class="product_card w-full">
 		<div class="relative w-full" v-if="imgSrc">
 			<NuxtImg
 				provider="directus"

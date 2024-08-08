@@ -25,7 +25,11 @@
 					class="flex w-full items-center justify-between border-b-[1px] border-b-gray2 px-10 pb-[1.25rem] max-tablet:px-4"
 				>
 					<div class="max-tablet:text-[0.875rem]">Корзина</div>
-					<button type="button" @click="websiteStore.isVisibleCart = false">
+					<button
+						type="button"
+						aria-label="Закрыть корзину"
+						@click="websiteStore.isVisibleCart = false"
+					>
 						<IconsClose class="h-3 w-3" />
 					</button>
 				</div>
@@ -103,6 +107,7 @@
 									:src="config.public.databaseUrl + 'assets/' + item?.image_id"
 									width="130"
 									class="object-cover max-mobile:h-[6.25rem] max-mobile:w-[3.813rem] mobile:h-[6.25rem]"
+									placeholder
 								/>
 
 								<div class="relative flex w-full items-center justify-between">
@@ -135,6 +140,7 @@
 						<button
 							v-if="useCart.items.length > 0"
 							@click="useCart.removeCart()"
+							aria-label="Очистить корзину"
 							class="flex items-center gap-3 text-[1rem]"
 						>
 							Очистить корзину <IconsClose class="w-[10px]" />
@@ -187,6 +193,7 @@
 										/>
 
 										<button
+											aria-label="Применить промокод"
 											type="submit"
 											class="h-[35px] rounded-[1.875rem] border-[1px] border-black px-[1rem] text-[0.7rem] transition-colors hover:bg-black hover:text-primary max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
 										>
@@ -219,6 +226,7 @@
 										/>
 
 										<button
+											aria-label="Применить код порадочной карты"
 											type="submit"
 											:spaceBetween="10"
 											class="h-[35px] rounded-[1.875rem] border-[1px] border-black px-[1rem] text-[0.7rem] transition-colors hover:bg-black hover:text-primary max-tablet:h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:py-[5px] max-tablet:text-[0.625rem]"
@@ -305,6 +313,7 @@
 
 					<!--  Кнопка - Перейти к оплате -->
 					<button
+						aria-label="Перейти к оплате"
 						type="button"
 						@click="handleSubmit"
 						class="flex w-full items-center justify-center bg-red2 text-[0.625rem] text-primary transition-colors hover:bg-red2-hover max-tablet:mt-[1.875rem] max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] tablet:mt-[1.25rem] tablet:min-h-[37px] tablet:rounded-[1.875rem] tablet:font-medium"
@@ -339,7 +348,10 @@
 						</div>
 					</div>
 
-					<div v-else class="flex gap-[10px] overflow-hidden">
+					<div
+						v-else
+						class="flex gap-[10px] overflow-hidden max-tablet:grid max-tablet:grid-cols-[1fr_1fr_1fr]"
+					>
 						<div
 							v-for="product in useCart.relatedItems"
 							:key="product.id"
@@ -355,8 +367,9 @@
 										class="h-32 object-cover"
 										:src="product.main_image.id"
 										width="200"
+										placeholder
 									/>
-									<div class="inset-0 mt-2 overflow-hidden whitespace-nowrap">
+									<div class="inset-0 mt-2 overflow-hidden">
 										<div
 											class="overflow-hidden overflow-ellipsis text-[0.7rem] font-normal"
 										>

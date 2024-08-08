@@ -66,6 +66,7 @@
 								input-type="text"
 							/>
 							<button
+								aria-label="Найти"
 								:disabled="!input.value.value"
 								type="submit"
 								class="absolute bottom-0 right-0 top-0 h-[48px] min-w-36 rounded-main bg-red px-4 text-primary transition-all hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-60 max-tablet:h-[2.5rem]"

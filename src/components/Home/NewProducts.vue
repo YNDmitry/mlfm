@@ -3,13 +3,14 @@
 		products: [
 			{
 				id: string
+				slug: string
 				title: string
 				main_image: {
 					id: string
 				}
 				price: number
 			},
-		]
+		][]
 		productBanners?: [
 			{
 				title: string
@@ -22,7 +23,7 @@
 		]
 	}
 
-	defineProps<Props>()
+	const props = defineProps<Props>()
 </script>
 
 <template>
@@ -36,14 +37,16 @@
 				</h2>
 
 				<div
+					v-if="products.length > 0"
 					class="no-scrollbar mx-[-1rem] flex scroll-px-3 gap-[45px] overflow-x-auto px-[1rem] max-tablet:gap-4"
 				>
-					<template v-for="product in products" :key="product.id">
+					<template v-for="product in products" :key="product?.id">
 						<ProductCard
-							:id="product.id"
-							:title="product.title"
-							:imgSrc="product.main_image.id"
-							:price="product.price"
+							:id="product?.id"
+							:slug="product?.slug"
+							:title="product?.title"
+							:imgSrc="product?.main_image?.id"
+							:price="product?.price"
 							class="animation-duration-2000 max-w-[18.31rem] flex-shrink-0 transition-all max-tablet:w-[171px]"
 						/>
 					</template>

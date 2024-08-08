@@ -29,6 +29,9 @@
 
 	const router = useRouter()
 	const route = useRoute()
+
+	const minPriceValue = defineModel('minPrice', {default: ''})
+	const maxPriceValue = defineModel('maxPrice', {default: ''})
 </script>
 
 <template>
@@ -77,6 +80,8 @@
 				:minPrice="minPrice"
 				:maxPrice="maxPrice"
 				@updateCollection="$event = $emit('updateCollection', $event)"
+				v-model:min-price-value="minPriceValue"
+				v-model:max-price-value="maxPriceValue"
 			/>
 		</Dialog>
 		<button

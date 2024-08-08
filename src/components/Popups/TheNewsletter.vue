@@ -52,6 +52,7 @@
 		id="newsletter-popup"
 		:pt="{
 			root: 'mx-6',
+			closeicon: 'right-[10px]',
 		}"
 	>
 		<div class="rounded-xl bg-white">
@@ -68,9 +69,11 @@
 			<div
 				class="mx-1rem container flex max-w-[507px] flex-col gap-[2rem] pb-[4.375rem] pt-[34px] max-tablet:gap-3 max-tablet:pb-4 max-tablet:pt-4"
 			>
-				<div class="text-[1.25rem] font-medium">Присоединяйтесь к нам!</div>
+				<div class="text-[1.25rem] font-medium max-tablet:text-[1rem]">
+					Присоединяйтесь к нам!
+				</div>
 
-				<p>
+				<p class="max-tablet:text-[0.75rem]">
 					Получите доступ к закрытым акциям и первыми узнавайте о лимитированных
 					коллекциях!
 				</p>
@@ -87,16 +90,17 @@
 						<Field
 							:disabled="isSubmitting"
 							placeholder="Email"
-							class="w-full rounded-b-[0px] border-[1px] border-black px-5 font-extralight focus:outline-none disabled:pointer-events-none max-tablet:min-h-9"
+							class="w-full rounded-b-[0px] border-[1px] border-b-0 border-gray px-5 font-extralight focus:outline-none disabled:pointer-events-none max-tablet:min-h-9 max-tablet:text-[0.75rem]"
 							type="email"
 							name="newsletterEmail"
 						/>
 						<ErrorMessage
 							name="newsletterEmail"
-							class="absolute bottom-[-1.5rem] text-[0.625rem] text-[red]"
+							class="absolute bottom-[-1.5rem] text-[0.625rem] text-red2"
 						/>
 
 						<button
+							aria-label="Подписаться"
 							type="submit"
 							class="relative flex w-full max-w-[150px] items-center justify-center bg-red2 font-medium text-primary hover:bg-red2-hover max-laptop:text-[12px] max-tablet:min-h-10 max-tablet:w-full max-tablet:max-w-none laptop:text-[0.875rem]"
 						>

@@ -3,7 +3,7 @@
 		title: string
 		image: string
 		collection?: string
-		item?: {title: string; id: string} | null
+		item?: any
 	}
 	const props = defineProps<Props>()
 

@@ -1,0 +1,55 @@
+fragment ProductFields on products {
+	id
+	slug
+	title
+	description
+	brand {
+		title
+	}
+	product_variants {
+		id
+		color_id {
+			title
+		}
+		size_id {
+			small_title
+		}
+		qunatity
+		availability
+		price
+		image {
+			id
+		}
+	}
+	main_image {
+		id
+	}
+	category {
+		title
+	}
+	product_upsells {
+		related_products_id {
+			id
+			slug
+			title
+			main_image {
+				id
+			}
+			product_variants {
+				price
+			}
+		}
+	}
+}
+
+query GetProductBySlug($slug: String, $status: String) {
+	products(filter: {slug: {_eq: $slug}, status: {_eq: $status}}) {
+		...ProductFields
+	}
+}
+
+query GetProductBySlugPreview($slug: String) {
+	products(filter: {slug: {_eq: $slug}}) {
+		...ProductFields
+	}
+}

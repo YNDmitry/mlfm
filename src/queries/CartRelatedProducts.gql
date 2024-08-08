@@ -1,6 +1,7 @@
 query RelatedProducts {
 	products(limit: 3) {
 		id
+		slug
 		title
 		price
 		main_image {

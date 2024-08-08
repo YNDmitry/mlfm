@@ -6,6 +6,7 @@ query Products(
 ) {
 	products(filter: $filter, sort: $sort, limit: $limit, page: $page) {
 		id
+		slug
 		title
 		main_image {
 			id
@@ -18,11 +19,17 @@ query Products(
 			}
 		}
 	}
+	products_aggregated(filter: $filter) {
+		count {
+			id
+		}
+	}
 }
 
 query GetProductsByIds($ids: [String]) {
 	products(filter: {id: {_in: $ids}}) {
 		id
+		slug
 		main_image {
 			id
 		}
@@ -47,6 +54,7 @@ query GetProductsByIds($ids: [String]) {
 query GetCartProductsByIds($ids: [String], $variant_ids: [String]) {
 	products(filter: {id: {_in: $ids}}) {
 		id
+		slug
 		main_image {
 			id
 		}
@@ -65,6 +73,20 @@ query GetCartProductsByIds($ids: [String], $variant_ids: [String]) {
 			}
 			price
 			qunatity
+		}
+	}
+}
+
+query GetRandomProducts($id: String) {
+	products(filter: {id: {_neq: $id}}, limit: 4) {
+		id
+		slug
+		title
+		product_variants {
+			price
+		}
+		main_image {
+			id
 		}
 	}
 }

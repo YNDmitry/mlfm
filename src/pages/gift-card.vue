@@ -134,7 +134,7 @@
 									<div class="flex w-full items-center gap-4">
 										<label
 											for="virtual"
-											class="relative flex h-12 w-full items-center justify-center overflow-hidden rounded-main border border-black text-center has-[:checked]:text-[#ffffff]"
+											class="relative flex h-12 w-full items-center justify-center overflow-hidden rounded-main border border-black text-center has-[:checked]:text-[#ffffff] max-tablet:h-9"
 										>
 											<RadioButton
 												:pt="{
@@ -149,13 +149,13 @@
 												v-model="type"
 											/>
 											<span
-												class="z-10 cursor-pointer text-[14px] transition-all checked:text-[#ffffff]"
+												class="z-10 cursor-pointer text-[14px] transition-all checked:text-[#ffffff] max-tablet:text-[0.625rem]"
 												>Виртуальная</span
 											>
 										</label>
 										<label
 											for="p"
-											class="relative flex h-12 w-full items-center justify-center overflow-hidden rounded-main border border-black text-center has-[:checked]:text-[#ffffff]"
+											class="relative flex h-12 w-full items-center justify-center overflow-hidden rounded-main border border-black text-center has-[:checked]:text-[#ffffff] max-tablet:h-9"
 										>
 											<RadioButton
 												:pt="{
@@ -171,7 +171,7 @@
 												v-model="type"
 											/>
 											<span
-												class="z-10 cursor-pointer text-[14px] transition-all checked:text-[#ffffff]"
+												class="z-10 cursor-pointer text-[14px] transition-all checked:text-[#ffffff] max-tablet:text-[0.625rem]"
 												>Физическая</span
 											>
 										</label>
@@ -180,7 +180,7 @@
 							</div>
 							<!-- Кнопки "Добавить" -->
 							<div
-								class="flex flex-col max-tablet:my-[1.25rem] max-tablet:gap-[1rem] tablet:gap-[1.313rem]"
+								class="flex flex-col max-tablet:gap-[1rem] tablet:gap-[1.313rem]"
 							>
 								<button
 									:disabled="isDisabled"

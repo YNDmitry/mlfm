@@ -7,13 +7,8 @@
 
 	const handleError = () => clearError({redirect: '/'})
 
-	const message =
-		props.error?.statusCode === 404
-			? 'Страница не найдена'
-			: props.error?.statusMessage
-
 	useHead({
-		title: `${props.error?.statusCode === 404 ? 'Страница не найдена' : props.error?.statusMessage} | MLFM`,
+		title: `${props.error?.statusMessage} | MLFM`,
 	})
 </script>
 
@@ -23,7 +18,7 @@
 			<div class="container">
 				<div class="py-12 text-center">
 					<h1 class="text-h1">{{ error?.statusCode }}</h1>
-					<p class="mb-6 mt-2">{{ message }}</p>
+					<p class="mb-6 mt-2">{{ error?.message }}</p>
 					<div class="mx-auto w-full max-w-96">
 						<button
 							@click="handleError"

@@ -6,6 +6,7 @@
 				products_id: {
 					id: string
 					title: string
+					slug: string
 					price: number
 					main_image: {
 						id: string
@@ -62,9 +63,10 @@
 						>
 							<HomePatternCard
 								:title="product.products_id.title"
+								:slug="product.products_id.slug"
 								:price="product.products_id.price"
 								:image="product.products_id.main_image.id"
-								:link="product.products_id.id"
+								:link="product.products_id.slug"
 							/>
 						</SwiperSlide>
 					</Swiper>

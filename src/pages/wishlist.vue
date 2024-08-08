@@ -27,6 +27,7 @@
 					<ProductCard
 						v-for="product in wishlistStore.productDetails"
 						:key="product.id"
+						:slug="product.slug"
 						:title="product.title"
 						:price="product.price"
 						:id="product.id"

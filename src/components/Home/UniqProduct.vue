@@ -6,6 +6,9 @@
 		uniq_product_id: {
 			type: String,
 		},
+		uniq_product_slug: {
+			type: String,
+		},
 		uniq_product_image_2: {
 			type: String,
 		},
@@ -31,7 +34,7 @@
 					</div>
 
 					<NuxtLink
-						:to="'/catalog/' + uniq_product_id"
+						:to="'/catalog/' + uniq_product_slug"
 						class="flex w-full max-w-[10.625rem] items-center justify-center rounded-main bg-red2 py-2 font-montserrat text-[0.75rem] font-bold uppercase text-primary transition-colors hover:bg-red2-hover"
 					>
 						Купить

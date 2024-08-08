@@ -13,6 +13,7 @@ query Homepage {
 		look_product {
 			products_id {
 				id
+				slug
 				title
 				price
 				main_image {
@@ -28,11 +29,13 @@ query Homepage {
 		}
 		uniq_product_id {
 			id
+			slug
 		}
 	}
 	homepage_products {
 		products_id {
 			id
+			slug
 			title
 			price
 			main_image {

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 	const appConfig = useRuntimeConfig()
-	const isMobile = useMediaQuery('(max-width:768px)')
 	const websiteStore = useWebsiteStore()
 
 	definePageMeta({
@@ -85,6 +84,7 @@
 			:uniq_image="data.homepage?.uniq_product_image?.id"
 			:uniq_product_image_2="data.homepage?.uniq_product_image_2?.id"
 			:uniq_product_id="data.homepage?.uniq_product_id?.id"
+			:uniq_product_slug="data.homepage?.uniq_product_id?.slug"
 		/>
 		<!-- /Выбор стилиста -->
 	</div>

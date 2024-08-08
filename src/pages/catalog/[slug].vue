@@ -1,50 +1,73 @@
 <script setup lang="ts">
 	const appConfig = useRuntimeConfig()
-	const {getItems} = useDirectusItems()
 
 	const cartStore = useCartStore()
 	const websiteStore = useWebsiteStore()
 	const wishlistStore = useWishlistStore()
-	const {id} = useRoute().params
-	const isOnWishlist = computed(() => wishlistStore.isOnWishlist(id as string))
+	const {slug} = useRoute().params
 	const toast = useToast()
-	const isRandomProductsPending = ref(true)
-	const rProducts = ref(null)
 
 	definePageMeta({
 		layout: 'default',
 	})
 
-	const product = ref<Product | null>(null)
+	// TODO: Исправить этот компонент, он не работает как положено
 
-	const fetchProduct = async () => {
-		try {
-			const response = await useAsyncGql(
-				'GetProductById',
-				{id: id as string},
-				{
-					getCachedData(key, nuxtApp) {
-						return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
-					},
-				},
-			)
-			product.value = response.data?.value.products_by_id || null
-
-			if (!product.value) {
-				throw createError({
-					statusCode: 404,
-					statusMessage: 'Продукт не найден',
-				})
-			}
-		} catch (error) {
-			console.error('Error fetching product:', error)
-			throw createError({
-				statusCode: 404,
-				statusMessage: 'Продукт не найден',
-			})
+	interface Product {
+		id?: string
+		title?: string
+		slug?: string
+		description?: string
+		brand: {
+			title: string
 		}
+		main_image?: {
+			id?: string
+		}
+		product_variants?: [
+			{
+				id?: string
+				color_id?: {title: string}
+				size_id?: {small_title: string}
+				availability?: string
+				price?: number
+			},
+		]
 	}
-	await fetchProduct()
+
+	const {$preview} = useNuxtApp()
+	const keyPrfx = $preview.value ? `-preview-${slug}` : `-product-${slug}`
+
+	const {data: product, status} = await useAsyncData(
+		`catalog-data${keyPrfx}`,
+		async () => {
+			const data = ref<Product>()
+			if ($preview.value) {
+				refreshNuxtData()
+				await GqlGetProductBySlugPreview({slug: slug as string}).then((res) => {
+					data.value = res.products[0] as Product
+				})
+			} else {
+				await GqlGetProductBySlug({
+					slug: slug as string,
+					status: 'published',
+				}).then((res) => (data.value = res.products[0] as Product))
+			}
+			return data.value
+		},
+		{
+			getCachedData(key, nuxtApp) {
+				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+			},
+		},
+	)
+
+	if (!product.value) {
+		throw createError({
+			statusCode: 404,
+			statusMessage: 'Продукт не найден',
+		})
+	}
 
 	useSeoMeta({
 		title: product?.value?.title + ' | MLFM',
@@ -61,33 +84,44 @@
 		twitterCard: 'summary',
 	})
 
+	// Schema.org Product Schema
+	useSchemaOrg([
+		{
+			'@type': 'Product',
+			name: product?.value?.title,
+			image: [
+				appConfig.public.databaseUrl +
+					'assets/' +
+					product?.value?.main_image?.id,
+			],
+			description: product?.value?.description,
+			brand: {
+				'@type': 'Brand',
+				name: product?.value?.brand?.title,
+			},
+			offers: {
+				'@type': 'Offer',
+				url: 'https://mlfm.store/catalog/' + product?.value?.slug,
+				priceCurrency: 'RUB',
+				price: product?.value?.product_variants[0].price,
+				itemCondition: 'https://schema.org/NewCondition',
+				availability: 'https://schema.org/InStock',
+				seller: {
+					'@type': 'Organization',
+					name: 'MLFM',
+				},
+			},
+		},
+	])
+
+	const isOnWishlist = computed(() =>
+		wishlistStore.isOnWishlist(product?.value?.id as string),
+	)
 	const currentVariantId = ref(product?.value?.product_variants[0]?.id)
 	const currentColor = ref(product?.value?.product_variants[0]?.color_id?.title)
 	const currentSize = ref(
 		product?.value?.product_variants[0]?.size_id?.small_title,
 	)
-
-	const initRandomProducts = async () => {
-		try {
-			const randomProducts = await getItems({
-				collection: 'products',
-				params: {
-					fields: ['title', 'price', 'main_image', 'id'],
-					filter: {
-						id: {
-							_neq: id,
-						},
-					},
-					limit: 4,
-				},
-			})
-			isRandomProductsPending.value = false
-			return (rProducts.value = randomProducts)
-		} catch (error) {
-			console.log(error)
-		}
-	}
-	await initRandomProducts()
 
 	const handleAddToCart = async () => {
 		const currentProduct = product?.value
@@ -148,7 +182,7 @@
 	)
 
 	watch([currentColor, currentSize], () => {
-		const variant = product.value?.product_variants.find(
+		const variant = product?.value?.product_variants?.find(
 			(variant: any) =>
 				variant?.color_id?.title === currentColor.value &&
 				variant?.size_id?.small_title === currentSize.value,
@@ -157,7 +191,7 @@
 	})
 
 	const isProductOutOfStock = computed(() => {
-		const availability = product.value?.product_variants?.find(
+		const availability = product?.value?.product_variants?.find(
 			(el: any) => el.id === currentVariantId.value,
 		)
 		if (availability) {
@@ -167,63 +201,41 @@
 	})
 
 	const currentPrice = computed(() => {
-		const price = product.value?.product_variants?.find(
+		const price = product?.value?.product_variants?.find(
 			(el: any) => el.id === currentVariantId.value,
 		)
 		if (price) {
-			return usePrice(price.price)
+			return usePrice(price?.price as number)
 		}
 		return '-'
 	})
 
 	const img = useImage()
 	const currentImage = computed(() => {
-		const cI = product.value?.product_variants?.find(
+		const cI = product?.value?.product_variants?.find(
 			(el: any) => el.id === currentVariantId.value,
 		)
 
 		if (cI) {
-			return img(cI.image?.id, {}, {provider: 'directus'})
+			return img(cI.image?.id as string, {}, {provider: 'directus'})
 		}
-		return img(product.value?.main_image?.id, {}, {provider: 'directus'})
+		return img(
+			product?.value?.main_image?.id as string,
+			{},
+			{provider: 'directus'},
+		)
 	})
-
-	// Schema.org Product Schema
-	useSchemaOrg([
-		{
-			'@type': 'Product',
-			name: product.value?.title,
-			image: [
-				appConfig.public.databaseUrl +
-					'assets/' +
-					product.value?.main_image?.id,
-			],
-			description: product.value?.description,
-			brand: {
-				'@type': 'Brand',
-				name: product.value?.brand?.title,
-			},
-			offers: {
-				'@type': 'Offer',
-				url: window.location.href,
-				priceCurrency: 'RUB',
-				price: product.value?.price,
-				itemCondition: 'https://schema.org/NewCondition',
-				availability: 'https://schema.org/InStock',
-				seller: {
-					'@type': 'Organization',
-					name: 'MLFM',
-				},
-			},
-		},
-	])
 </script>
 
 <template>
 	<div>
 		<Toast :position="'top-right'" />
 		<!-- Карточка товара -->
-		<section class="pt-[78px] max-tablet:pt-0">
+		<section
+			class="pt-[78px] max-tablet:pt-0"
+			:class="product?.product_upsells.length > 0 ? '' : 'pb-[78px]'"
+			v-if="status === 'success'"
+		>
 			<div class="mx-auto my-0 max-w-[1189px] px-[1rem]">
 				<div class="flex gap-7 max-tablet:flex-col max-tablet:gap-4">
 					<div
@@ -286,7 +298,7 @@
 											<input
 												type="radio"
 												name="color"
-												:value="color.title"
+												:value="color?.title"
 												v-model="currentColor"
 												class="hidden"
 											/>
@@ -294,7 +306,7 @@
 											<span
 												class="rounded-full bg-white flex items-center justify-center border border-black px-2 text-black max-tablet:min-h-[1.25rem] max-tablet:min-w-[3.438rem] max-tablet:text-[0.625rem] tablet:min-h-[2rem] tablet:min-w-[5.938rem]"
 												id="option-6"
-												>{{ color.title }}</span
+												>{{ color?.title }}</span
 											>
 										</label>
 									</div>
@@ -303,7 +315,7 @@
 
 							<div
 								class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-2"
-								v-if="processedData.sizes?.length > 0"
+								v-if="processedData.sizes.length > 0"
 							>
 								<span class="max-tablet:text-[0.625rem] tablet:text-[0.75rem]"
 									>Размер:</span
@@ -319,7 +331,7 @@
 										<input
 											type="radio"
 											name="size"
-											:value="size.small_title"
+											:value="size?.small_title"
 											v-model="currentSize"
 											class="hidden"
 										/>
@@ -328,7 +340,7 @@
 											class="rounded-full bg-white flex items-center justify-center border border-black px-2 text-black max-tablet:min-h-[1.25rem] max-tablet:min-w-[3.438rem] max-tablet:text-[0.625rem] tablet:min-h-[2rem] tablet:min-w-[5.938rem]"
 											id="option-6"
 										>
-											{{ size.small_title }}
+											{{ size?.small_title }}
 										</span>
 									</label>
 								</div>
@@ -336,7 +348,9 @@
 							</div>
 						</div>
 
-						<span class="max-tablet:text-[0.625rem] tablet:text-[0.875rem]"
+						<span
+							class="max-tablet:text-[0.625rem] tablet:text-[0.875rem]"
+							v-if="currentPrice"
 							>Цена: {{ currentPrice }}</span
 						>
 
@@ -362,8 +376,10 @@
 							<button
 								@click="
 									isOnWishlist
-										? wishlistStore.removeItemFromWishlist(id as string)
-										: wishlistStore.addItemToWishlist(id as string)
+										? wishlistStore.removeItemFromWishlist(
+												product?.id as string,
+											)
+										: wishlistStore.addItemToWishlist(product?.id as string)
 								"
 								type="button"
 								class="w-full rounded-main border-[1px] border-black transition-all hover:bg-black hover:text-primary max-tablet:min-h-[2rem] max-tablet:text-[0.625rem] tablet:min-h-[3.313rem]"
@@ -379,15 +395,20 @@
 
 						<!-- Dropdown-ы -->
 						<div
+							v-if="product?.description"
 							class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-[1.25rem]"
 						>
-							<Accordion v-if="product?.description">
-								<AccordionTab class="p-0">
-									<template #header class="p-0">
-										<div class="font-normal">О продукте</div>
-									</template>
-									<p class="pt-3">{{ product?.description }}</p>
-								</AccordionTab>
+							<Accordion>
+								<AccordionPanel class="p-0">
+									<AccordionHeader class="text-[.875rem] font-normal"
+										>О продукте</AccordionHeader
+									>
+									<AccordionContent>
+										<p class="pt-3 text-[.75rem]">
+											{{ product?.description }}
+										</p>
+									</AccordionContent>
+								</AccordionPanel>
 							</Accordion>
 						</div>
 						<!-- /Dropdown-ы -->
@@ -399,6 +420,7 @@
 
 		<!-- Похожие товары -->
 		<section
+			v-if="product?.product_upsells?.length > 0"
 			class="max-laptop:pb-[3.75rem] max-tablet:pt-[2rem] tablet:pt-[7.25rem] laptop:pb-[12.5rem]"
 		>
 			<div class="container my-0 px-3">
@@ -407,33 +429,16 @@
 				>
 					Похожие товары
 				</h2>
-
 				<div
-					v-if="isRandomProductsPending"
 					class="no-scrollbar mx-[-1rem] flex scroll-px-3 gap-[45px] overflow-x-auto px-[1rem] max-tablet:gap-[20px]"
 				>
-					<div class="w-full" v-for="(item, idx) in 4" :key="idx">
-						<Skeleton width="300px" height="410px" />
-
-						<div
-							class="flex flex-col gap-[0.5rem] pt-5 text-[14px] font-normal max-tablet:gap-1 max-tablet:pt-2 max-tablet:text-[10px]"
-						>
-							<Skeleton width="10rem" />
-
-							<Skeleton width="4rem" />
-						</div>
-					</div>
-				</div>
-				<div
-					v-else
-					class="no-scrollbar mx-[-1rem] flex scroll-px-3 gap-[45px] overflow-x-auto px-[1rem] max-tablet:gap-[20px]"
-				>
-					<template v-for="product in rProducts" :key="product.id">
+					<template v-for="item in product?.product_upsells" :key="product.id">
 						<ProductCard
-							:id="product?.id"
-							:title="product?.title"
-							:imgSrc="product?.main_image"
-							:price="product?.price"
+							:id="item?.related_products_id?.id"
+							:slug="item?.related_products_id?.slug"
+							:title="item?.related_products_id?.title"
+							:imgSrc="item?.related_products_id?.main_image?.id"
+							:price="item?.related_products_id?.product_variants[0].price"
 							class="animation-duration-2000 max-w-[18.31rem] flex-shrink-0 transition-all max-tablet:w-[150px]"
 						/>
 					</template>

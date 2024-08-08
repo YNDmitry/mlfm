@@ -3,6 +3,7 @@
 
 	interface Product {
 		id: string
+		slug: string
 		title: string
 		main_image: {id: string}
 		product_variants: [
@@ -20,7 +21,6 @@
 		totalProducts: number
 		currentPage: number
 		currentLimit: number
-		isMobile: boolean
 		isLoading: boolean
 	}
 
@@ -56,91 +56,97 @@
 		<div
 			class="grid grid-cols-[repeat(auto-fill,minmax(250px,_1fr))] gap-[1.875rem] pb-[3.75rem] max-tablet:grid-cols-[repeat(auto-fill,minmax(150px,_1fr))]"
 		>
-			<template v-if="isLoading" v-for="(item, idx) in 6" :key="idx">
-				<div>
-					<Skeleton
-						width="100%"
-						:height="$device.isMobile ? '12rem' : '25rem'"
-					/>
-					<div class="mt-5">
-						<Skeleton />
-						<Skeleton class="mt-2" width="5rem" />
+			<template v-if="isLoading">
+				<template v-for="(item, idx) in 6" :key="idx">
+					<div>
+						<Skeleton
+							width="100%"
+							:height="$device.isMobile ? '12rem' : '25rem'"
+						/>
+						<div class="mt-5">
+							<Skeleton />
+							<Skeleton class="mt-2" width="5rem" />
+						</div>
 					</div>
-				</div>
+				</template>
 			</template>
-			<template
-				v-else
-				v-for="(product, index) in displayedProducts"
-				:key="product.id"
-			>
-				<ProductCard
-					:id="product.id"
-					:title="product?.title"
-					:imgSrc="
-						product?.main_image?.id || product?.product_variants[0]?.image?.id
-					"
-					:price="product?.product_variants[0]?.price"
-					:class="{
-						'max-tablet:col-span-full':
-							index === displayedProducts.length - 1 &&
-							displayedProducts.length % 2 !== 0,
-					}"
-					class="animation-duration-2000 flex-shrink-0 transition-all"
-				/>
-
-				<!-- изображение -->
+			<template v-else>
 				<template
-					v-if="
-						(props.isMobile &&
-							(index + props.currentPage * props.currentLimit + 1) % 6 === 0) ||
-						(!props.isMobile &&
-							(index + props.currentPage * props.currentLimit + 1) % 3 === 0)
-					"
+					v-for="(product, index) in displayedProducts"
+					:key="product.id"
 				>
-					<div
-						class="col-span-full w-full overflow-hidden"
+					<ProductCard
+						:id="product?.id"
+						:slug="product?.slug"
+						:title="product?.title"
+						:imgSrc="
+							product?.main_image?.id || product?.product_variants[0]?.image?.id
+						"
+						:price="product?.product_variants[0]?.price"
+						:class="{
+							'max-tablet:col-span-full':
+								index === displayedProducts.length - 1 &&
+								displayedProducts.length % 2 !== 0,
+						}"
+						class="animation-duration-2000 flex-shrink-0 transition-all"
+					/>
+
+					<!-- изображение -->
+					<template
 						v-if="
-							props.data.catalog.random_banners_collection.length >
-							getBannerIndex(index + props.currentPage * props.currentLimit)
+							(props.isMobile &&
+								(index + props.currentPage * props.currentLimit + 1) % 6 ===
+									0) ||
+							(!props.isMobile &&
+								(index + props.currentPage * props.currentLimit + 1) % 3 === 0)
 						"
 					>
-						<button
-							type="button"
-							@click="
-								changeCollection(
-									props.data.catalog.random_banners_collection[
-										getBannerIndex(
-											index + props.currentPage * props.currentLimit,
-										)
-									]?.collection_id.title,
-								)
+						<div
+							class="col-span-full w-full overflow-hidden"
+							v-if="
+								props.data.catalog.random_banners_collection.length >
+								getBannerIndex(index + props.currentPage * props.currentLimit)
 							"
 						>
-							<NuxtImg
-								provider="directus"
-								:src="
-									props.data.catalog.random_banners_collection[
-										getBannerIndex(
-											index + props.currentPage * props.currentLimit,
-										)
-									]?.image.id
+							<button
+								type="button"
+								@click="
+									changeCollection(
+										props.data.catalog.random_banners_collection[
+											getBannerIndex(
+												index + props.currentPage * props.currentLimit,
+											)
+										]?.collection_id.title,
+									)
 								"
-								class="h-auto max-w-full"
-								width="955"
-								format="webp"
-								placeholder
-							/>
-						</button>
-					</div>
+							>
+								<NuxtImg
+									provider="directus"
+									:src="
+										props.data.catalog.random_banners_collection[
+											getBannerIndex(
+												index + props.currentPage * props.currentLimit,
+											)
+										]?.image.id
+									"
+									class="h-auto max-w-full"
+									width="955"
+									format="webp"
+									placeholder
+								/>
+							</button>
+						</div>
+					</template>
 				</template>
 			</template>
 		</div>
 		<!-- /Раздел с карточками -->
 
+		<!-- TODO: Сделать пагинацию которая связана с query параметрами -->
 		<!-- Пагинация -->
 		<div
 			class="w-ful relative border-t-[1px] border-[#AAAAAA]"
-			v-if="products?.length > 0"
+			v-if="products?.length"
 		>
 			<Paginator
 				id="pagination"
@@ -157,8 +163,9 @@
 					newProductsLimit * 2,
 					newProductsLimit * 3,
 				]"
+				:alwaysShow="false"
 				:currentPageReportTemplate="
-					!props.isMobile
+					!$device.isMobile
 						? '{currentPage} из {totalPages}'
 						: '{currentPage} из {totalPages}'
 				"
