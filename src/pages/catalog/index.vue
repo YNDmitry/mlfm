@@ -10,7 +10,7 @@
 	const currentLimit = ref(Number(route.query.limit) || 9)
 	const currentSort = ref(route.query.sort || options[0].code)
 
-	const {products, refresh, isProductLoading} = useProducts(
+	const {products, productCount, refresh, isProductLoading} = useProducts(
 		currentSort,
 		currentPage.value,
 		currentLimit.value,
@@ -26,10 +26,6 @@
 		},
 	)
 
-	const otherQuery = computed(() => {
-		const {page, limit, ...rest} = route.query
-		return rest
-	})
 	watch(
 		() => route.query,
 		() => {
@@ -38,12 +34,18 @@
 	)
 
 	watch(
-		() => otherQuery.value,
+		() => [
+			route.query.category,
+			route.query.collectionId,
+			route.query.color,
+			route.query.size,
+			route.query.brand,
+			route.query.minPrice,
+			route.query.maxPrice,
+		],
 		() => {
-			if (!otherQuery.value) {
-				router.replace({query: {...route.query, page: 1}})
-				refresh()
-			}
+			router.replace({query: {...route.query, page: 1}})
+			refresh()
 		},
 	)
 
@@ -67,7 +69,7 @@
 		currentPage.value = 0
 	}
 
-	function updatePage(newPage: number) {
+	function updatePage(newPage: {page: number; rows: number}) {
 		router.replace({
 			query: {...route.query, page: newPage.page + 1, limit: newPage.rows},
 		})
@@ -131,7 +133,7 @@
 							v-if="products?.length"
 							:isLoading="isProductLoading"
 							:products="products"
-							:totalProducts="data?.products_aggregated[0].count?.id"
+							:totalProducts="productCount"
 							:data="data"
 							:currentPage="currentPage"
 							:currentLimit="currentLimit"
