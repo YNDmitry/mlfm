@@ -158,7 +158,7 @@
 						}"
 					>
 						<TabList
-							:pt="{inkbar: 'hidden'}"
+							:pt="{activeBar: 'hidden', tabList: 'grid grid-cols-[1fr_1fr]'}"
 							v-if="
 								useCart.discountPercent === null ||
 								useCart.giftCodeInitialAmount === 0
