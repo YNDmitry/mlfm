@@ -15,10 +15,13 @@
 	const router = useRouter()
 	const route = useRoute()
 	const props = defineProps<Props>()
+	const emit = defineEmits(['update:categories'])
 	const minPriceValue = defineModel('minPrice', {default: 0})
 	const maxPriceValue = defineModel('maxPrice', {default: 0})
 	const categories: any = useState('categories')
-	const currentCategories = ref(route.query.category || [])
+	const currentCategories = ref(
+		route.query.category ? route.query.category : [],
+	)
 
 	watch(
 		() => route.query.minPrice,
@@ -31,6 +34,13 @@
 		() => route.query.maxPrice,
 		() => {
 			if (!route.query.maxPrice) maxPriceValue.value = props.maxPrice
+		},
+	)
+
+	watch(
+		() => route.query.category,
+		(newVal) => {
+			if (newVal === undefined || null) currentCategories.value = []
 		},
 	)
 
@@ -75,12 +85,18 @@
 								:inputId="category.id"
 								:name="category.title"
 								:value="category.title"
-								:aria-label="'Категория - ' + category.title"
-								@update:model-value="
+								@change="
 									router.replace({
-										query: {...route.query, category: currentCategories},
+										query: {
+											...route.query,
+											category: currentCategories,
+										},
 									})
 								"
+								:aria-label="'Категория - ' + category.title"
+								:pt="{
+									box: 'shadow-none border-gray border',
+								}"
 							/>
 							<span>{{ category.title }}</span>
 						</label>
@@ -231,7 +247,7 @@
 		@apply max-w-[85px] outline-none;
 	}
 
-	.p-checkbox {
+	/* .p-checkbox-input {
 		@apply !shadow-none;
-	}
+	} */
 </style>
