@@ -90,3 +90,17 @@ query GetRandomProducts($id: String) {
 		}
 	}
 }
+
+query SearchProducts($title: String) {
+	products(search: $title) {
+		id
+		slug
+		title
+		main_image {
+			id
+		}
+		product_variants {
+			price
+		}
+	}
+}

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 	import {object, string} from 'yup'
 	const websiteStore = useWebsiteStore()
-	const {getItems} = useDirectusItems()
 
 	const schema = object({
 		search: string().required('Обязательное поле'),
@@ -11,25 +10,20 @@
 		validationSchema: schema,
 	})
 
-	const currentProducts = ref([])
+	const currentProducts: any = ref([])
 	const isNothingFound = ref(false)
 
 	const input = useField('search')
 
 	const onSubmit = handleSubmit(async (values) => {
-		return await getItems({
-			collection: 'products',
-			params: {
-				search: values.search,
-			},
-		}).then((res) => {
-			if (res.length === 0) {
-				isNothingFound.value = true
-			} else {
-				isNothingFound.value = false
-			}
-			currentProducts.value = res
-		})
+		const res = await GqlSearchProducts({title: values.search})
+
+		if (res.products.length === 0) {
+			isNothingFound.value = true
+		} else {
+			isNothingFound.value = false
+		}
+		return (currentProducts.value = res.products)
 	})
 </script>
 
@@ -80,17 +74,28 @@
 			<div
 				class="mt-8 grid grid-cols-[repeat(6,_1fr)] gap-6 overflow-y-auto max-laptop:grid-cols-[repeat(4,_1fr)] max-tablet:grid-cols-[repeat(2,_1fr)]"
 				data-lenis-prevent
-				v-if="currentProducts.length > 0 && !isNothingFound"
 			>
-				<ProductCard
-					:title="item.title"
-					:price="item.price"
-					:imgSrc="item.main_image"
-					:id="item.id"
-					v-for="item in currentProducts"
-					:key="item.id"
-					@click="websiteStore.isSearchPopup = false"
-				/>
+				<template v-if="isSubmitting">
+					<div class="flex w-full flex-col" v-for="(item, idx) in 6" :key="idx">
+						<Skeleton width="15.625rem" height="20rem" />
+						<Skeleton width="10rem" height="1rem" class="mt-2" />
+						<Skeleton width="5rem" height="1rem" class="mt-2" />
+					</div>
+				</template>
+				<template
+					v-if="currentProducts.length > 0 && !isNothingFound && !isSubmitting"
+				>
+					<template v-for="item in currentProducts" :key="item.id">
+						<ProductCard
+							:id="item.id"
+							:slug="item.slug"
+							:title="item.title"
+							:price="item.product_variants[0].price"
+							:imgSrc="item.main_image.id"
+							@click="websiteStore.isSearchPopup = false"
+						/>
+					</template>
+				</template>
 			</div>
 			<div v-if="isNothingFound" class="py-5 text-center">
 				Ничего не найдено
