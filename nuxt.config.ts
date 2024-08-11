@@ -47,8 +47,18 @@ export default defineNuxtConfig({
 			databaseUrl: process.env.DATABASE_URL,
 			'graphql-client': {
 				clients: {
-					default: 'https://admin.mlfm.store/graphql',
+					default: {
+						host: 'https://admin.mlfm.store/graphql',
+					},
 				},
+			},
+		},
+	},
+
+	graphql: {
+		clients: {
+			profile: {
+				endpoint: 'https://admin.mlfm.store/graphql',
 			},
 		},
 	},
@@ -72,6 +82,7 @@ export default defineNuxtConfig({
 		'@nuxt/test-utils/module',
 		'@nuxtjs/device',
 		'nuxt-schema-org',
+		'nuxt-graphql-request',
 	],
 
 	image: {
