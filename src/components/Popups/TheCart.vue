@@ -354,11 +354,11 @@
 					>
 						<div
 							v-for="product in useCart.relatedItems"
-							:key="product.id"
+							:key="product?.id"
 							class="w-full"
 						>
 							<NuxtLink
-								:to="'/catalog/' + product.id"
+								:to="'/catalog/' + product.slug"
 								@click="websiteStore.isVisibleCart = false"
 							>
 								<div class="relative flex w-full flex-col justify-center">
@@ -376,7 +376,7 @@
 											{{ product.title }}
 										</div>
 										<div class="overflow-ellipsis text-[10px]">
-											₽ {{ product.price }}
+											{{ usePrice(product?.product_variants[0]?.price) }}
 										</div>
 									</div>
 								</div>

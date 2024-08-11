@@ -3,9 +3,11 @@ query RelatedProducts {
 		id
 		slug
 		title
-		price
 		main_image {
 			id
+		}
+		product_variants {
+			price
 		}
 	}
 }
