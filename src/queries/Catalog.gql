@@ -26,6 +26,8 @@ query Catalog {
 		count {
 			id
 		}
+	}
+	product_variants_aggregated {
 		min {
 			price
 		}

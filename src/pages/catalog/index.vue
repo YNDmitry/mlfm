@@ -9,9 +9,23 @@
 	const sortOptions = ref(options)
 	const currentPage = ref(Number(route.query.page) - 1 || 0)
 	const currentLimit = ref(Number(route.query.limit) || 9)
-	const currentSort = ref(route.query.sort || sortOptions.value[0].code)
+	const currentSort = ref(
+		sortOptions.value.find((option) => option.code === route.query.sort) ||
+			sortOptions.value[0],
+	)
 
-	const {products, productCount, refresh, isProductLoading} = useProducts()
+	const {refresh, isProductLoading} = useProducts()
+
+	const {data: products, refresh: refreshProducts} = useAsyncData(
+		'products',
+		async () => {
+			return await refresh(
+				currentPage.value,
+				currentLimit.value,
+				currentSort.value.code,
+			)
+		},
+	)
 
 	const {data} = await useAsyncGql(
 		'Catalog',
@@ -32,9 +46,26 @@
 
 	watch(
 		() => {
-			const {category, collectionId, color, size, brand, minPrice, maxPrice} =
-				route.query
-			return {category, collectionId, color, size, brand, minPrice, maxPrice}
+			const {
+				category,
+				collectionId,
+				color,
+				size,
+				brand,
+				minPrice,
+				maxPrice,
+				sort,
+			} = route.query
+			return {
+				category,
+				collectionId,
+				color,
+				size,
+				brand,
+				minPrice,
+				maxPrice,
+				sort,
+			}
 		},
 		(newFilters, oldFilters) => {
 			if (JSON.stringify(newFilters) !== JSON.stringify(oldFilters)) {
@@ -48,7 +79,7 @@
 					},
 				})
 
-				refresh(currentPage.value, currentLimit.value)
+				refreshProducts()
 			}
 		},
 		{deep: true},
@@ -59,12 +90,8 @@
 			const {page, limit} = route.query
 			return {page, limit}
 		},
-		(newPage, oldPage) => {
-			// if (JSON.stringify(newPage) !== JSON.stringify(oldPage)) {
-			// currentPage.value = Number(newPage.page) - 1 || 0 // обновляем currentPage только при изменении page
-			// currentLimit.value = Number(newPage.limit)
-			// }
-			refresh(currentPage.value, currentLimit.value) // обновляем данные
+		() => {
+			refreshProducts()
 		},
 	)
 
@@ -90,7 +117,7 @@
 				limit: route.query.limit || currentLimit.value,
 			},
 		})
-		currentPage.value = 1
+		currentPage.value = 0
 	}
 
 	function updatePage(newPage: {page: number; rows: number}) {
@@ -111,8 +138,6 @@
 	const minPriceValue = useRouteQuery('minPrice', null)
 	const maxPriceValue = useRouteQuery('maxPrice', null)
 	const categories = useState('categories', () => data.value.categories)
-
-	refresh(currentPage.value, currentLimit.value)
 </script>
 
 <template>
@@ -126,8 +151,8 @@
 						:data="data"
 						:resetFilters="resetFilters"
 						:totalProducts="data?.products_aggregated[0].count?.id"
-						:minPrice="data?.products_aggregated[0]?.min?.price"
-						:maxPrice="data?.products_aggregated[0]?.max?.price"
+						:minPrice="data?.product_variants_aggregated[0].min?.price"
+						:maxPrice="data?.product_variants_aggregated[0].max?.price"
 						:currentSort="currentSort"
 						:categories="categories"
 						@update:currentSort="($event) => (currentSort = $event)"
@@ -141,8 +166,8 @@
 						:data="data"
 						:resetFilters="resetFilters"
 						:totalProducts="data?.products_aggregated[0].count?.id"
-						:minPrice="data?.products_aggregated[0]?.min?.price"
-						:maxPrice="data?.products_aggregated[0]?.max?.price"
+						:minPrice="data?.product_variants_aggregated[0].min?.price"
+						:maxPrice="data?.product_variants_aggregated[0].max?.price"
 						v-model:min-price-value="minPriceValue"
 						v-model:max-price-value="maxPriceValue"
 						class="max-tablet:hidden"
@@ -152,9 +177,8 @@
 					<div class="max-laptop:pb-[3.75rem] laptop:pb-[4.375rem]">
 						<!-- Хлебные крошки и сортировка -->
 						<CatalogSort
-							:current-sort="currentSort"
 							:sort-options="sortOptions"
-							v-model="currentSort"
+							v-model:current-sort="currentSort"
 						/>
 						<!-- /Хлебные крошки и сортировка -->
 
@@ -164,9 +188,9 @@
 
 						<!-- Пагинация и лист с продуктами -->
 						<CatalogProductList
-							:isLoading="isProductLoading"
-							:products="products"
-							:totalProducts="productCount"
+							:isLoading="products?.isLoading"
+							:products="products?.products"
+							:totalProducts="products?.totalProducts"
 							:data="data"
 							:currentPage="currentPage"
 							:currentLimit="currentLimit"

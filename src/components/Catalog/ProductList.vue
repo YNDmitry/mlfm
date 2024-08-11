@@ -14,7 +14,7 @@
 	}
 
 	interface Props {
-		products: Product[]
+		products: any
 		data: any
 		totalProducts: number
 		currentPage: number
@@ -143,7 +143,7 @@
 		<!-- Пагинация -->
 		<div
 			class="w-ful relative border-t-[1px] border-[#AAAAAA]"
-			v-if="totalProducts > 0"
+			v-if="products.length"
 		>
 			<Paginator
 				id="pagination"
@@ -188,15 +188,11 @@
 					},
 				}"
 			>
-				<template #start="slotProps">
-					Page: {{ slotProps.state.page }} First:
-					{{ slotProps.state.first }} Rows: {{ slotProps.state.rows }}
-				</template>
 			</Paginator>
 		</div>
 		<!-- /Пагинация -->
 		<div
-			v-if="totalProducts === 0"
+			v-if="products.length === 0"
 			class="mx-auto flex w-full max-w-[500px] flex-col justify-center gap-5 text-center"
 		>
 			<div>Продуктов по данным фильтрам не найдено</div>

@@ -6,7 +6,14 @@
 	const props = defineProps<Props>()
 	const router = useRouter()
 	const route = useRoute()
-	const currentSort: any = defineModel('currentSort')
+
+	const currentSort = defineModel('currentSort')
+
+	watch(currentSort, (newValue: any) => {
+		router.replace({
+			query: {...route.query, sort: newValue.code},
+		})
+	})
 </script>
 
 <template>
@@ -22,13 +29,8 @@
 			<Select
 				v-model="currentSort"
 				:options="sortOptions"
-				@update:modelValue="
-					router.replace({
-						query: {...route.query, sort: currentSort.code},
-					})
-				"
 				optionLabel="sort"
-				placeholder="Сортировка"
+				:placeholder="currentSort.name"
 				:pt="{
 					root: 'shadow-none outline-none !max-h-none items-center gap-4',
 					label: 'text-black p-0 text-black text-[12px]',

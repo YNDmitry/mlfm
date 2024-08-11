@@ -1,18 +1,18 @@
 export const options = [
 	{
 		name: 'Дата (от новой)',
-		code: ['-date_created'],
+		code: '-date_created',
 	},
 	{
 		name: 'Дата (от старой)',
-		code: ['date_created'],
+		code: 'date_created',
 	},
 	{
 		name: 'Цена (от низкой)',
-		code: ['price'],
+		code: 'product_variants.price',
 	},
 	{
 		name: 'Цена (от высокой)',
-		code: ['-price'],
+		code: '-product_variants.price',
 	},
 ]

@@ -60,26 +60,28 @@ export function useProducts() {
 		return obj
 	})
 
-	const products: any = ref(null)
-	const productCount: any = ref(null)
+	const productCount: any = ref(0)
 	const isProductLoading = ref(true)
 
-	const refresh = async (page: number, limit: number) => {
-		await GqlProducts({
+	const refresh = async (page: number, limit: number, sort: any) => {
+		const res = await GqlProducts({
 			page: page + 1,
 			limit: limit,
-			sort: route.query.sort || ['-date_created'],
+			sort: [sort],
 			filter: filterObj.value.value,
-		}).then((res) => {
-			products.value = res.products
-			productCount.value = res.products_aggregated[0].count?.id
-			isProductLoading.value = false
 		})
+
+		productCount.value = res.products_aggregated[0].count?.id
+		isProductLoading.value = false
+
+		return {
+			products: res.products,
+			totalProducts: productCount,
+			isLoading: isProductLoading,
+		} // Вернем продукты
 	}
 
 	return {
-		products,
-		productCount,
 		refresh,
 		isProductLoading,
 	}
