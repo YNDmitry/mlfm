@@ -7,13 +7,13 @@
 		{title: 'Контакты', href: '/contact-us'},
 	])
 
-	const isMobile = useMediaQuery('(max-width: 768px)')
+	const {isMobile} = useDevice()
 	const isOpen = ref(false)
 
 	const isDesktopMenuOpen = ref(false)
 
 	const openMenu = () => {
-		if (!isMobile.value) return
+		if (!isMobile) return
 		isOpen.value = !isOpen.value
 	}
 	const tooltipStyles = {

@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-	import Skeleton from 'primevue/skeleton'
-
 	interface Product {
 		id: string
 		slug: string
@@ -24,29 +22,34 @@
 		isLoading: boolean
 	}
 
+	const {isMobile} = useDevice()
+
 	const props = defineProps<Props>()
 	const emit = defineEmits(['resetFilters', 'updatePage', 'updateCollection'])
 
 	const router = useRouter()
 	const route = useRoute()
 
-	const initialLimit = ref(Number(route.query.limit) || props.currentLimit)
-	const newProductsLimit = ref(
-		Number(route.query.limit) || (props.currentLimit as number),
-	)
-
-	const displayedProducts = computed(() => props.products)
-
-	const getBannerIndex = (overallIndex: number) => {
-		if (props.isMobile) {
-			return Math.floor(overallIndex / 6)
-		} else {
-			return Math.floor(overallIndex / 3)
-		}
-	}
+	const initialLimit = ref(props.currentLimit)
 
 	const changeCollection = (collectionName: string) => {
 		router.push({query: {...route.query, collectionId: collectionName}})
+	}
+
+	const totalBanners = props.data.catalog.random_banners_collection.length
+
+	// Количество баннеров, отображаемых на одной странице
+	const bannersPerPage = computed(() => (isMobile ? 1 : 1))
+
+	// Расчет индекса баннера для текущего продукта на странице
+	const getBannerIndex = (overallIndex: number) => {
+		return Math.floor(overallIndex / bannersPerPage.value)
+	}
+
+	const shouldShowBanner = (index: number) => {
+		const overallIndex = index + props.currentPage * props.currentLimit
+		const bannerIndex = getBannerIndex(overallIndex)
+		return bannerIndex < totalBanners
 	}
 </script>
 
@@ -54,15 +57,12 @@
 	<div>
 		<!-- Раздел с карточками -->
 		<div
-			class="grid grid-cols-[repeat(auto-fill,minmax(250px,_1fr))] gap-[1.875rem] pb-[3.75rem] max-tablet:grid-cols-[repeat(auto-fill,minmax(150px,_1fr))]"
+			class="grid grid-cols-[repeat(auto-fill,minmax(250px,_1fr))] gap-[1.875rem] pb-[3.75rem] max-tablet:grid-cols-[repeat(auto-fill,minmax(150px,_1fr))] max-tablet:gap-4"
 		>
 			<template v-if="isLoading">
 				<template v-for="(item, idx) in 6" :key="idx">
 					<div>
-						<Skeleton
-							width="100%"
-							:height="$device.isMobile ? '12rem' : '25rem'"
-						/>
+						<Skeleton width="100%" :height="isMobile ? '12rem' : '25rem'" />
 						<div class="mt-5">
 							<Skeleton />
 							<Skeleton class="mt-2" width="5rem" />
@@ -71,10 +71,7 @@
 				</template>
 			</template>
 			<template v-else>
-				<template
-					v-for="(product, index) in displayedProducts"
-					:key="product.id"
-				>
+				<template v-for="(product, index) in products" :key="product.id">
 					<ProductCard
 						:id="product?.id"
 						:slug="product?.slug"
@@ -85,8 +82,7 @@
 						:price="product?.product_variants[0]?.price"
 						:class="{
 							'max-tablet:col-span-full':
-								index === displayedProducts.length - 1 &&
-								displayedProducts.length % 2 !== 0,
+								index === products.length - 1 && products.length % 2 !== 0,
 						}"
 						class="animation-duration-2000 flex-shrink-0 transition-all"
 					/>
@@ -94,18 +90,20 @@
 					<!-- изображение -->
 					<template
 						v-if="
-							(props.isMobile &&
+							shouldShowBanner(index) &&
+							((isMobile &&
 								(index + props.currentPage * props.currentLimit + 1) % 6 ===
 									0) ||
-							(!props.isMobile &&
-								(index + props.currentPage * props.currentLimit + 1) % 3 === 0)
+								(!isMobile &&
+									(index + props.currentPage * props.currentLimit + 1) % 3 ===
+										0))
 						"
 					>
 						<div
 							class="col-span-full w-full overflow-hidden"
 							v-if="
-								props.data.catalog.random_banners_collection.length >
-								getBannerIndex(index + props.currentPage * props.currentLimit)
+								getBannerIndex(index + props.currentPage * props.currentLimit) <
+								totalBanners
 							"
 						>
 							<button
@@ -142,11 +140,10 @@
 		</div>
 		<!-- /Раздел с карточками -->
 
-		<!-- TODO: Сделать пагинацию которая связана с query параметрами -->
 		<!-- Пагинация -->
 		<div
 			class="w-ful relative border-t-[1px] border-[#AAAAAA]"
-			v-if="products?.length"
+			v-if="totalProducts > 0"
 		>
 			<Paginator
 				id="pagination"
@@ -155,17 +152,14 @@
 						$emit('updatePage', $event)
 					}
 				"
+				:first="currentPage * props.currentLimit"
 				:rows="props.currentLimit"
 				:totalRecords="props.totalProducts"
 				template="PrevPageLink CurrentPageReport JumpToPageDropdown RowsPerPageDropdown NextPageLink"
-				:rowsPerPageOptions="[
-					newProductsLimit,
-					newProductsLimit * 2,
-					newProductsLimit * 3,
-				]"
+				:rowsPerPageOptions="[initialLimit, initialLimit * 2, initialLimit * 3]"
 				:alwaysShow="false"
 				:currentPageReportTemplate="
-					!$device.isMobile
+					!isMobile
 						? '{currentPage} из {totalPages}'
 						: '{currentPage} из {totalPages}'
 				"
@@ -193,11 +187,16 @@
 						listcontainer: '!mt-[8px]',
 					},
 				}"
-			></Paginator>
+			>
+				<template #start="slotProps">
+					Page: {{ slotProps.state.page }} First:
+					{{ slotProps.state.first }} Rows: {{ slotProps.state.rows }}
+				</template>
+			</Paginator>
 		</div>
 		<!-- /Пагинация -->
 		<div
-			v-if="products?.length === 0"
+			v-if="totalProducts === 0"
 			class="mx-auto flex w-full max-w-[500px] flex-col justify-center gap-5 text-center"
 		>
 			<div>Продуктов по данным фильтрам не найдено</div>

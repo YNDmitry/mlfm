@@ -9,7 +9,7 @@
 		resetFilters: () => void
 		minPrice: number
 		maxPrice: number
-		totalProducts: string | number
+		totalProducts: number | null | undefined
 	}
 
 	const router = useRouter()
@@ -75,13 +75,13 @@
 								:inputId="category.id"
 								:name="category.title"
 								:value="category.title"
+								:aria-label="'Категория - ' + category.title"
 								@update:model-value="
 									router.replace({
 										query: {...route.query, category: currentCategories},
 									})
 								"
 							/>
-
 							<span>{{ category.title }}</span>
 						</label>
 					</div>

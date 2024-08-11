@@ -25,7 +25,7 @@
 		{id: 3, title: 'Доставлен'},
 	])
 
-	const isMobile = useMediaQuery('(max-width: 768px)')
+	const {isMobile} = useDevice()
 </script>
 <template>
 	<div>

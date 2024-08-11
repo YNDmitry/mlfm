@@ -15,17 +15,16 @@ interface filterObject {
 		title: {}
 	}
 	price: {}
+	status: {}
 }
 
-export function useProducts(
-	currentSort: any,
-	currentPage: any,
-	currentLimit: any,
-) {
+export function useProducts() {
 	const route = useRoute()
 
 	const filterObj = computed(() => {
 		const obj = ref({} as filterObject)
+
+		obj.value.status = {_eq: 'published'}
 
 		if (route.query.brand) {
 			obj.value.brand = {title: {_eq: route.query.brand}}
@@ -64,15 +63,16 @@ export function useProducts(
 	const products: any = ref(null)
 	const productCount: any = ref(null)
 	const isProductLoading = ref(true)
-	const refresh = async () => {
+
+	const refresh = async (page: number, limit: number) => {
 		await GqlProducts({
-			page: Number(route.query.page) || currentPage + 1,
-			limit: Number(route.query.limit) || currentLimit,
+			page: page + 1,
+			limit: limit,
 			sort: route.query.sort || ['-date_created'],
 			filter: filterObj.value.value,
 		}).then((res) => {
 			products.value = res.products
-			productCount.value = res.products_aggregated[0].count.id
+			productCount.value = res.products_aggregated[0].count?.id
 			isProductLoading.value = false
 		})
 	}

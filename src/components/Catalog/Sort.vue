@@ -3,7 +3,7 @@
 		sortOptions: any
 	}
 
-	defineProps<Props>()
+	const props = defineProps<Props>()
 	const router = useRouter()
 	const route = useRoute()
 	const currentSort: any = defineModel('currentSort')

@@ -48,7 +48,7 @@
 				height="410"
 				:alt="title"
 				format="webp"
-				placeholder
+				:placeholder="[50, 70, 0, 1]"
 			/>
 
 			<ClientOnly>
@@ -62,9 +62,9 @@
 						pt: {text: 'text-[0.5rem] bg-red2 text-primary'},
 					}"
 					@click.prevent="
-						!wishlistStore.isOnWishlist(id)
-							? wishlistStore.addItemToWishlist(id)
-							: wishlistStore.removeItemFromWishlist(id)
+						!wishlistStore.isOnWishlist(id as string)
+							? wishlistStore.addItemToWishlist(id as string)
+							: wishlistStore.removeItemFromWishlist(id as string)
 					"
 				/>
 			</ClientOnly>

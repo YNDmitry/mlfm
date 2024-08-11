@@ -8,11 +8,11 @@
 		currentSort: any
 		sortOptions: any
 		categories: Category[]
-		filters: any
 		data: any
 		resetFilters: () => void
 		minPrice: string
 		maxPrice: string
+		totalProducts: number | null | undefined
 	}
 	const props = defineProps<Props>()
 	const isSortOpen = ref(false)
@@ -35,9 +35,7 @@
 </script>
 
 <template>
-	<div
-		class="items-center justify-between gap-4 pb-[2.5rem] pt-[70] max-laptop:flex laptop:hidden"
-	>
+	<div class="flex items-center justify-between gap-4 pb-[2.5rem] pt-[70]">
 		<Dialog
 			position="bottom"
 			v-model:visible="isSortOpen"
@@ -74,11 +72,11 @@
 		>
 			<CatalogDesktopFilterSidebar
 				:categories="categories"
-				:filters="filters"
 				:data="data"
 				:resetFilters="resetFilters"
 				:minPrice="minPrice"
 				:maxPrice="maxPrice"
+				:total-products="totalProducts"
 				@updateCollection="$event = $emit('updateCollection', $event)"
 				v-model:min-price-value="minPriceValue"
 				v-model:max-price-value="maxPriceValue"

@@ -11,8 +11,6 @@
 		layout: 'default',
 	})
 
-	// TODO: Исправить этот компонент, он не работает как положено
-
 	interface Product {
 		id?: string
 		title?: string

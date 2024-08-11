@@ -1,20 +1,17 @@
 <script setup lang="ts">
 	import {options} from '../../components/Catalog/constans'
 
+	const {isDesktop, isMobile} = useDevice()
 	const appConfig = useRuntimeConfig()
 	const router = useRouter()
 	const route = useRoute()
 
 	const sortOptions = ref(options)
-	const currentPage = ref(Number(route.query.page) || 0)
+	const currentPage = ref(Number(route.query.page) - 1 || 0)
 	const currentLimit = ref(Number(route.query.limit) || 9)
-	const currentSort = ref(route.query.sort || options[0].code)
+	const currentSort = ref(route.query.sort || sortOptions.value[0].code)
 
-	const {products, productCount, refresh, isProductLoading} = useProducts(
-		currentSort,
-		currentPage.value,
-		currentLimit.value,
-	)
+	const {products, productCount, refresh, isProductLoading} = useProducts()
 
 	const {data} = await useAsyncGql(
 		'Catalog',
@@ -34,18 +31,40 @@
 	)
 
 	watch(
-		() => [
-			route.query.category,
-			route.query.collectionId,
-			route.query.color,
-			route.query.size,
-			route.query.brand,
-			route.query.minPrice,
-			route.query.maxPrice,
-		],
 		() => {
-			router.replace({query: {...route.query, page: 1}})
-			refresh()
+			const {category, collectionId, color, size, brand, minPrice, maxPrice} =
+				route.query
+			return {category, collectionId, color, size, brand, minPrice, maxPrice}
+		},
+		(newFilters, oldFilters) => {
+			if (JSON.stringify(newFilters) !== JSON.stringify(oldFilters)) {
+				const preservedLimit = route.query.limit || currentLimit.value
+
+				router.replace({
+					query: {
+						...route.query,
+						page: 1, // сброс страницы на 1 при изменении фильтров
+						limit: preservedLimit,
+					},
+				})
+
+				refresh(currentPage.value, currentLimit.value)
+			}
+		},
+		{deep: true},
+	)
+
+	watch(
+		() => {
+			const {page, limit} = route.query
+			return {page, limit}
+		},
+		(newPage, oldPage) => {
+			// if (JSON.stringify(newPage) !== JSON.stringify(oldPage)) {
+			// currentPage.value = Number(newPage.page) - 1 || 0 // обновляем currentPage только при изменении page
+			// currentLimit.value = Number(newPage.limit)
+			// }
+			refresh(currentPage.value, currentLimit.value) // обновляем данные
 		},
 	)
 
@@ -65,14 +84,27 @@
 	})
 
 	function resetFilters() {
-		router.replace({query: {}})
-		currentPage.value = 0
+		router.replace({
+			query: {
+				page: 1,
+				limit: route.query.limit || currentLimit.value,
+			},
+		})
+		currentPage.value = 1
 	}
 
 	function updatePage(newPage: {page: number; rows: number}) {
+		currentPage.value = newPage.page
+		currentLimit.value = newPage.rows
+
 		router.replace({
-			query: {...route.query, page: newPage.page + 1, limit: newPage.rows},
+			query: {
+				...route.query,
+				page: newPage.page + 1,
+				limit: newPage.rows,
+			},
 		})
+
 		window.scrollTo(0, 0)
 	}
 
@@ -80,7 +112,7 @@
 	const maxPriceValue = useRouteQuery('maxPrice', null)
 	const categories = useState('categories', () => data.value.categories)
 
-	refresh()
+	refresh(currentPage.value, currentLimit.value)
 </script>
 
 <template>
@@ -90,20 +122,22 @@
 				<div class="laptop:grid laptop:grid-cols-aside laptop:gap-20">
 					<!-- Кнопки для фильтров (На Мобилках) -->
 					<CatalogMobileFilterSidebar
-						v-if="$device.isMobileOrTablet"
-						:currentSort="currentSort"
-						@update:currentSort="($event) => (currentSort = $event)"
+						v-if="isMobile"
 						:data="data"
 						:resetFilters="resetFilters"
+						:totalProducts="data?.products_aggregated[0].count?.id"
 						:minPrice="data?.products_aggregated[0]?.min?.price"
 						:maxPrice="data?.products_aggregated[0]?.max?.price"
+						:currentSort="currentSort"
+						:categories="categories"
+						@update:currentSort="($event) => (currentSort = $event)"
 						:sort-options="sortOptions"
 					/>
 					<!-- Кнопки для фильтров (На Мобилках) -->
 
 					<!-- Боковое меню (На ПК) -->
 					<CatalogDesktopFilterSidebar
-						v-if="$device.isDesktop"
+						v-if="isDesktop"
 						:data="data"
 						:resetFilters="resetFilters"
 						:totalProducts="data?.products_aggregated[0].count?.id"
@@ -118,7 +152,7 @@
 					<div class="max-laptop:pb-[3.75rem] laptop:pb-[4.375rem]">
 						<!-- Хлебные крошки и сортировка -->
 						<CatalogSort
-							:current-sort="currentSort.code"
+							:current-sort="currentSort"
 							:sort-options="sortOptions"
 							v-model="currentSort"
 						/>
@@ -130,7 +164,6 @@
 
 						<!-- Пагинация и лист с продуктами -->
 						<CatalogProductList
-							v-if="products?.length"
 							:isLoading="isProductLoading"
 							:products="products"
 							:totalProducts="productCount"

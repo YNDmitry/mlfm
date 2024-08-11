@@ -45,7 +45,11 @@ export default defineNuxtConfig({
 	runtimeConfig: {
 		public: {
 			databaseUrl: process.env.DATABASE_URL,
-			GQL_HOST: process.env.DATABASE_URL + 'graphql',
+			'graphql-client': {
+				clients: {
+					default: 'https://admin.mlfm.store/graphql',
+				},
+			},
 		},
 	},
 
@@ -137,6 +141,10 @@ export default defineNuxtConfig({
 	site: {
 		url: 'https://www.mlfm.store',
 		name: 'MLFM',
+	},
+
+	device: {
+		refreshOnResize: true,
 	},
 
 	schemaOrg: {
