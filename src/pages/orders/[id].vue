@@ -272,7 +272,7 @@
 								<div class="flex flex-col gap-3">
 									<div class="text-[0.7rem] font-medium">
 										Итоговая цена {{ finalText }}:
-										{{ product?.payment[0]?.payment_amount }}Р
+										{{ usePrice(product?.payment[0]?.payment_amount) }}
 									</div>
 								</div>
 							</div>

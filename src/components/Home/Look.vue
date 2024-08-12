@@ -64,7 +64,7 @@
 							<HomePatternCard
 								:title="product.products_id.title"
 								:slug="product.products_id.slug"
-								:price="product.products_id.price"
+								:price="product.products_id.product_variants[0].price"
 								:image="product.products_id.main_image.id"
 								:link="product.products_id.slug"
 							/>

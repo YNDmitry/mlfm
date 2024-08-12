@@ -24,8 +24,16 @@
 	})
 
 	const userStore = useUserStore()
+	const toast = useToast()
 	const onSubmit = handleSubmit(async (values) => {
-		await userStore.userLogin(values.email, values.password)
+		const res = await userStore.userLogin(values.email, values.password)
+		if (res?.message === 'unauthorized') {
+			toast.add({
+				severity: 'error',
+				summary: 'Ошибка',
+				detail: 'Неверный логин или пароль',
+			})
+		}
 	})
 
 	const isResetPasswordPopup = ref(false)
@@ -33,6 +41,7 @@
 
 <template>
 	<AuthForm title="Войти">
+		<Toast :position="'top-right'" />
 		<PopupsAuthResetPassword
 			@update:visible="isResetPasswordPopup = $event"
 			:isPopupOpen="isResetPasswordPopup"

@@ -15,7 +15,7 @@ export default defineNuxtPlugin(() => {
 
 	const directus = createDirectus(config.public.databaseUrl)
 		.with(rest())
-		.with(authentication())
+		.with(authentication('cookie', {credentials: 'include'}))
 	return {
 		provide: {
 			directus,

@@ -73,17 +73,18 @@ export const useUserStore = defineStore('userStore', {
 
 		async userLogin(email: string, password: string) {
 			const {login} = useDirectusAuth()
-			const err = ref('')
+
 			try {
-				await login({email: email, password: password})
-				await this.getUserInfo()
-				await navigateTo('/profile')
-			} catch (error: any) {
-				err.value = error ?? {}
-				console.log(error.errors)
+				const res = await login({email, password})
+
+				if (res) {
+					await this.getUserInfo()
+					return await navigateTo('/profile')
+				}
+			} catch (error) {
+				return {message: 'unauthorized'}
 			}
 		},
-
 		async getUserInfo() {
 			const user: any = await useDirectusUser()
 

@@ -65,7 +65,7 @@
 		<section class="pb-44">
 			<div class="container">
 				<Accordion value="0">
-					<AccordionPanel value="0">
+					<AccordionPanel value="0" :pt="{root: 'border-gray2 border-b'}">
 						<AccordionHeader :pt="{root: 'py-4'}"
 							>Активные заказы</AccordionHeader
 						>
@@ -85,7 +85,7 @@
 								<div
 									v-for="order in activeOrders"
 									:key="order.id"
-									class="flex items-center justify-between rounded-main border-gray2 px-6 py-3 last:border-b-0 hover:bg-third/20"
+									class="flex items-center justify-between rounded-main border-gray2 px-6 py-3 transition-all last:border-b-0 hover:bg-third/20 max-tablet:flex-col max-tablet:gap-4"
 								>
 									<div>
 										Заказ: {{ order.order_number }} от
@@ -122,7 +122,7 @@
 								<div
 									v-for="order in completedOrders"
 									:key="order.id"
-									class="flex items-center justify-between rounded-main border-gray2 px-6 py-3 last:border-b-0 hover:bg-third/20"
+									class="flex items-center justify-between rounded-main border-gray2 px-6 py-3 transition-all last:border-b-0 hover:bg-third/20"
 								>
 									<div>
 										Заказ: {{ order.order_number }} от

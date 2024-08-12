@@ -46,7 +46,7 @@
 							:slug="product?.slug"
 							:title="product?.title"
 							:imgSrc="product?.main_image?.id"
-							:price="product?.price"
+							:price="product?.product_variants[0]?.price"
 							class="animation-duration-2000 max-w-[18.31rem] flex-shrink-0 transition-all max-tablet:w-[171px]"
 						/>
 					</template>

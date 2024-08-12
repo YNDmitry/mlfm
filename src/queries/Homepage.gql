@@ -15,9 +15,11 @@ query Homepage {
 				id
 				slug
 				title
-				price
 				main_image {
 					id
+				}
+				product_variants {
+					price
 				}
 			}
 		}
@@ -37,9 +39,11 @@ query Homepage {
 			id
 			slug
 			title
-			price
 			main_image {
 				id
+			}
+			product_variants {
+				price
 			}
 		}
 	}
