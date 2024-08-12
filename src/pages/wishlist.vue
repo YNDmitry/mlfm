@@ -29,7 +29,7 @@
 						:key="product.id"
 						:slug="product.slug"
 						:title="product.title"
-						:price="product.price"
+						:price="product.product_variants[0].price"
 						:id="product.id"
 						:imgSrc="product.main_image.id"
 					/>
