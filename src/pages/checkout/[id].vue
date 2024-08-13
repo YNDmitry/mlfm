@@ -35,6 +35,20 @@
 		(el: any) => el.type === 'gift-card',
 	)
 
+	// Сопоставление количества товаров
+	const cartItemsWithQuantity = res.products.map((product: any) => {
+		const matchedItem = data.checkout_sessions_by_id?.session_data.items.find(
+			(item: any) =>
+				item.product_id === product.id &&
+				item.variant_id === product.product_variants[0].id,
+		)
+
+		return {
+			...product,
+			quantity: matchedItem ? matchedItem.quantity : 1, // по умолчанию 1, если вдруг нет совпадений
+		}
+	})
+
 	checkoutStore.items = data.checkout_sessions_by_id?.session_data.items
 	checkoutStore.promoCode = data.checkout_sessions_by_id?.session_data.discount
 	checkoutStore.giftCard = data.checkout_sessions_by_id?.session_data.giftCode
@@ -55,7 +69,7 @@
 		<CheckoutInfoForm />
 		<CheckoutOrderSummary
 			:giftCard="giftCard"
-			:cartItems="res.products"
+			:cartItems="cartItemsWithQuantity"
 			:totalPrice="data.checkout_sessions_by_id?.session_data.totalPrice"
 			:discount="data.checkout_sessions_by_id?.session_data.discount"
 			:giftCodeCurrentBalance="

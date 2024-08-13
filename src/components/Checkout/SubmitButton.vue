@@ -7,7 +7,7 @@
 
 	const offer = useField('offer')
 
-	const updateValue = (value) => {
+	const updateValue = (value: boolean) => {
 		offer.handleChange(value)
 	}
 </script>
@@ -36,17 +36,17 @@
 					inputId="offer"
 					name="offer"
 					:pt="{
-						box: 'rounded-[0] border-[1px] border-grayLight shadow-none',
+						box: 'border border-grayLight text-white shadow-none',
 					}"
-					:value="offer.value"
+					v-model:model-value="offer.value.value"
 					@update:model-value="updateValue"
 				/>
-				<p class="border-darkGray2 text-[0.625rem]">
+				<span class="border-darkGray2 text-[0.625rem]">
 					Я согласен с
 					<NuxtLink to="/docs/offer" class="underline"
 						>публичной оффертой</NuxtLink
 					>
-				</p>
+				</span>
 			</div>
 			<span
 				v-if="offer.errorMessage && offer.meta.touched"

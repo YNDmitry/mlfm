@@ -98,7 +98,7 @@
 	const submitForm = handleSubmit(async (values: any) => {
 		try {
 			if (submitCount.value === 1) {
-				await checkoutStore.sendCode(email.value)
+				await checkoutStore.sendCode(email.value as string)
 				otpResendTimeout.value = 60
 				resume()
 			}
@@ -204,7 +204,7 @@
 	}
 
 	const sendCode = () => {
-		checkoutStore.sendCode(email.value)
+		checkoutStore.sendCode(email.value as string)
 		otpResendTimeout.value = 60
 		updateOrderModel()
 		resume()

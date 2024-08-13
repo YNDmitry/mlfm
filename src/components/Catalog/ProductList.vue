@@ -38,18 +38,25 @@
 
 	const totalBanners = props.data.catalog.random_banners_collection.length
 
-	// Количество баннеров, отображаемых на одной странице
-	const bannersPerPage = computed(() => (isMobile ? 1 : 1))
+	// Вычисляем интервал между баннерами
+	const bannerInterval = isMobile ? 3 : 2 // Показываем баннер после каждых 3 продуктов
 
-	// Расчет индекса баннера для текущего продукта на странице
-	const getBannerIndex = (overallIndex: number) => {
-		return Math.floor(overallIndex / bannersPerPage.value)
+	// Вычисляем количество баннеров, которые должны быть показаны на текущей странице
+	const bannersOnPage = Math.floor(props.currentLimit / (bannerInterval + 1))
+
+	// Проверка, показываем ли мы баннер на текущем продукте
+	const shouldShowBanner = (index: number) => {
+		const globalIndex = props.currentPage * props.currentLimit + index
+		return (
+			(globalIndex + 1) % (bannerInterval + 1) === 0 &&
+			globalIndex / (bannerInterval + 1) < totalBanners
+		)
 	}
 
-	const shouldShowBanner = (index: number) => {
-		const overallIndex = index + props.currentPage * props.currentLimit
-		const bannerIndex = getBannerIndex(overallIndex)
-		return bannerIndex < totalBanners
+	// Вычисляем индекс баннера, который нужно показать
+	const getBannerIndex = (index: number) => {
+		const globalIndex = props.currentPage * props.currentLimit + index
+		return Math.floor(globalIndex / (bannerInterval + 1))
 	}
 </script>
 
@@ -57,7 +64,7 @@
 	<div>
 		<!-- Раздел с карточками -->
 		<div
-			class="grid grid-cols-[repeat(auto-fill,minmax(250px,_1fr))] gap-[1.875rem] pb-[3.75rem] max-tablet:grid-cols-[repeat(auto-fill,minmax(150px,_1fr))] max-tablet:gap-4"
+			class="grid grid-flow-row-dense grid-cols-[repeat(auto-fill,minmax(250px,_1fr))] gap-[1.875rem] pb-[3.75rem] max-tablet:grid-cols-[repeat(auto-fill,minmax(150px,_1fr))] max-tablet:gap-4"
 		>
 			<template v-if="isLoading">
 				<template v-for="(item, idx) in 6" :key="idx">
@@ -88,32 +95,17 @@
 					/>
 
 					<!-- изображение -->
-					<template
-						v-if="
-							shouldShowBanner(index) &&
-							((isMobile &&
-								(index + props.currentPage * props.currentLimit + 1) % 6 ===
-									0) ||
-								(!isMobile &&
-									(index + props.currentPage * props.currentLimit + 1) % 3 ===
-										0))
-						"
-					>
+					<template v-if="shouldShowBanner(index)">
 						<div
 							class="col-span-full w-full overflow-hidden"
-							v-if="
-								getBannerIndex(index + props.currentPage * props.currentLimit) <
-								totalBanners
-							"
+							v-if="getBannerIndex(index) < totalBanners"
 						>
 							<button
 								type="button"
 								@click="
 									changeCollection(
 										props.data.catalog.random_banners_collection[
-											getBannerIndex(
-												index + props.currentPage * props.currentLimit,
-											)
+											getBannerIndex(index)
 										]?.collection_id.title,
 									)
 								"
@@ -122,9 +114,7 @@
 									provider="directus"
 									:src="
 										props.data.catalog.random_banners_collection[
-											getBannerIndex(
-												index + props.currentPage * props.currentLimit,
-											)
+											getBannerIndex(index)
 										]?.image.id
 									"
 									class="h-auto max-w-full"

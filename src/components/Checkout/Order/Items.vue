@@ -53,9 +53,7 @@
 					<span class="text-[0.625rem]">{{ item.category }}</span>
 					<p class="text-[0.625rem] font-medium">{{ item.title }}</p>
 					<div class="flex gap-3">
-						<span class="text-[8px] opacity-50"
-							>{{ item.product_variants[0].qunatity }} шт</span
-						>
+						<span class="text-[8px] opacity-50">{{ item.quantity }} шт</span>
 
 						<span
 							class="text-[8px] opacity-50"
@@ -72,7 +70,9 @@
 						</span>
 					</div>
 				</div>
-				<span class="text-[0.625rem]">{{ formattedPrice(item.price) }}</span>
+				<span class="text-[0.625rem]">{{
+					formattedPrice(item.product_variants[0].price)
+				}}</span>
 			</div>
 		</article>
 	</div>
