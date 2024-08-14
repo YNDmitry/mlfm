@@ -35,25 +35,25 @@ query Catalog {
 			price
 		}
 	}
-	brands {
+	brands(filter: {status: {_eq: "published"}}) {
 		title
 		description
 		id
 	}
-	colors {
+	colors(filter: {status: {_eq: "published"}}) {
 		title
 		id
 	}
-	sizes {
+	sizes(filter: {status: {_eq: "published"}}) {
 		small_title
 		large_title
 		id
 	}
-	collection {
+	collection(filter: {status: {_eq: "published"}}) {
 		title
 		id
 	}
-	categories {
+	categories(filter: {status: {_eq: "published"}}) {
 		title
 		id
 	}
