@@ -22,12 +22,12 @@ export const useWishlistStore = defineStore('wishlist', {
 	actions: {
 		async checkOrCreateSession() {
 			let sessionId = localStorage.getItem('sessionId')
-			if (!sessionId) {
+			if (sessionId === null) {
 				try {
 					const res = await GqlCreateGuestSessionItem({
 						data: {status: 'draft'},
 					})
-					sessionId = res.create_guest_session_item?.id as string
+					sessionId = res?.create_guest_session_item?.id as string
 					localStorage.setItem('sessionId', sessionId)
 				} catch (error) {
 					console.error('Failed to initialize session:', error)

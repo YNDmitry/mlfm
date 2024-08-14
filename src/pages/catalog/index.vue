@@ -137,7 +137,15 @@
 
 	const minPriceValue = useRouteQuery('minPrice', null)
 	const maxPriceValue = useRouteQuery('maxPrice', null)
-	const categories = useState('categories', () => data.value.categories)
+	const {data: categories} = useAsyncGql(
+		'Categories',
+		{},
+		{
+			getCachedData(key, nuxtApp) {
+				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+			},
+		},
+	)
 </script>
 
 <template>
@@ -154,7 +162,7 @@
 						:minPrice="data?.product_variants_aggregated[0].min?.price"
 						:maxPrice="data?.product_variants_aggregated[0].max?.price"
 						:currentSort="currentSort"
-						:categories="categories"
+						:categories="categories?.categories"
 						@update:currentSort="($event) => (currentSort = $event)"
 						:sort-options="sortOptions"
 					/>
@@ -168,6 +176,7 @@
 						:totalProducts="data?.products_aggregated[0].count?.id"
 						:minPrice="data?.product_variants_aggregated[0].min?.price"
 						:maxPrice="data?.product_variants_aggregated[0].max?.price"
+						:categories="categories?.categories"
 						v-model:min-price-value="minPriceValue"
 						v-model:max-price-value="maxPriceValue"
 						class="max-tablet:hidden"
@@ -183,7 +192,7 @@
 						<!-- /Хлебные крошки и сортировка -->
 
 						<!-- О бренде -->
-						<CatalogAboutBrand :brands="data.brands" />
+						<CatalogAboutBrand :brands="data?.brands" />
 						<!-- /О бренде -->
 
 						<!-- Пагинация и лист с продуктами -->

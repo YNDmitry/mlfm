@@ -6,6 +6,7 @@
 
 	interface Props {
 		data: any
+		categories: Category[]
 		resetFilters: () => void
 		minPrice: number
 		maxPrice: number
@@ -18,7 +19,7 @@
 	const emit = defineEmits(['update:categories'])
 	const minPriceValue = defineModel('minPrice', {default: 0})
 	const maxPriceValue = defineModel('maxPrice', {default: 0})
-	const categories: any = useState('categories')
+	// const categories: any = useState('categories')
 	const currentCategories = ref(
 		route.query.category ? route.query.category : [],
 	)
@@ -68,7 +69,7 @@
 			<div
 				class="relative pb-[1.25rem] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-['']"
 				data-lenis-prevent
-				v-if="categories.length"
+				v-if="categories"
 			>
 				<p class="pb-[1.25rem] text-[0.875rem]">Категория</p>
 

@@ -36,7 +36,7 @@
 		router.push({query: {...route.query, collectionId: collectionName}})
 	}
 
-	const totalBanners = props.data.catalog.random_banners_collection.length
+	const totalBanners = props.data?.catalog?.random_banners_collection.length
 
 	// Вычисляем интервал между баннерами
 	const bannerInterval = isMobile ? 3 : 2 // Показываем баннер после каждых 3 продуктов
@@ -131,10 +131,7 @@
 		<!-- /Раздел с карточками -->
 
 		<!-- Пагинация -->
-		<div
-			class="w-ful relative border-t-[1px] border-[#AAAAAA]"
-			v-if="products.length"
-		>
+		<div class="w-ful relative border-t-[1px] border-[#AAAAAA]" v-if="products">
 			<Paginator
 				id="pagination"
 				@page="
@@ -182,7 +179,7 @@
 		</div>
 		<!-- /Пагинация -->
 		<div
-			v-if="products.length === 0"
+			v-if="products?.length === 0"
 			class="mx-auto flex w-full max-w-[500px] flex-col justify-center gap-5 text-center"
 		>
 			<div>Продуктов по данным фильтрам не найдено</div>
