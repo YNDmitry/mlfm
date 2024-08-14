@@ -24,11 +24,6 @@
 				label="TinkoffPay"
 			/>
 			<CheckoutPaymentOption name="paymentMethod" value="spb" label="СПБ" />
-			<CheckoutPaymentOption
-				name="paymentMethod"
-				value="installments"
-				label="Долями"
-			/>
 		</div>
 	</div>
 </template>

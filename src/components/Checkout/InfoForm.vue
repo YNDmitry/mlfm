@@ -10,6 +10,25 @@
 	const otpResendTimeout = ref(0)
 	const toast = useToast()
 
+	// Default values for development mode
+	const devDefaultValues = import.meta.env.DEV
+		? {
+				firstName: 'Иван',
+				lastName: 'Иванов',
+				thirdName: 'Иванович',
+				email: 'dredbads@gmail.com',
+				phone: '+7 (999) 123 45-67',
+				deliveryType: 'delivery',
+				city: 'Москва',
+				street: 'Ленина',
+				home: '1',
+				entrance: '2',
+				apartment: '3',
+				postCode: '0000',
+				offer: true,
+			}
+		: {}
+
 	const schema = object({
 		firstName: string().required('Обязательное поле'),
 		lastName: string().required('Обязательное поле'),
@@ -58,7 +77,6 @@
 		paymentMethod: string().oneOf([
 			'sbp',
 			'bank_card',
-			'installments',
 			'sberbank',
 			'tinkoff_bank',
 		]),
@@ -72,6 +90,7 @@
 		initialValues: {
 			deliveryType: 'delivery',
 			offer: false,
+			...devDefaultValues,
 		},
 	})
 
@@ -96,21 +115,21 @@
 	}, 1000)
 
 	const submitForm = handleSubmit(async (values: any) => {
-		try {
-			if (submitCount.value === 1) {
-				await checkoutStore.sendCode(email.value as string)
-				otpResendTimeout.value = 60
-				resume()
-			}
-			checkoutStore.isOtpVisible = true
-			formValues.value = values
-			updateOrderModel()
-		} catch (error) {
-			throw createError({
-				status: 401,
-				statusMessage: 'Что-то пошло не так',
-			})
-		}
+		// await checkoutStore.sendCode(email.value as string)
+		otpResendTimeout.value = 60
+		resume()
+		checkoutStore.isOtpVisible = true
+		formValues.value = values
+		updateOrderModel()
+		// try {
+		// if (submitCount.value === 1) {
+		// }
+		// } catch (error) {
+		// 	throw createError({
+		// 		status: 401,
+		// 		statusMessage: 'Что-то пошло не так',
+		// 	})
+		// }
 	})
 
 	const orderModel = ref({
@@ -187,7 +206,7 @@
 			.then((data) => {
 				if (data.success) {
 					isOtpSubmit.value = false
-					window.location.href = data.paymentUrl
+					// window.location.href = data.paymentUrl
 				} else {
 					toast.add({
 						severity: 'warn',
@@ -296,7 +315,7 @@
 					</div>
 				</div>
 			</Dialog>
-			<form @submit.prevent="submitForm" class="pt-8">
+			<form @submit="submitForm" class="pt-8">
 				<CheckoutFields />
 				<CheckoutDeliveryOptions v-if="!isOnlyVirtual" />
 				<CheckoutDeliveryAddress

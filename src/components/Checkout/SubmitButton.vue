@@ -15,6 +15,7 @@
 <template>
 	<div class="mt-[1.875rem]">
 		<button
+			type="submit"
 			:disabled="isSubmitting"
 			class="w-full bg-red2 text-primary transition-colors hover:bg-red2-hover max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[45px] tablet:rounded-[1.875rem]"
 		>
