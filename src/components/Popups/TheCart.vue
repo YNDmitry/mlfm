@@ -350,18 +350,14 @@
 
 					<div
 						v-else
-						class="flex gap-[10px] overflow-hidden max-tablet:grid max-tablet:grid-cols-[1fr_1fr_1fr]"
+						class="grid w-full grid-cols-[1fr_1fr_1fr] gap-[10px] overflow-hidden"
 					>
-						<div
-							v-for="product in useCart.relatedItems"
-							:key="product?.id"
-							class="w-full"
-						>
+						<div v-for="product in useCart.relatedItems" :key="product?.id">
 							<NuxtLink
 								:to="'/catalog/' + product.slug"
 								@click="websiteStore.isVisibleCart = false"
 							>
-								<div class="relative flex w-full flex-col justify-center">
+								<div class="relative w-full flex-col justify-center">
 									<NuxtImg
 										provider="directus"
 										class="h-32 object-cover"
@@ -370,12 +366,10 @@
 										placeholder
 									/>
 									<div class="inset-0 mt-2 overflow-hidden">
-										<div
-											class="overflow-hidden overflow-ellipsis text-[0.7rem] font-normal"
-										>
+										<div class="w-28 truncate text-[0.7rem] font-normal">
 											{{ product.title }}
 										</div>
-										<div class="overflow-ellipsis text-[10px]">
+										<div class="truncate text-[10px]">
 											{{ usePrice(product?.product_variants[0]?.price) }}
 										</div>
 									</div>
