@@ -115,21 +115,21 @@
 	}, 1000)
 
 	const submitForm = handleSubmit(async (values: any) => {
-		// await checkoutStore.sendCode(email.value as string)
-		otpResendTimeout.value = 60
-		resume()
-		checkoutStore.isOtpVisible = true
-		formValues.value = values
-		updateOrderModel()
-		// try {
-		// if (submitCount.value === 1) {
-		// }
-		// } catch (error) {
-		// 	throw createError({
-		// 		status: 401,
-		// 		statusMessage: 'Что-то пошло не так',
-		// 	})
-		// }
+		try {
+			if (submitCount.value === 1) {
+				await checkoutStore.sendCode(email.value as string)
+				otpResendTimeout.value = 60
+				resume()
+				checkoutStore.isOtpVisible = true
+				formValues.value = values
+				updateOrderModel()
+			}
+		} catch (error) {
+			throw createError({
+				status: 401,
+				statusMessage: 'Что-то пошло не так',
+			})
+		}
 	})
 
 	const orderModel = ref({
@@ -206,7 +206,7 @@
 			.then((data) => {
 				if (data.success) {
 					isOtpSubmit.value = false
-					// window.location.href = data.paymentUrl
+					window.location.href = data.returnUrl
 				} else {
 					toast.add({
 						severity: 'warn',

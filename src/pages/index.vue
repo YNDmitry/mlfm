@@ -50,6 +50,7 @@
 		<HomeHero
 			:title="data.homepage?.slider_collection?.title"
 			:image="data.homepage?.slider_collection?.image?.id"
+			:position="data.homepage?.position"
 		/>
 		<!-- /Главный банер - слайдер -->
 

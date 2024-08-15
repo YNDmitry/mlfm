@@ -7,6 +7,7 @@ query Homepage {
 				id
 			}
 		}
+		position
 		look_image {
 			id
 		}

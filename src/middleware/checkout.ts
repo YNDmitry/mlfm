@@ -1,12 +1,12 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
 	const existingCheckoutSessionId = to.params.id as string
 
-	const data = await GqlGetCheckoutSession({
-		id: existingCheckoutSessionId,
-	})
-
-	const existingSession = data.checkout_sessions_by_id
 	try {
+		const data = await GqlGetCheckoutSession({
+			id: existingCheckoutSessionId,
+		})
+
+		const existingSession = data?.checkout_sessions_by_id
 		// Проверка, не истекла ли сессия
 		const currentTimeUTC = new Date().toISOString()
 		const sessionExpiryTimeUTC = existingSession?.expires_at

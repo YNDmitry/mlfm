@@ -359,10 +359,10 @@ export const useCartStore = defineStore('userCart', {
 				if (this.giftCodeRemainingBalance < 0) this.giftCodeRemainingBalance = 0
 				this.giftCodeErrors = ''
 			} catch (error: any) {
-				this.giftCodeErrors = {
+				return (this.giftCodeErrors = {
 					status: 400,
 					statusMessage: 'Подарочная карта не найдена',
-				}
+				})
 			}
 		},
 

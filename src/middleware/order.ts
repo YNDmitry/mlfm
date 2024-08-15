@@ -40,7 +40,7 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
 				)
 			} else {
 				// Если пользователь не аутентифицирован и нет PIN, редиректим на страницу логина
-				return navigateTo('/profile')
+				return
 			}
 
 			const data = await res.json()

@@ -6,6 +6,10 @@
 		title: {
 			type: String,
 		},
+		position: {
+			type: Array,
+			default: [],
+		},
 	})
 
 	const link = computed(() => {
@@ -35,6 +39,10 @@
 		</div>
 		<div
 			class="absolute z-10 flex flex-col items-center justify-center gap-[1.5rem] text-primary"
+			:class="{
+				'bottom-8': position[0] === 'bottom',
+				'top-8': position[0] === 'top',
+			}"
 		>
 			<h1
 				v-if="title"
