@@ -131,7 +131,10 @@
 		<!-- /Раздел с карточками -->
 
 		<!-- Пагинация -->
-		<div class="w-ful relative border-t-[1px] border-[#AAAAAA]" v-if="products">
+		<div
+			class="w-ful relative border-t-[1px] border-[#AAAAAA]"
+			v-if="products.length"
+		>
 			<Paginator
 				id="pagination"
 				@page="
