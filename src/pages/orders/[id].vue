@@ -242,33 +242,35 @@
 										>
 									</div>
 								</article>
-								<article
-									v-for="item in orderProducts"
-									:key="item"
-									class="flex max-mobile:gap-[0.625rem] mobile:gap-[0.938rem]"
-								>
-									<NuxtImg
-										:src="
-											$config.public.databaseUrl + 'assets/' + item?.image?.id
-										"
-										width="130"
-										class="object-cover max-mobile:h-[6.25rem] max-mobile:w-[3.813rem] mobile:h-[6.25rem]"
-									/>
+								<template v-if="orderProducts">
+									<article
+										v-for="item in orderProducts"
+										:key="item"
+										class="flex max-mobile:gap-[0.625rem] mobile:gap-[0.938rem]"
+									>
+										<NuxtImg
+											:src="
+												$config.public.databaseUrl + 'assets/' + item?.image?.id
+											"
+											width="130"
+											class="object-cover max-mobile:h-[6.25rem] max-mobile:w-[3.813rem] mobile:h-[6.25rem]"
+										/>
 
-									<div class="flex w-full items-center justify-between">
-										<div class="flex flex-col gap-1">
-											<span class="text-[0.625rem]">{{
-												item?.product?.category?.title
-											}}</span>
+										<div class="flex w-full items-center justify-between">
+											<div class="flex flex-col gap-1">
+												<span class="text-[0.625rem]">{{
+													item?.product?.category?.title
+												}}</span>
 
-											<p class="text-[0.625rem] font-medium">
-												{{ item?.product?.title }}
-											</p>
+												<p class="text-[0.625rem] font-medium">
+													{{ item?.product?.title }}
+												</p>
+											</div>
+
+											<span class="text-[0.625rem]">{{ item?.price }} ₽</span>
 										</div>
-
-										<span class="text-[0.625rem]">{{ item?.price }} ₽</span>
-									</div>
-								</article>
+									</article>
+								</template>
 								<div class="flex flex-col gap-3">
 									<div class="text-[0.7rem] font-medium">
 										Итоговая цена {{ finalText }}:

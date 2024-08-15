@@ -1,7 +1,7 @@
 export default defineNuxtRouteMiddleware(async (to, _from) => {
 	const config = useRuntimeConfig()
 	const toast = useToast()
-	const {isAuthenticated} = useUserStore()
+	const {isAuthenticated, id} = useUserStore()
 	const isPinValid = useState('isOrderPinValid')
 	const userToken = useCookie('directus_token') // допустим, токен хранится в стейте
 	const orderProduct = useState('order-product')
@@ -16,7 +16,7 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
 			let res
 			if (pin) {
 				// Если есть PIN, проверяем заказ по PIN (можно без аутентификации)
-				res = await fetch(`${config.public.databaseUrl}/check-pin`, {
+				res = await fetch(`${config.public.databaseUrl}check-pin`, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
@@ -26,36 +26,38 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
 						pin: pin,
 					}),
 				})
-			} else if (isAuthenticated && userToken.value) {
+			} else if (userToken.value) {
 				// Если пользователь аутентифицирован, запрашиваем заказ по ID
-				res = await fetch(
-					`${config.public.databaseUrl}items/customer_orders/${orderId}`,
-					{
-						method: 'GET',
-						headers: {
-							'Content-Type': 'application/json',
-							Authorization: `Bearer ${userToken.value}`,
-						},
+				res = await fetch(`${config.public.databaseUrl}check-pin`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `${userToken.value}`,
 					},
-				)
+					body: JSON.stringify({
+						id: orderId,
+						userId: id,
+					}),
+				})
 			} else {
-				// Если пользователь не аутентифицирован и нет PIN, редиректим на страницу логина
 				return
 			}
 
 			const data = await res.json()
 
-			if (data) {
+			if (data.authorized) {
 				orderProduct.value = data.data
 				isPinValid.value = true
 
 				// Запрашиваем продукты заказа, если они есть
-				if (data?.data.products) {
+				if (data?.data?.products) {
 					const currentProducts = await GqlOrderProducts({
 						ids: data?.data.products,
 					})
-					orderProducts.value = currentProducts.product_variants
+					return (orderProducts.value = currentProducts.product_variants)
 				}
+
+				return true
 			} else {
 				toast.add({
 					severity: 'error',
@@ -72,6 +74,8 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
 				summary: 'Ошибка',
 				life: 3000,
 			})
+			console.log(error)
+
 			return navigateTo('/') // редиректим на главную или другую страницу
 		}
 	} else {
@@ -82,6 +86,8 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
 			summary: 'Ошибка',
 			life: 3000,
 		})
+		console.log('error')
+
 		return navigateTo('/')
 	}
 })
