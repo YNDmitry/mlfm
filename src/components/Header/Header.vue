@@ -17,7 +17,7 @@
 		isOpen.value = !isOpen.value
 	}
 	const tooltipStyles = {
-		text: 'text-[0.5rem] py-2 bg-red2 text-primary',
+		text: 'text-[0.5rem] p-[0.5rem] bg-red2 text-primary',
 	}
 </script>
 
