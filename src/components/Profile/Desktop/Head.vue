@@ -5,12 +5,19 @@
 	const toast = useToast()
 
 	const updateUserNewsletter = async () => {
-		await updateUser({
-			id: userStore.id,
-			user: {
-				newsletter: !userStore.newsletter,
-			},
-		})
+		try {
+			await updateUser({
+				id: userStore.id,
+				user: {
+					newsletter: userStore.newsletter,
+				},
+			})
+		} catch (error) {
+			toast.add({
+				severity: 'error',
+				summary: 'Что-то пошло не так',
+			})
+		}
 	}
 
 	const updatePassword = async () => {
@@ -141,7 +148,13 @@
 			</div>
 			<!-- Информация -->
 
-			<button @click="userStore?.handleChangeUserDetailsPopup">
+			<button
+				@click="userStore?.handleChangeUserDetailsPopup"
+				v-tooltip.left="{
+					value: 'Обновить профиль',
+					pt: {text: 'text-[0.5rem] bg-red2 text-primary'},
+				}"
+			>
 				<IconsEditProfile />
 			</button>
 		</div>

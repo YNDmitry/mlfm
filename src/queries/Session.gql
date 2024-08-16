@@ -10,6 +10,12 @@ mutation updateGuestSessionItem($data: update_guest_session_input!, $id: ID!) {
 	}
 }
 
+mutation deleteGuestSessionItem($id: ID!) {
+	delete_guest_session_item(id: $id) {
+		id
+	}
+}
+
 query getSession($id: ID!) {
 	guest_session_by_id(id: $id) {
 		id

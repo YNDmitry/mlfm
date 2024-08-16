@@ -42,27 +42,39 @@
 	const [newsletter] = defineField('newsletter')
 
 	const userStore = useUserStore()
+	const toast = useToast()
 	const onSubmit = handleSubmit(async (values) => {
-		await userStore
-			.create(
-				values.email,
-				values.password,
-				values.firstName,
-				values.lastName,
-				values.terms,
-				values.newsletter,
-			)
-			.then(() => {
-				navigateTo('/profile/')
-			})
-			.catch((e) => {
-				console.log(e)
-			})
+		try {
+			await userStore
+				.create(
+					values.email,
+					values.password,
+					values.firstName,
+					values.lastName,
+					values.terms,
+					values.newsletter,
+				)
+				.then(() => {
+					navigateTo('/profile/')
+				})
+		} catch (error: any) {
+			console.log(error)
+
+			if (error.errors[0].extensions.code === 'RECORD_NOT_UNIQUE') {
+				toast.add({
+					severity: 'error',
+					summary: 'Ошибка',
+					detail: 'Пользователь с таким email уже зарегестрирован',
+					life: 3000,
+				})
+			}
+		}
 	})
 </script>
 
 <template>
 	<AuthForm title="Регистрация">
+		<Toast :position="'top-right'" />
 		<form @submit="onSubmit">
 			<div class="grid grid-cols-[1fr_1fr] gap-2">
 				<TheInput

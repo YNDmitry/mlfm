@@ -5,7 +5,10 @@
 	const schema = object({
 		firstName: string(),
 		lastName: string(),
-		phone: string(),
+		phone: string().matches(
+			/^\+7 \(\d{3}\) \d{3} \d{2}-\d{2}$/,
+			'Обязательное поле',
+		),
 	})
 
 	const {handleSubmit, isSubmitting} = useForm({
@@ -14,15 +17,21 @@
 
 	const isDone = ref(false)
 
+	const phone = useField('phone')
+
 	const onSubmitUpdateInfo = handleSubmit(async (values) => {
-		await userStore.updateUserInfo(
-			values.firstName,
-			values.lastName,
-			values.phone,
-		)
-		await userStore.getUserInfo()
-		isDone.value = true
-		setTimeout(() => (userStore.isChangeUserInfoPopup = false), 500)
+		try {
+			await userStore.updateUserInfo(
+				values.firstName,
+				values.lastName,
+				values.phone,
+			)
+			await userStore.getUserInfo()
+			isDone.value = true
+			return setTimeout(() => (userStore.isChangeUserInfoPopup = false), 500)
+		} catch (error) {
+			throw error
+		}
 	})
 </script>
 
@@ -51,10 +60,18 @@
 						:inputPlaceholder="userStore.lastName + ' - фамилия'"
 					/>
 				</div>
-				<TheInput
+				<InputMask
+					mask="+7 (999) 999 99-99"
+					placeholder="+7 (999) 999 99-99"
+					name="phone"
 					input-type="text"
-					:inputName="'phone'"
-					:inputPlaceholder="userStore.phone || 'Телефон'"
+					:model-value="phone.value"
+					@update:model-value="
+						(value) => {
+							phone.setValue(value)
+						}
+					"
+					class="w-full border-[1px] border-black font-light focus:outline-none max-tablet:h-[2.5rem] max-tablet:rounded-[1.25rem] max-tablet:px-[12px] max-tablet:py-[5px] max-tablet:text-[0.625rem] tablet:h-[48px] tablet:rounded-[35px] tablet:px-[0.875rem] tablet:text-[0.875rem]"
 				/>
 				<button
 					:disabled="isSubmitting"

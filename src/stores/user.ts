@@ -14,6 +14,7 @@ interface UserState {
 	isEmailVerify: boolean
 	currentOrders: []
 	completedOrders: []
+	authErrors: {} | null | undefined
 }
 
 interface CreateUserPayload {
@@ -41,6 +42,7 @@ export const useUserStore = defineStore('userStore', {
 		isChangeUserInfoPopup: false,
 		isChangeAddressesPopup: false,
 		isEmailVerify: false,
+		authErrors: null,
 	}),
 	actions: {
 		async create(
@@ -65,10 +67,14 @@ export const useUserStore = defineStore('userStore', {
 				is_email_verified: false,
 			}
 
-			await $directus.request(createUser(userPayload))
-			await login({email: mail, password: password})
+			try {
+				await $directus.request(createUser(userPayload))
+				await login({email: mail, password: password})
 
-			await this.getUserInfo()
+				await this.getUserInfo()
+			} catch (error: any) {
+				throw error
+			}
 		},
 
 		async userLogin(email: string, password: string) {
@@ -99,34 +105,49 @@ export const useUserStore = defineStore('userStore', {
 			this.id = user?.value.id
 			this.isAuthenticated = true
 			this.isEmailVerify = user?.value.is_email_verified
+			this.phone = user?.value.phone
 		},
 
 		async transferGuestSession() {
 			const sessionId = localStorage.getItem('sessionId')
 			if (sessionId) {
-				const sessionData = await this.fetchSessionData(sessionId)
-				await this.saveSessionDataToUser(this.id, sessionData)
-				await this.clearGuestSession(sessionId)
-				localStorage.removeItem('session_id')
+				try {
+					const sessionData = await this.fetchSessionData(sessionId)
+					await this.saveSessionDataToUser(this.id, sessionData)
+					await this.clearGuestSession(sessionId)
+					localStorage.removeItem('session_id')
+				} catch (error) {
+					throw error
+				}
 			}
 		},
 
 		async fetchSessionData(sessionId: string) {
-			const {$directus} = useNuxtApp()
-			const response = await $directus
-				.items('guest_sessions')
-				.readOne(sessionId)
-			return response
+			try {
+				const response = await GqlGetSession({id: sessionId})
+				return response.guest_session_by_id
+			} catch (error) {
+				throw error
+			}
 		},
 
 		async saveSessionDataToUser(userId: string, sessionData: any) {
 			const {$directus} = useNuxtApp()
-			await $directus.items('users').updateOne(userId, {sessionData})
+			await $directus.items('directus_users').updateOne(userId, {sessionData})
+			// try {
+
+			// } catch (error) {
+
+			// }
 		},
 
 		async clearGuestSession(sessionId: string) {
-			const {$directus} = useNuxtApp()
-			await $directus.items('guest_sessions').deleteOne(sessionId)
+			try {
+				await GqlDeleteGuestSessionItem({id: sessionId})
+				return
+			} catch (error) {
+				throw error
+			}
 		},
 
 		async updateUserInfo(firstName: string, lastName: string, phone: string) {
@@ -138,9 +159,8 @@ export const useUserStore = defineStore('userStore', {
 					last_name: lastName,
 					phone: phone,
 				},
-			}).then(() => {
-				this.getUserInfo()
 			})
+			await this.getUserInfo()
 		},
 
 		async updatePassword() {
@@ -171,9 +191,13 @@ export const useUserStore = defineStore('userStore', {
 			localStorage.setItem('sessionId', sessionId)
 		},
 
-		generateNewSessionId() {
+		async generateNewSessionId() {
 			// Генерация нового session ID
-			return 'new-session-id'
+			const res = await GqlCreateGuestSessionItem({
+				data: {status: 'draft'},
+			})
+			const sessionId = res.create_guest_session_item?.id
+			return sessionId
 		},
 
 		handleChangeUserDetailsPopup() {
