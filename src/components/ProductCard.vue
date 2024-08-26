@@ -23,13 +23,6 @@
 		},
 	})
 
-	const priceFormated = computed(() =>
-		Intl.NumberFormat('ru-RU', {
-			style: 'currency',
-			currency: 'RUB',
-		}).format(props.price as number),
-	)
-
 	const wishlistStore = useWishlistStore()
 
 	const isInsideOnWishlist = computed(() =>
@@ -75,7 +68,7 @@
 		>
 			<div>{{ title }}</div>
 
-			<span>{{ priceFormated }}</span>
+			<span>{{ usePrice(price) }}</span>
 		</div>
 	</NuxtLink>
 </template>

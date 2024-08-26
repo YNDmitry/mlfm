@@ -34,6 +34,7 @@
 
 	const changeCollection = (collectionName: string) => {
 		router.push({query: {...route.query, collectionId: collectionName}})
+		window.scrollTo(0, 0)
 	}
 
 	const totalBanners = props.data?.catalog?.random_banners_collection.length

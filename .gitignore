@@ -25,3 +25,4 @@ logs
 !.env.example
 
 bun.lockb
+todo.md

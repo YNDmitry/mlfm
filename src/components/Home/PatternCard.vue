@@ -17,13 +17,6 @@
 			required: true,
 		},
 	})
-
-	const priceFormated = computed(() =>
-		Intl.NumberFormat('ru-RU', {
-			style: 'currency',
-			currency: 'RUB',
-		}).format(props.price),
-	)
 </script>
 
 <template>
@@ -43,7 +36,7 @@
 				class="flex flex-col items-center gap-[5px] font-medium text-third max-laptop:py-[10px] tablet:text-[14px] laptop:py-[20px]"
 			>
 				<p class="text-center max-tablet:text-[10px]">{{ title }}</p>
-				<span class="max-tablet:text-[10px]">{{ priceFormated }}</span>
+				<span class="max-tablet:text-[10px]">{{ usePrice(price) }}</span>
 			</div>
 
 			<NuxtLink

@@ -8,6 +8,9 @@
 
 	const {handleSubmit, isSubmitting} = useForm({
 		validationSchema: schema,
+		initialValues: {
+			search: '',
+		},
 	})
 
 	const currentProducts: any = ref([])
@@ -24,6 +27,10 @@
 			isNothingFound.value = false
 		}
 		return (currentProducts.value = res.products)
+	})
+
+	const isDisabled = computed(() => {
+		return input?.value?.value?.length === 0 ? true : false
 	})
 </script>
 
@@ -58,10 +65,12 @@
 								input-name="search"
 								input-placeholder="Название продукта"
 								input-type="text"
+								:value="input.value?.value"
+								@keyup="(value) => input.setValue(value.target.value)"
 							/>
 							<button
 								aria-label="Найти"
-								:disabled="!input.value.value"
+								:disabled="isDisabled"
 								type="submit"
 								class="absolute bottom-0 right-0 top-0 h-[48px] min-w-36 rounded-main bg-red px-4 text-primary transition-all hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-60 max-tablet:h-[2.5rem]"
 							>

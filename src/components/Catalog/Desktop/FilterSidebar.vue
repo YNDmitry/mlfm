@@ -178,6 +178,7 @@
 							mode="currency"
 							:min="minPrice"
 							:max="maxPrice"
+							:max-fraction-digits="0"
 							currency="RUB"
 							unstyled
 							locale="ru-RU"
@@ -203,6 +204,7 @@
 							mode="currency"
 							:min="minPrice"
 							:max="maxPrice"
+							:max-fraction-digits="0"
 							currency="RUB"
 							unstyled
 							locale="ru-RU"

@@ -119,7 +119,8 @@
 									currency="RUB"
 									locale="ru-RU"
 									placeholder="10.000 ₽"
-									:min="100"
+									:max-fraction-digits="0"
+									:min="1000"
 									:pt="{
 										root: 'outline-none !active:outline-none',
 									}"

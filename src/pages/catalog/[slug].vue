@@ -274,78 +274,6 @@
 							{{ product?.title }}
 						</h1>
 
-						<div class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-4">
-							<div
-								class="flex flex-col max-tablet:gap-[0.75rem] max-tablet:text-[0.625rem] tablet:gap-4 tablet:text-[0.75rem]"
-							>
-								<span v-if="product?.category"
-									>Категория: {{ product?.category?.title }}</span
-								>
-								<span v-if="product?.brand"
-									>Бренд: {{ product?.brand?.title }}</span
-								>
-
-								<template v-if="processedData.colors?.length > 0">
-									<span>Цвет: </span>
-									<div class="flex max-tablet:gap-[0.75rem] tablet:gap-2">
-										<label
-											class="inline-flex cursor-pointer items-center"
-											v-for="(color, idx) in processedData.colors"
-											:key="idx"
-										>
-											<input
-												type="radio"
-												name="color"
-												:value="color?.title"
-												v-model="currentColor"
-												class="hidden"
-											/>
-
-											<span
-												class="rounded-full bg-white flex items-center justify-center border border-black px-2 text-black max-tablet:min-h-[1.25rem] max-tablet:min-w-[3.438rem] max-tablet:text-[0.625rem] tablet:min-h-[2rem] tablet:min-w-[5.938rem]"
-												id="option-6"
-												>{{ color?.title }}</span
-											>
-										</label>
-									</div>
-								</template>
-							</div>
-
-							<div
-								class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-2"
-								v-if="processedData.sizes.length > 0"
-							>
-								<span class="max-tablet:text-[0.625rem] tablet:text-[0.75rem]"
-									>Размер:</span
-								>
-
-								<!-- radio кнопки! -->
-								<div class="flex max-tablet:gap-[0.75rem] tablet:gap-2">
-									<label
-										class="inline-flex cursor-pointer items-center"
-										v-for="(size, idx) in processedData.sizes"
-										:key="idx"
-									>
-										<input
-											type="radio"
-											name="size"
-											:value="size?.small_title"
-											v-model="currentSize"
-											class="hidden"
-										/>
-
-										<span
-											class="rounded-full bg-white flex items-center justify-center border border-black px-2 text-black max-tablet:min-h-[1.25rem] max-tablet:min-w-[3.438rem] max-tablet:text-[0.625rem] tablet:min-h-[2rem] tablet:min-w-[5.938rem]"
-											id="option-6"
-										>
-											{{ size?.small_title }}
-										</span>
-									</label>
-								</div>
-								<!-- /radio кнопки! -->
-							</div>
-						</div>
-
 						<span
 							class="max-tablet:text-[0.625rem] tablet:text-[0.875rem]"
 							v-if="currentPrice"
@@ -393,17 +321,35 @@
 
 						<!-- Dropdown-ы -->
 						<div
-							v-if="product?.description"
 							class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-[1.25rem]"
 						>
-							<Accordion>
-								<AccordionPanel class="p-0">
+							<Accordion value="0">
+								<AccordionPanel value="0" class="p-0">
 									<AccordionHeader class="text-[.875rem] font-normal"
 										>О продукте</AccordionHeader
 									>
 									<AccordionContent>
-										<p class="pt-3 text-[.75rem]">
+										<div class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-4">
+											<div
+												class="flex flex-col max-tablet:gap-[0.75rem] max-tablet:text-[0.625rem] tablet:gap-4 tablet:text-[0.75rem]"
+											>
+												<span v-if="product?.category">Категория: {{ product?.category?.title }}</span>
+												<span v-if="product?.brand">Бренд: {{ product?.brand?.title }}</span>
+											</div>
+										</div>
+										<p class="pt-3 text-[.75rem]" v-if="product?.description">
 											{{ product?.description }}
+										</p>
+									</AccordionContent>
+								</AccordionPanel>
+								<AccordionPanel value="1" class="p-0">
+									<AccordionHeader class="text-[.875rem] font-normal"
+									>Размер и цвет</AccordionHeader
+									>
+									<AccordionContent>
+										<p class="pt-3 text-[.75rem] flex flex-col gap-2" v-for="(item, idx) in product?.product_variants" :key="idx">
+											<span v-if="item.color_id">Цвет: {{item.color_id.title}}</span>
+											<span v-if="item.size_id">Размер: {{item.size_id.small_title}}</span>
 										</p>
 									</AccordionContent>
 								</AccordionPanel>

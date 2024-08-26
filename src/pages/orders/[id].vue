@@ -149,7 +149,12 @@
 									</div>
 								</div>
 							</div>
-							<Message severity="error" v-else>Заказ отменён</Message>
+							<Message severity="error" v-else>
+								<div class="text-[0.8rem]">Заказ отменён</div>
+								<p class="mt-2 text-[0.8rem] text-black">
+									Причина: {{ product.canceled_comment }}
+								</p>
+							</Message>
 							<Message
 								v-if="product?.payment_status === 'in_progress'"
 								severity="warn"
@@ -271,7 +276,13 @@
 										</div>
 									</article>
 								</template>
-								<div class="flex flex-col gap-3">
+								<div
+									class="flex flex-col gap-3"
+									v-if="
+										product?.payment.length > 0 ||
+										product?.payment[0]?.payment_amount > 0
+									"
+								>
 									<div class="text-[0.7rem] font-medium">
 										Итоговая цена {{ finalText }}:
 										{{ usePrice(product?.payment[0]?.payment_amount) }}
