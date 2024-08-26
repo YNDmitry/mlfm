@@ -326,10 +326,10 @@
 							<Accordion value="0">
 								<AccordionPanel value="0" class="p-0">
 									<AccordionHeader class="text-[.875rem] font-normal"
-										>О продукте</AccordionHeader
+										><span class="py-2">О продукте</span></AccordionHeader
 									>
 									<AccordionContent>
-										<div class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-4">
+										<div class="flex mt-2 flex-col max-tablet:gap-[0.75rem] tablet:gap-4">
 											<div
 												class="flex flex-col max-tablet:gap-[0.75rem] max-tablet:text-[0.625rem] tablet:gap-4 tablet:text-[0.75rem]"
 											>
@@ -344,7 +344,7 @@
 								</AccordionPanel>
 								<AccordionPanel value="1" class="p-0">
 									<AccordionHeader class="text-[.875rem] font-normal"
-									>Размер и цвет</AccordionHeader
+									><span class="py-2">Размер и цвет</span></AccordionHeader
 									>
 									<AccordionContent>
 										<p class="pt-3 text-[.75rem] flex flex-col gap-2" v-for="(item, idx) in product?.product_variants" :key="idx">
