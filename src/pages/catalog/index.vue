@@ -95,20 +95,7 @@
 		},
 	)
 
-	useSeoMeta({
-		title: data.value?.catalog?.SEO?.meta_title,
-		ogTitle: data.value?.catalog?.SEO?.meta_title,
-		description: data.value?.catalog?.SEO?.meta_description,
-		ogDescription: data.value?.catalog?.SEO?.meta_description,
-		ogImage:
-			appConfig.public.databaseUrl +
-			'assets/' +
-			data.value?.catalog?.SEO?.og_image?.id,
-		twitterImage:
-			appConfig.public.databaseUrl +
-			'assets/' +
-			data.value?.catalog?.SEO?.og_image?.id,
-	})
+	useSeoMetaUtil(data.value?.catalog?.SEO, appConfig)
 
 	function resetFilters() {
 		router.replace({

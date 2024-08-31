@@ -22,6 +22,12 @@
 		main_image?: {
 			id?: string
 		}
+		category?: {
+			title?: string
+			size_table: {
+				id: string
+			}
+		}
 		product_variants?: [
 			{
 				id?: string
@@ -223,11 +229,31 @@
 			{provider: 'directus'},
 		)
 	})
+
+	const isShowSizeTable = ref(false)
 </script>
 
 <template>
 	<div>
 		<Toast :position="'top-right'" />
+		<Dialog
+			:pt="{
+				root: 'max-w-[1000px] w-[95%]',
+			}"
+			:modal="true"
+			v-model:visible="isShowSizeTable"
+			v-if="product?.category?.size_table.id"
+		>
+			<div class="flex w-full justify-start overflow-auto">
+				<NuxtImg
+					placeholder
+					:src="product?.category?.size_table.id"
+					provider="directus"
+					width="1000"
+					class="w-full min-w-[1000px]"
+				/>
+			</div>
+		</Dialog>
 		<!-- Карточка товара -->
 		<section
 			class="pt-[78px] max-tablet:pt-0"
@@ -274,11 +300,23 @@
 							{{ product?.title }}
 						</h1>
 
-						<span
-							class="max-tablet:text-[0.625rem] tablet:text-[0.875rem]"
-							v-if="currentPrice"
-							>Цена: {{ currentPrice }}</span
-						>
+						<div class="flex justify-between gap-4">
+							<span
+								class="max-tablet:text-[0.625rem] tablet:text-[0.875rem]"
+								v-if="currentPrice"
+							>
+								Цена: {{ currentPrice }}
+							</span>
+							<button
+								type="button"
+								aria-label="Таблица размеров"
+								class="text-gray underline transition-all hover:text-black max-tablet:text-[0.625rem] tablet:text-[0.875rem]"
+								@click="isShowSizeTable = !isShowSizeTable"
+								v-if="product?.category?.size_table.id"
+							>
+								Таблица размеров
+							</button>
+						</div>
 
 						<!-- Кнопки "Добавить" -->
 						<div
@@ -329,12 +367,18 @@
 										><span class="py-2">О продукте</span></AccordionHeader
 									>
 									<AccordionContent>
-										<div class="flex mt-2 flex-col max-tablet:gap-[0.75rem] tablet:gap-4">
+										<div
+											class="mt-2 flex flex-col max-tablet:gap-[0.75rem] tablet:gap-4"
+										>
 											<div
 												class="flex flex-col max-tablet:gap-[0.75rem] max-tablet:text-[0.625rem] tablet:gap-4 tablet:text-[0.75rem]"
 											>
-												<span v-if="product?.category">Категория: {{ product?.category?.title }}</span>
-												<span v-if="product?.brand">Бренд: {{ product?.brand?.title }}</span>
+												<span v-if="product?.category"
+													>Категория: {{ product?.category?.title }}</span
+												>
+												<span v-if="product?.brand"
+													>Бренд: {{ product?.brand?.title }}</span
+												>
 											</div>
 										</div>
 										<p class="pt-3 text-[.75rem]" v-if="product?.description">
@@ -344,12 +388,20 @@
 								</AccordionPanel>
 								<AccordionPanel value="1" class="p-0">
 									<AccordionHeader class="text-[.875rem] font-normal"
-									><span class="py-2">Размер и цвет</span></AccordionHeader
+										><span class="py-2">Размер и цвет</span></AccordionHeader
 									>
 									<AccordionContent>
-										<p class="pt-3 text-[.75rem] flex flex-col gap-2" v-for="(item, idx) in product?.product_variants" :key="idx">
-											<span v-if="item.color_id">Цвет: {{item.color_id.title}}</span>
-											<span v-if="item.size_id">Размер: {{item.size_id.small_title}}</span>
+										<p
+											class="flex flex-col gap-2 pt-3 text-[.75rem]"
+											v-for="(item, idx) in product?.product_variants"
+											:key="idx"
+										>
+											<span v-if="item.color_id"
+												>Цвет: {{ item.color_id.title }}</span
+											>
+											<span v-if="item.size_id"
+												>Размер: {{ item.size_id.small_title }}</span
+											>
 										</p>
 									</AccordionContent>
 								</AccordionPanel>

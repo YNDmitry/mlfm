@@ -10,20 +10,7 @@
 		},
 	)
 
-	useSeoMeta({
-		title: data.value.about_us?.SEO.meta_title,
-		ogTitle: data.value.about_us?.SEO.meta_title,
-		description: data.value.about_us?.SEO.meta_description,
-		ogDescription: data.value.about_us?.SEO.meta_description,
-		ogImage:
-			appConfig.public.databaseUrl +
-			'assets/' +
-			data.value.about_us?.SEO.og_image?.id,
-		twitterImage:
-			appConfig.public.databaseUrl +
-			'assets/' +
-			data.value.about_us?.SEO.og_image?.id,
-	})
+	useSeoMetaUtil(data.value.about_us?.SEO, appConfig)
 </script>
 
 <template>

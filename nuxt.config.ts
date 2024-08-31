@@ -83,7 +83,7 @@ export default defineNuxtConfig({
 		'@nuxtjs/device',
 		'nuxt-schema-org',
 		'nuxt-graphql-request',
-	],
+    ],
 
 	image: {
 		format: ['webp'],
@@ -99,7 +99,7 @@ export default defineNuxtConfig({
 	},
 
 	robots: {
-		Sitemap: (req: any) => `https://${req.headers.host}/sitemap.xml`,
+		sitemap: (req) => `https://${req.headers.host}/sitemap.xml`,
 	},
 
 	primevue: {
@@ -161,9 +161,9 @@ export default defineNuxtConfig({
 	schemaOrg: {
 		identity: {
 			type: 'Organization',
-			name: 'My Company',
-			url: 'https://example.com',
-			logo: 'https://example.com/logo.png',
+			name: 'MLFM',
+			url: 'https://mlfm.store',
+			logo: 'https://admin.mlfm.store/assets/918c4e74-9193-418f-a972-db7fbefd62c8',
 		},
 	},
 })

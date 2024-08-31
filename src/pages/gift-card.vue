@@ -19,23 +19,7 @@
 		},
 	)
 
-	useSeoMeta({
-		title: data.value.gift_card?.seo?.meta_title,
-		ogTitle: data.value.gift_card?.seo?.meta_title,
-		twitterTitle: data.value.gift_card?.seo?.meta_title,
-		description: data.value.gift_card?.seo?.meta_description,
-		ogDescription: data.value.gift_card?.seo?.meta_description,
-		twitterDescription: data.value.gift_card?.seo?.meta_description,
-		ogImage:
-			config.public.databaseUrl +
-			'assets/' +
-			data.value.gift_card?.seo?.og_image?.id,
-		twitterImage:
-			config.public.databaseUrl +
-			'assets/' +
-			data.value.gift_card?.seo?.og_image?.id,
-		twitterCard: 'summary',
-	})
+	useSeoMetaUtil(data.value.gift_card?.seo, config)
 
 	const addItemToCart = async () => {
 		try {

@@ -26,6 +26,9 @@ fragment ProductFields on products {
 	}
 	category {
 		title
+		size_table {
+			id
+		}
 	}
 	product_upsells {
 		related_products_id {

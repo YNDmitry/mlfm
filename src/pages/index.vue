@@ -26,22 +26,7 @@
 		},
 	)
 
-	useSeoMeta({
-		title: websiteStore.siteSettings?.seo?.meta_title,
-		twitterTitle: websiteStore.siteSettings?.seo.meta_title,
-		ogTitle: websiteStore.siteSettings?.seo.meta_title,
-		description: websiteStore.siteSettings?.seo.meta_description,
-		twitterDescription: websiteStore.siteSettings?.seo.meta_description,
-		ogDescription: websiteStore.siteSettings?.seo.meta_description,
-		twitterImage:
-			appConfig.public.databaseUrl +
-			'assets/' +
-			websiteStore.siteSettings?.seo.og_image?.id,
-		ogImage:
-			appConfig.public.databaseUrl +
-			'assets/' +
-			websiteStore.siteSettings?.seo.og_image?.id,
-	})
+	useSeoMetaUtil(websiteStore.siteSettings?.seo, appConfig)
 </script>
 
 <template>

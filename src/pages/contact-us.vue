@@ -15,16 +15,7 @@
 		},
 	)
 
-	useSeoMeta({
-		title: data.value.contacts?.SEO?.meta_title,
-		ogTitle: data.value.contacts?.SEO?.meta_title,
-		description: data.value.contacts?.SEO?.meta_description,
-		ogDescription: data.value.contacts?.SEO?.meta_description,
-		ogImage:
-			appConfig.public.databaseUrl +
-			'assets/' +
-			data.value.contacts?.SEO?.og_image?.id,
-	})
+	useSeoMetaUtil(data.value.contacts?.SEO, appConfig)
 </script>
 
 <template>
