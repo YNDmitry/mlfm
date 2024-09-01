@@ -6,7 +6,7 @@
 
 	const handleSubmit = async () => {
 		const id = await useCart.createCheckoutSession()
-		return navigateTo(`/checkout/${id}`)
+		return await navigateTo(`/checkout/${id}`)
 	}
 </script>
 
@@ -316,8 +316,18 @@
 						aria-label="Перейти к оплате"
 						type="button"
 						@click="handleSubmit"
-						class="flex w-full items-center justify-center bg-red2 text-[0.625rem] text-primary transition-colors hover:bg-red2-hover max-tablet:mt-[1.875rem] max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] tablet:mt-[1.25rem] tablet:min-h-[37px] tablet:rounded-[1.875rem] tablet:font-medium"
+						:disabled="useCart.isSubmitting"
+						class="relative flex w-full items-center justify-center bg-red2 text-[0.625rem] text-primary transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-50 max-tablet:mt-[1.875rem] max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] tablet:mt-[1.25rem] tablet:min-h-[37px] tablet:rounded-[1.875rem] tablet:font-medium"
 					>
+						<ProgressSpinner
+							aria-label="Загрузка..."
+							style="width: 20px; height: 20px"
+							:pt="{
+								root: 'mx-0 absolute left-[2rem]',
+								circle: '!stroke-[#ffffff]',
+							}"
+							v-if="useCart.isSubmitting"
+						/>
 						Перейти к оплате
 					</button>
 					<!--  /Кнопка - Перейти к оплате -->

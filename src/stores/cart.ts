@@ -43,6 +43,7 @@ export const useCartStore = defineStore('userCart', {
 		giftCodeRemainingBalance: null,
 		giftCodeErrors: {} as {status?: number; statusMessage?: string},
 		isRelatedProductPending: true,
+		isSubmitting: false,
 	}),
 	getters: {
 		totalPrice: (state) => {
@@ -367,6 +368,7 @@ export const useCartStore = defineStore('userCart', {
 		},
 
 		async createCheckoutSession() {
+			this.isSubmitting = true
 			const sessionId = await this.getSessionId()
 			if (!sessionId) {
 				await this.initCart()
@@ -402,11 +404,13 @@ export const useCartStore = defineStore('userCart', {
 							JSON.stringify(currentSessionData) ===
 							JSON.stringify(existingSession.session_data)
 						) {
+							this.isSubmitting = false
 							return existingCheckoutSessionId // Возвращаем ID существующей активной сессии
 						}
 					}
 				} catch (error) {
 					console.error('Error reading existing checkout session:', error)
+					this.isSubmitting = false
 					localStorage.removeItem('checkoutSessionId') // Удаляем невалидную сессию
 				}
 			}
@@ -430,8 +434,10 @@ export const useCartStore = defineStore('userCart', {
 
 				const newSessionId = data.create_checkout_sessions_item?.id as string
 				localStorage.setItem('checkoutSessionId', newSessionId)
+				this.isSubmitting = false
 				return newSessionId
 			} catch (error) {
+				this.isSubmitting = false
 				console.error('Error creating checkout session:', error)
 			}
 		},

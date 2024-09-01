@@ -55,7 +55,9 @@
 </script>
 <template>
 	<div>
-		<Toast group="bt" />
+		<ClientOnly>
+			<Toast group="bt" />
+		</ClientOnly>
 		<ProfileUpdateUserDetailsPopup />
 		<ProfileAddAddressPopup />
 		<section class="pb-16 pt-20 max-tablet:pt-11">

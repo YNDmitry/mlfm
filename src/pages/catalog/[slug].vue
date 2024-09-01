@@ -235,7 +235,9 @@
 
 <template>
 	<div>
-		<Toast :position="'top-right'" />
+		<ClientOnly>
+			<Toast :position="'top-right'" />
+		</ClientOnly>
 		<Dialog
 			:pt="{
 				root: 'max-w-[1000px] w-[95%]',
@@ -367,20 +369,6 @@
 										><span class="py-2">О продукте</span></AccordionHeader
 									>
 									<AccordionContent>
-										<div
-											class="mt-2 flex flex-col max-tablet:gap-[0.75rem] tablet:gap-4"
-										>
-											<div
-												class="flex flex-col max-tablet:gap-[0.75rem] max-tablet:text-[0.625rem] tablet:gap-4 tablet:text-[0.75rem]"
-											>
-												<span v-if="product?.category"
-													>Категория: {{ product?.category?.title }}</span
-												>
-												<span v-if="product?.brand"
-													>Бренд: {{ product?.brand?.title }}</span
-												>
-											</div>
-										</div>
 										<p class="pt-3 text-[.75rem]" v-if="product?.description">
 											{{ product?.description }}
 										</p>
@@ -403,6 +391,25 @@
 												>Размер: {{ item.size_id.small_title }}</span
 											>
 										</p>
+									</AccordionContent>
+								</AccordionPanel>
+								<AccordionPanel value="2" class="p-0">
+									<AccordionHeader class="text-[.875rem] font-normal"
+										><span class="py-2"
+											>Категория и бренд</span
+										></AccordionHeader
+									>
+									<AccordionContent>
+										<div
+											class="flex flex-col gap-2 pt-3 max-tablet:text-[0.625rem] tablet:text-[0.75rem]"
+										>
+											<span v-if="product?.category"
+												>Категория: {{ product?.category?.title }}</span
+											>
+											<span v-if="product?.brand"
+												>Бренд: {{ product?.brand?.title }}</span
+											>
+										</div>
 									</AccordionContent>
 								</AccordionPanel>
 							</Accordion>

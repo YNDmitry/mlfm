@@ -74,7 +74,9 @@
 
 <template>
 	<AuthForm title="Регистрация">
-		<Toast :position="'top-right'" />
+		<ClientOnly>
+			<Toast :position="'top-right'" />
+		</ClientOnly>
 		<form @submit="onSubmit">
 			<div class="grid grid-cols-[1fr_1fr] gap-2">
 				<TheInput

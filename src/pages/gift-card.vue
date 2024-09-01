@@ -50,7 +50,9 @@
 
 <template>
 	<div>
-		<Toast position="top-right" />
+		<ClientOnly>
+			<Toast position="top-right" />
+		</ClientOnly>
 		<!-- Карточка товара -->
 		<section class="pb-20 pt-[78px] max-tablet:pt-0">
 			<div class="mx-auto my-0 max-w-[1189px] px-[1rem]">

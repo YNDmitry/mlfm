@@ -107,7 +107,9 @@
 
 <template>
 	<div>
-		<Toast position="top-right" />
+		<ClientOnly>
+			<Toast position="top-right" />
+		</ClientOnly>
 		<section class="py-12">
 			<div class="container mx-auto">
 				<OrdersForm
@@ -220,6 +222,12 @@
 												v-if="product?.giftcard_id?.code"
 											>
 												Код подарочной карты: {{ product?.giftcard_id?.code }}
+											</p>
+											<p
+												v-else
+												class="text-[0.625rem] font-medium text-[orange]"
+											>
+												Код подарочной карты отобразится, когда мы примем заказ.
 											</p>
 										</div>
 									</div>

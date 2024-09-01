@@ -85,7 +85,7 @@
 			.oneOf([true], 'Нужно обязательно подтвердить'),
 	})
 
-	const {isSubmitting, handleSubmit, submitCount} = useForm({
+	const {handleSubmit} = useForm({
 		validationSchema: schema,
 		initialValues: {
 			deliveryType: 'delivery',
@@ -115,21 +115,12 @@
 	}, 1000)
 
 	const submitForm = handleSubmit(async (values: any) => {
-		try {
-			if (submitCount.value === 1) {
-				await checkoutStore.sendCode(email.value as string)
-				otpResendTimeout.value = 60
-				resume()
-				checkoutStore.isOtpVisible = true
-				formValues.value = values
-				updateOrderModel()
-			}
-		} catch (error) {
-			throw createError({
-				status: 401,
-				statusMessage: 'Что-то пошло не так',
-			})
-		}
+		await checkoutStore.sendCode(email.value as string)
+		otpResendTimeout.value = 60
+		resume()
+		checkoutStore.isOtpVisible = true
+		formValues.value = values
+		updateOrderModel()
 	})
 
 	const orderModel = ref({
@@ -195,31 +186,30 @@
 		isOtpSubmit.value = true
 		updateOrderModel()
 
-		await fetch(config.public.databaseUrl + 'order/create', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(orderModel.value),
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				if (data.success) {
-					isOtpSubmit.value = false
-					window.location.href = data.returnUrl
-				} else {
-					toast.add({
-						severity: 'warn',
-						summary: 'Ошибка',
-						detail: data.message,
-						life: 10000,
-					})
-				}
-			})
-			.catch(() => {
+		try {
+			const res = await fetch(config.public.databaseUrl + 'order/create', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(orderModel.value),
+			}).then((res) => res.json())
+
+			if (res.success) {
 				isOtpSubmit.value = false
-				isError.value = true
-			})
+				window.location.href = res.returnUrl
+			} else {
+				isOtpSubmit.value = false
+				toast.add({
+					severity: 'warn',
+					summary: 'Ошибка',
+					detail: res.errors[0].message,
+					life: 10000,
+				})
+			}
+		} catch (error) {
+			isOtpSubmit.value = false
+		}
 	}
 
 	const sendCode = () => {
@@ -247,11 +237,14 @@
 
 <template>
 	<div class="pb-[3.75rem]">
-		<Toast :position="'top-right'" />
+		<ClientOnly>
+			<Toast :position="'top-right'" />
+		</ClientOnly>
 		<div class="container laptop:max-w-[512px]">
 			<Dialog
 				modal
 				v-model:visible="checkoutStore.isOtpVisible"
+				:closable="false"
 				:pt="{icons: 'hidden', root: 'max-tablet:w-[95%]'}"
 			>
 				<div class="flex-column align-items-center flex flex-col text-center">
@@ -287,11 +280,11 @@
 							</button>
 							<button
 								:disabled="
-									checkoutStore.otpCode.length < 6 ? true : false || isError
+									checkoutStore.otpCode.length < 6 ? true : false || isOtpSubmit
 								"
 								type="submit"
 								@click="submitOtp"
-								class="w-full bg-red2 text-primary transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-50 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[45px] tablet:rounded-[1.875rem]"
+								class="relative w-full bg-red2 text-primary transition-colors hover:bg-red2-hover disabled:pointer-events-none disabled:opacity-50 max-tablet:min-h-[1.875rem] max-tablet:rounded-[1.25rem] max-tablet:text-[0.625rem] tablet:min-h-[45px] tablet:rounded-[1.875rem]"
 							>
 								<ProgressSpinner
 									aria-label="Loading..."
@@ -315,7 +308,7 @@
 					</div>
 				</div>
 			</Dialog>
-			<form @submit="submitForm" class="pt-8">
+			<form @submit.prevent="submitForm" class="pt-8">
 				<CheckoutFields />
 				<CheckoutDeliveryOptions v-if="!isOnlyVirtual" />
 				<CheckoutDeliveryAddress
@@ -323,7 +316,7 @@
 				/>
 				<CheckoutOrderComment />
 				<CheckoutPaymentMethod />
-				<CheckoutSubmitButton :isSubmitting="isSubmitting" />
+				<CheckoutSubmitButton :isSubmitting="checkoutStore.isSubmitting" />
 			</form>
 		</div>
 	</div>

@@ -7,6 +7,7 @@ export const useCheckoutStore = defineStore('checkoutStore', {
 		promoCode: null,
 		giftCard: null,
 		paymentMethod: 'bank_card',
+		isSubmitting: false,
 	}),
 	actions: {
 		handleDeliveryType() {
@@ -17,15 +18,24 @@ export const useCheckoutStore = defineStore('checkoutStore', {
 		},
 		async sendCode(email: string) {
 			const config = useRuntimeConfig()
-			await fetch(config.public.databaseUrl + 'order/send-otp', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					email: email,
-				}),
-			}).then((res) => res.json())
+			this.isSubmitting = true
+			try {
+				const res = await fetch(config.public.databaseUrl + 'order/send-otp', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						email: email,
+					}),
+				})
+				const data = res.json()
+				this.isSubmitting = false
+				return data
+			} catch (error) {
+				this.isSubmitting = false
+				console.log(error)
+			}
 		},
 	},
 })

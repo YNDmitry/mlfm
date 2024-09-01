@@ -41,7 +41,9 @@
 
 <template>
 	<AuthForm title="Войти">
-		<Toast :position="'top-right'" />
+		<ClientOnly>
+			<Toast :position="'top-right'" />
+		</ClientOnly>
 		<PopupsAuthResetPassword
 			@update:visible="isResetPasswordPopup = $event"
 			:isPopupOpen="isResetPasswordPopup"
