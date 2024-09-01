@@ -83,7 +83,7 @@ export default defineNuxtConfig({
 		'@nuxtjs/device',
 		'nuxt-schema-org',
 		'nuxt-graphql-request',
-    ],
+	],
 
 	image: {
 		format: ['webp'],

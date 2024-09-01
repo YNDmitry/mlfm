@@ -242,12 +242,12 @@
 			}"
 			:modal="true"
 			v-model:visible="isShowSizeTable"
-			v-if="product?.category?.size_table.id"
+			v-if="product?.category?.size_table?.id"
 		>
 			<div class="flex w-full justify-start overflow-auto">
 				<NuxtImg
 					placeholder
-					:src="product?.category?.size_table.id"
+					:src="product?.category?.size_table?.id"
 					provider="directus"
 					width="1000"
 					class="w-full min-w-[1000px]"
@@ -312,7 +312,7 @@
 								aria-label="Таблица размеров"
 								class="text-gray underline transition-all hover:text-black max-tablet:text-[0.625rem] tablet:text-[0.875rem]"
 								@click="isShowSizeTable = !isShowSizeTable"
-								v-if="product?.category?.size_table.id"
+								v-if="product?.category?.size_table?.id"
 							>
 								Таблица размеров
 							</button>
