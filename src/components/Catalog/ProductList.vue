@@ -147,7 +147,7 @@
 				:rows="props.currentLimit"
 				:totalRecords="props.totalProducts"
 				template="PrevPageLink CurrentPageReport JumpToPageDropdown RowsPerPageDropdown NextPageLink"
-				:rowsPerPageOptions="[9, 18, 27]"
+				:rowsPerPageOptions="[27, 36, 45]"
 				:alwaysShow="false"
 				:currentPageReportTemplate="
 					!isMobile

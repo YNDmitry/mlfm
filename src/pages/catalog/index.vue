@@ -8,7 +8,7 @@
 
 	const sortOptions = ref(options)
 	const currentPage = ref(Number(route.query.page) - 1 || 0)
-	const currentLimit = ref(Number(route.query.limit) || 9)
+	const currentLimit = ref(Number(route.query.limit) || 27)
 	const currentSort = ref(
 		sortOptions.value.find((option) => option.code === route.query.sort) ||
 			sortOptions.value[0],
