@@ -16,6 +16,12 @@ interface filterObject {
 	}
 	price: {}
 	status: {}
+	stone: {
+		title: {}
+	}
+	material: {
+		title: {}
+	}
 }
 
 export function useProducts() {
@@ -28,6 +34,14 @@ export function useProducts() {
 
 		if (route.query.brand) {
 			obj.value.brand = {title: {_eq: route.query.brand}}
+		}
+
+		if (route.query.stone) {
+			obj.value.stone = {title: {_eq: route.query.stone}}
+		}
+
+		if (route.query.material) {
+			obj.value.material = {title: {_eq: route.query.material}}
 		}
 
 		if (route.query.collectionId) {

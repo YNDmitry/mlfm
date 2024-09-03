@@ -30,6 +30,12 @@ fragment ProductFields on products {
 			id
 		}
 	}
+	stone {
+		title
+	}
+	material {
+		title
+	}
 	product_upsells {
 		related_products_id {
 			id

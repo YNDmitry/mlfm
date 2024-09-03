@@ -138,6 +138,26 @@
 			/>
 			<!-- /Цвет -->
 
+			<!-- Камень -->
+			<CatalogFilter
+				:filters="props.data?.stone"
+				:title="`Камень`"
+				:routeTitle="'stone'"
+				:currentFilter="route.query.stone"
+				@update:currentFilter="route.query.stone = $event"
+			/>
+			<!-- /Камень -->
+
+			<!-- Материал -->
+			<CatalogFilter
+				:filters="props.data?.material"
+				:title="`Материал`"
+				:routeTitle="'material'"
+				:currentFilter="route.query.material"
+				@update:currentFilter="route.query.material = $event"
+			/>
+			<!-- /Материал -->
+
 			<!-- Размер -->
 			<CatalogFilter
 				:filters="props.data?.sizes.map((el: any) => ({title: el.small_title}))"

@@ -22,6 +22,12 @@
 		main_image?: {
 			id?: string
 		}
+		material?: {
+			title: string
+		}
+		stone?: {
+			title: string
+		}
 		category?: {
 			title?: string
 			size_table: {
@@ -376,7 +382,9 @@
 								</AccordionPanel>
 								<AccordionPanel value="1" class="p-0">
 									<AccordionHeader class="text-[.875rem] font-normal"
-										><span class="py-2">Размер и цвет</span></AccordionHeader
+										><span class="py-2"
+											>Размер, цвет, камень и материал</span
+										></AccordionHeader
 									>
 									<AccordionContent>
 										<p
@@ -389,6 +397,12 @@
 											>
 											<span v-if="item.size_id"
 												>Размер: {{ item.size_id.small_title }}</span
+											>
+											<span v-if="product?.stone"
+												>Камень: {{ product?.stone?.title }}</span
+											>
+											<span v-if="product?.material"
+												>Материал: {{ product?.material?.title }}</span
 											>
 										</p>
 									</AccordionContent>

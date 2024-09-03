@@ -57,4 +57,12 @@ query Catalog {
 		title
 		id
 	}
+	material(filter: {status: {_eq: "published"}}) {
+		title
+		id
+	}
+	stone(filter: {status: {_eq: "published"}}) {
+		title
+		id
+	}
 }
