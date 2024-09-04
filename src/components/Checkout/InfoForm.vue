@@ -116,11 +116,11 @@
 
 	const submitForm = handleSubmit(async (values: any) => {
 		await checkoutStore.sendCode(email.value as string)
-		otpResendTimeout.value = 60
 		resume()
+		updateOrderModel()
+		otpResendTimeout.value = 60
 		checkoutStore.isOtpVisible = true
 		formValues.value = values
-		updateOrderModel()
 	})
 
 	const orderModel = ref({
@@ -308,7 +308,7 @@
 					</div>
 				</div>
 			</Dialog>
-			<form @submit.prevent="submitForm" class="pt-8">
+			<form @submit="submitForm" class="pt-8">
 				<CheckoutFields />
 				<CheckoutDeliveryOptions v-if="!isOnlyVirtual" />
 				<CheckoutDeliveryAddress

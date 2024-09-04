@@ -34,7 +34,6 @@
 				height="600"
 				format="webp"
 				placeholder
-				alt=""
 			/>
 		</div>
 		<div
