@@ -1,2 +1,0 @@
-schema: 'https://admin.mlfm.store/graphql'
-documents: '**/*.graphql'
