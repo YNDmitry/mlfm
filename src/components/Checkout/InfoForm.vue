@@ -1,13 +1,11 @@
 <script setup lang="ts">
-	import {boolean, object, string} from 'yup'
+	import {useCheckoutForm} from '~/composables/useCheckoutForm'
+	import {useOtpTimer} from '~/composables/useOtpTimer'
 
 	const checkoutStore = useCheckoutStore()
-	const config = useRuntimeConfig()
 
-	const formValues = ref('')
 	const isError = ref(false)
 	const isOtpSubmit = ref(false)
-	const otpResendTimeout = ref(0)
 	const toast = useToast()
 
 	// Default values for development mode
@@ -29,194 +27,49 @@
 			}
 		: {}
 
-	const schema = object({
-		firstName: string().required('Обязательное поле'),
-		lastName: string().required('Обязательное поле'),
-		thirdName: string().required('Обязательное поле'),
-		email: string()
-			.email('Введите валидный email')
-			.required('Обязательное поле'),
-		phone: string()
-			.matches(/^\+7 \(\d{3}\) \d{3} \d{2}-\d{2}$/, 'Обязательное поле')
-			.required('Обязательное поле'),
-		deliveryType: string()
-			.oneOf(['delivery', 'self-delivery'])
-			.default('delivery')
-			.notRequired(),
-		city: string().when('deliveryType', {
-			is: (value: string) => value === 'delivery',
-			then: () => string().required('Обязательное поле'),
-			otherwise: () => string().notRequired(),
-		}),
-		street: string().when('deliveryType', {
-			is: (value: string) => value === 'delivery',
-			then: () => string().required('Обязательное поле'),
-			otherwise: () => string().notRequired(),
-		}),
-		home: string().when('deliveryType', {
-			is: (value: string) => value === 'delivery',
-			then: () => string().required('Обязательное поле'),
-			otherwise: () => string().notRequired(),
-		}),
-		entrance: string().when('deliveryType', {
-			is: (value: string) => value === 'delivery',
-			then: () => string().required('Обязательное поле'),
-			otherwise: () => string().notRequired(),
-		}),
-		apartment: string().when('deliveryType', {
-			is: (value: string) => value === 'delivery',
-			then: () => string().required('Обязательное поле'),
-			otherwise: () => string().notRequired(),
-		}),
-		postCode: string().when('deliveryType', {
-			is: (value: string) => value === 'delivery',
-			then: () => string().required('Обязательное поле'),
-			otherwise: () => string().notRequired(),
-		}),
-		comment: string(),
-		paymentMethod: string().oneOf([
-			'sbp',
-			'bank_card',
-			'sberbank',
-			'tinkoff_bank',
-		]),
-		offer: boolean()
-			.required('Нужно обязательно подтвердить')
-			.oneOf([true], 'Нужно обязательно подтвердить'),
-	})
+	const {handleSubmit, values, errors} = useCheckoutForm(devDefaultValues)
+	const {otpResendTimeout, resume, pause} = useOtpTimer()
 
-	const {handleSubmit} = useForm({
-		validationSchema: schema,
-		initialValues: {
-			deliveryType: 'delivery',
-			offer: false,
-			...devDefaultValues,
-		},
-	})
-
-	const {value: email} = useField('email')
-	const {value: phone} = useField('phone')
-	const {value: comment} = useField('comment')
+	// Инициализация полей
 	const {value: firstName} = useField('firstName')
 	const {value: lastName} = useField('lastName')
 	const {value: thirdName} = useField('thirdName')
-	const {value: city} = useField('city')
-	const {value: street} = useField('street')
-	const {value: home} = useField('home')
-	const {value: entrance} = useField('entrance')
-	const {value: apartment} = useField('apartment')
+	const {value: email} = useField('email')
+	const {value: phone} = useField('phone')
 
-	const {pause, resume} = useIntervalFn(() => {
-		if (otpResendTimeout.value > 0) {
-			otpResendTimeout.value--
+	const submitForm = handleSubmit(async (formData) => {
+		checkoutStore.updateOrderModel(formData)
+
+		// Отправка заказа
+		const response = await checkoutStore.submitOrder()
+
+		if (response) {
+			// toast.success('Заказ успешно создан!')
+			window.location.href = response.returnUrl
 		} else {
-			pause()
+			// toast.error('Ошибка создания заказа. Попробуйте позже.')
 		}
-	}, 1000)
-
-	const submitForm = handleSubmit(async (values: any) => {
-		await checkoutStore.sendCode(email.value as string)
-		resume()
-		updateOrderModel()
-		otpResendTimeout.value = 60
-		checkoutStore.isOtpVisible = true
-		formValues.value = values
 	})
-
-	const orderModel = ref({
-		email: email.value,
-		otpCode: checkoutStore.otpCode,
-		orderDetails: {
-			comment: comment.value,
-			delivery_type: checkoutStore.deliveryType,
-			items: checkoutStore.items,
-		},
-		userDetails: {
-			first_name: firstName.value,
-			last_name: lastName.value,
-			patronymic: thirdName.value,
-			phone: phone.value,
-		},
-		paymentMethod: checkoutStore.paymentMethod,
-		checkout_session_id: useRoute().params.id,
-	})
-
-	function updateOrderModel() {
-		orderModel.value.email = email.value
-		orderModel.value.otpCode = checkoutStore.otpCode
-		orderModel.value.orderDetails.comment = comment.value
-		orderModel.value.orderDetails.delivery_type = checkoutStore.deliveryType
-		orderModel.value.orderDetails.items = checkoutStore.items
-
-		// Добавляем discount только если он есть
-		if (checkoutStore.promoCode) {
-			orderModel.value.orderDetails.discount = checkoutStore.promoCode
-		} else {
-			delete orderModel.value.orderDetails.discount
-		}
-
-		// Добавляем gift_card_code только если он есть
-		if (checkoutStore.giftCard) {
-			orderModel.value.orderDetails.gift_card_code = checkoutStore.giftCard
-		} else {
-			delete orderModel.value.orderDetails.gift_card_code
-		}
-
-		if (checkoutStore.deliveryType === 'delivery') {
-			orderModel.value.orderDetails.address_json = [
-				{
-					city: city.value,
-					street: street.value,
-					home: home.value,
-					entrance: entrance.value,
-					apartment: apartment.value,
-				},
-			]
-		}
-
-		orderModel.value.userDetails.first_name = firstName.value
-		orderModel.value.userDetails.last_name = lastName.value
-		orderModel.value.userDetails.patronymic = thirdName.value
-		orderModel.value.userDetails.phone = phone.value
-		orderModel.value.paymentMethod = checkoutStore.paymentMethod
-		orderModel.value.checkout_session_id = useRoute().params.id
-	}
 
 	const submitOtp = async () => {
-		isOtpSubmit.value = true
-		updateOrderModel()
-
-		try {
-			const res = await fetch(config.public.databaseUrl + 'order/create', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(orderModel.value),
-			}).then((res) => res.json())
-
-			if (res.success) {
-				isOtpSubmit.value = false
-				window.location.href = res.returnUrl
-			} else {
-				isOtpSubmit.value = false
-				toast.add({
-					severity: 'warn',
-					summary: 'Ошибка',
-					detail: res.errors[0].message,
-					life: 10000,
-				})
-			}
-		} catch (error) {
-			isOtpSubmit.value = false
-		}
+		checkoutStore.isOtpVisible = true
+		await checkoutStore.submitOrder()
 	}
 
-	const sendCode = () => {
-		checkoutStore.sendCode(email.value as string)
-		otpResendTimeout.value = 60
-		updateOrderModel()
-		resume()
+	// Отправка OTP-кода
+	const sendCode = async () => {
+		isOtpSubmit.value = true
+		const response = await checkoutStore.sendCode(
+			checkoutStore.orderModel.email,
+		)
+		if (response) {
+			checkoutStore.isOtpVisible = true
+			isOtpSubmit.value = false
+			// toast.success('Код OTP отправлен на ваш email')
+		} else {
+			isOtpSubmit.value = false
+			// toast.error('Не удалось отправить код OTP. Попробуйте позже.')
+		}
 	}
 
 	const isOnlyVirtual = ref(false)
