@@ -379,18 +379,6 @@
 										><span class="py-2">О продукте</span></AccordionHeader
 									>
 									<AccordionContent>
-										<p class="pt-3 text-[.75rem]" v-if="product?.description">
-											{{ product?.description }}
-										</p>
-									</AccordionContent>
-								</AccordionPanel>
-								<AccordionPanel value="1" class="p-0">
-									<AccordionHeader class="text-[.875rem] font-normal"
-										><span class="py-2"
-											>Размер, цвет, камень и материал</span
-										></AccordionHeader
-									>
-									<AccordionContent>
 										<p
 											class="flex flex-col gap-2 pt-3 text-[.75rem]"
 											v-for="(item, idx) in product?.product_variants"
@@ -409,9 +397,12 @@
 												>Материал: {{ product?.material?.title }}</span
 											>
 										</p>
+										<p class="pt-3 text-[.75rem]" v-if="product?.description">
+											{{ product?.description }}
+										</p>
 									</AccordionContent>
 								</AccordionPanel>
-								<AccordionPanel value="2" class="p-0">
+								<AccordionPanel value="1" class="p-0">
 									<AccordionHeader class="text-[.875rem] font-normal"
 										><span class="py-2"
 											>Категория и бренд</span
