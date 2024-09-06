@@ -1,3 +1,5 @@
+import {useUserStore} from '../stores/user'
+
 export default defineNuxtRouteMiddleware(async (to, _from) => {
 	const config = useRuntimeConfig()
 	const toast = useToast()
