@@ -10,12 +10,22 @@
 	if (process.client) {
 		await useUserStore().getUserInfo()
 		await useWishlistStore().initWishlist()
+		const toast = useToast()
+		websiteStore.setToastInstance(toast)
 	}
 </script>
 
 <template>
 	<NuxtLayout>
-		<Toast />
+		<ClientOnly>
+			<Toast
+				position="top-right"
+				:pt="{
+					summary: 'text-[0.8rem] font-normal',
+					detail: 'text-[0.6rem] font-normal',
+				}"
+			/>
+		</ClientOnly>
 		<NuxtPage />
 	</NuxtLayout>
 </template>

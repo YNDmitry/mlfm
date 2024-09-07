@@ -1,5 +1,6 @@
 <script setup lang="ts">
 	import {object, string} from 'yup'
+	import {useWebsiteStore} from '~~/core/src/stores'
 
 	definePageMeta({
 		middleware: 'order',
@@ -11,7 +12,7 @@
 
 	const config = useRuntimeConfig()
 	const {params} = useRoute()
-	const toast = useToast()
+	const {showToast} = useWebsiteStore()
 
 	const isPinValid = useState('isOrderPinValid')
 	const product = useState('order-product') as any
@@ -46,11 +47,10 @@
 			if (data.authorized === true) {
 				isPinValid.value = true
 			} else {
-				toast.add({
+				showToast({
 					severity: 'error',
 					detail: 'PIN не валидный либо заказ отсутствует. Введите другой',
 					summary: 'Неверный PIN',
-					life: 3000,
 				})
 			}
 
@@ -60,11 +60,10 @@
 			orderProducts.value = currentProducts.product_variants
 			return (product.value = data.data)
 		} catch (error) {
-			toast.add({
+			showToast({
 				severity: 'error',
 				detail: 'Что-то пошло не так.',
 				summary: 'Ошибка',
-				life: 3000,
 			})
 		}
 	})
@@ -107,9 +106,6 @@
 
 <template>
 	<div>
-		<ClientOnly>
-			<Toast position="top-right" />
-		</ClientOnly>
 		<section class="py-12">
 			<div class="container mx-auto">
 				<OrdersForm

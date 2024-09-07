@@ -13,6 +13,8 @@
 		totalProducts: number | null | undefined
 	}
 
+	const {activeFiltersCount} = useProducts()
+
 	const router = useRouter()
 	const route = useRoute()
 	const props = defineProps<Props>()
@@ -57,6 +59,17 @@
 
 <template>
 	<aside class="pb-[4.375rem]">
+		<Tag
+			v-if="activeFiltersCount"
+			:value="
+				activeFiltersCount === 1
+					? activeFiltersCount + ' активный фильтр'
+					: activeFiltersCount + ' активных фильтров'
+			"
+			:pt="{root: 'bg-red2 text-primary'}"
+			class="mb-4 text-[0.4rem] font-normal uppercase"
+		></Tag>
+
 		<div class="relative">
 			<p
 				v-if="totalProducts"

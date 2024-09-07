@@ -137,7 +137,7 @@
 
 <template>
 	<div>
-		<section class="pt-[3.75rem]">
+		<section class="pt-[3.75rem] max-tablet:pt-[1.5rem]">
 			<div class="container max-w-[1342px]">
 				<div class="laptop:grid laptop:grid-cols-aside laptop:gap-20">
 					<!-- Кнопки для фильтров (На Мобилках) -->

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 	import {object, string, boolean, ref} from 'yup'
+	import {useWebsiteStore} from '~~/core/src/stores'
 	import {useUserStore} from '~~/core/src/stores/user'
 
 	definePageMeta({
@@ -12,7 +13,7 @@
 	})
 
 	const userStore = useUserStore()
-	const toast = useToast()
+	const {showToast} = useWebsiteStore()
 
 	const schema = object({
 		firstName: string()
@@ -63,11 +64,10 @@
 			console.log(error)
 
 			if (error.errors[0].extensions.code === 'RECORD_NOT_UNIQUE') {
-				toast.add({
+				showToast({
 					severity: 'error',
-					summary: 'Ошибка',
 					detail: 'Пользователь с таким email уже зарегестрирован',
-					life: 3000,
+					summary: 'Ошибка',
 				})
 			}
 		}
@@ -76,9 +76,6 @@
 
 <template>
 	<AuthForm title="Регистрация">
-		<ClientOnly>
-			<Toast :position="'top-right'" />
-		</ClientOnly>
 		<form @submit="onSubmit">
 			<div class="grid grid-cols-[1fr_1fr] gap-2">
 				<TheInput

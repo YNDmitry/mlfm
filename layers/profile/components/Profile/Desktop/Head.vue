@@ -1,10 +1,11 @@
 <script setup lang="ts">
+	import {useWebsiteStore} from '~~/core/src/stores'
 	import {useUserStore} from '~~/core/src/stores/user'
 
 	const userStore = useUserStore()
+	const {showToast} = useWebsiteStore()
 
 	const {updateUser} = useDirectusUsers()
-	const toast = useToast()
 
 	const updateUserNewsletter = async () => {
 		try {
@@ -15,7 +16,7 @@
 				},
 			})
 		} catch (error) {
-			toast.add({
+			showToast({
 				severity: 'error',
 				summary: 'Что-то пошло не так',
 			})
@@ -24,12 +25,10 @@
 
 	const updatePassword = async () => {
 		await userStore.updatePassword().then(() => {
-			toast.add({
+			showToast({
 				severity: 'success',
 				summary: 'Успешно',
 				detail: 'Отправили письмо для восстановления пароля на email',
-				group: 'bt',
-				life: 3000,
 			})
 		})
 	}

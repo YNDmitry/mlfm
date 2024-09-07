@@ -1,9 +1,10 @@
+import {useWebsiteStore} from '../stores'
 import {useUserStore} from '../stores/user'
 
 export default defineNuxtRouteMiddleware(async (to, _from) => {
 	const config = useRuntimeConfig()
-	const toast = useToast()
 	const {isAuthenticated, id} = useUserStore()
+	const {showToast} = useWebsiteStore()
 	const isPinValid = useState('isOrderPinValid')
 	const userToken = useCookie('directus_token') // допустим, токен хранится в стейте
 	const orderProduct = useState('order-product')
@@ -15,11 +16,10 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
 
 	if (!orderId) {
 		// Если ID заказа не предоставлен, показываем ошибку или редиректим
-		toast.add({
+		showToast({
 			severity: 'error',
 			detail: 'ID заказа не предоставлен',
 			summary: 'Ошибка',
-			life: 3000,
 		})
 		if (to.path !== '/') {
 			return navigateTo('/') // редиректим на главную или другую страницу
@@ -73,22 +73,20 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
 				orderProducts.value = currentProducts.product_variants
 			}
 		} else {
-			toast.add({
+			showToast({
 				severity: 'error',
 				detail: 'Заказ не найден или PIN неверен',
 				summary: 'Ошибка',
-				life: 3000,
 			})
 			if (to.path !== '/') {
 				return navigateTo('/') // редиректим на главную или другую страницу
 			}
 		}
 	} catch (error) {
-		toast.add({
+		showToast({
 			severity: 'error',
 			detail: 'Что-то пошло не так. Попробуйте ещё раз',
 			summary: 'Ошибка',
-			life: 3000,
 		})
 		if (to.path !== '/') {
 			return navigateTo('/') // редиректим на главную или другую страницу

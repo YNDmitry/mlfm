@@ -12,8 +12,24 @@ export const useWebsiteStore = defineStore('websiteStore', {
 		isNewsletterFormSubmitted: false,
 		isSearchPopup: false,
 		siteSettings: {} as Config,
+		toastInstance: null as any,
 	}),
 	actions: {
+		setToastInstance(toast: any) {
+			this.toastInstance = toast
+		},
+
+		showToast({severity = 'info', summary = '', detail = '', life = 3000}) {
+			if (this.toastInstance) {
+				this.toastInstance.add({
+					severity,
+					summary,
+					detail,
+					life,
+				})
+			}
+		},
+
 		// Toggles the visibility of the cart popup.
 		handleVisibleCart(): void {
 			this.isVisibleCart = !this.isVisibleCart

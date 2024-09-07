@@ -1,13 +1,14 @@
 <script setup lang="ts">
+	import {useWebsiteStore} from '~~/core/src/stores'
 	import {useCheckoutForm} from '../../composables/useCheckoutForm'
 	import {useOtpTimer} from '../../composables/useOtpTimer'
 	import {useCheckoutStore} from '../../stores'
 
 	const checkoutStore = useCheckoutStore()
+	const {showToast} = useWebsiteStore()
 
 	const isError = ref(false)
 	const isOtpSubmit = ref(false)
-	const toast = useToast()
 
 	// Default values for development mode
 	const devDefaultValues = import.meta.env.DEV
@@ -41,20 +42,19 @@
 		if (response) {
 			checkoutStore.isOtpVisible = true
 			isOtpSubmit.value = false
-			// toast.success('Код OTP отправлен на ваш email')
+			showToast({
+				severity: 'success',
+				detail: 'Код OTP отправлен на ваш email',
+				summary: 'Успешно',
+			})
 		} else {
 			isOtpSubmit.value = false
-			// toast.error('Не удалось отправить код OTP. Попробуйте позже.')
+			showToast({
+				severity: 'error',
+				detail: 'Не удалось отправить код OTP. Попробуйте позже.',
+				summary: 'Ошибка',
+			})
 		}
-		// Отправка заказа
-		// const response = await checkoutStore.sendCode()
-
-		// if (response) {
-		// toast.success('Заказ успешно создан!')
-		// window.location.href = response.returnUrl
-		// } else {
-		// toast.error('Ошибка создания заказа. Попробуйте позже.')
-		// }
 	})
 
 	const submitOtp = async () => {
@@ -80,9 +80,6 @@
 
 <template>
 	<div class="pb-[3.75rem]">
-		<ClientOnly>
-			<Toast :position="'top-right'" />
-		</ClientOnly>
 		<div class="container laptop:max-w-[512px]">
 			<Dialog
 				modal

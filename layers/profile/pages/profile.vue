@@ -5,8 +5,6 @@
 	const {$graphql} = useNuxtApp()
 	const userStore = useUserStore()
 
-	const toast = useToast()
-
 	definePageMeta({
 		middleware: ['auth'],
 	})
@@ -56,9 +54,6 @@
 </script>
 <template>
 	<div>
-		<ClientOnly>
-			<Toast group="bt" />
-		</ClientOnly>
 		<ProfileUpdateUserDetailsPopup />
 		<section class="pb-16 pt-20 max-tablet:pt-11">
 			<ProfileDesktopHead v-if="!isMobile" />

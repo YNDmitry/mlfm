@@ -1,5 +1,6 @@
 <script setup lang="ts">
 	import {object, string} from 'yup'
+	import {useWebsiteStore} from '~~/core/src/stores'
 	import {useUserStore} from '~~/core/src/stores/user'
 	definePageMeta({
 		middleware: ['auth'],
@@ -11,7 +12,7 @@
 	})
 
 	const userStore = useUserStore()
-	const toast = useToast()
+	const {showToast} = useWebsiteStore()
 
 	const schema = object({
 		email: string()
@@ -30,10 +31,10 @@
 	const onSubmit = handleSubmit(async (values) => {
 		const res = await userStore.userLogin(values.email, values.password)
 		if (res?.message === 'unauthorized') {
-			toast.add({
+			showToast({
 				severity: 'error',
-				summary: 'Ошибка',
 				detail: 'Неверный логин или пароль',
+				summary: 'Ошибка',
 			})
 		}
 	})
@@ -43,9 +44,6 @@
 
 <template>
 	<AuthForm title="Войти">
-		<ClientOnly>
-			<Toast :position="'top-right'" />
-		</ClientOnly>
 		<PopupsAuthResetPassword
 			@update:visible="isResetPasswordPopup = $event"
 			:isPopupOpen="isResetPasswordPopup"

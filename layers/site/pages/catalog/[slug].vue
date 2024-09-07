@@ -9,7 +9,6 @@
 	const websiteStore = useWebsiteStore()
 	const wishlistStore = useWishlistStore()
 	const {slug} = useRoute().params
-	const toast = useToast()
 
 	definePageMeta({
 		layout: 'default',
@@ -145,16 +144,14 @@
 			variant_id: currentVariantId.value,
 		})
 
-		toast.add({
+		websiteStore.showToast({
 			severity: 'success',
 			summary: 'Успешно',
 			detail: 'Товар в корзине',
-			life: 3000,
 		})
 
 		setTimeout(() => {
 			websiteStore.handleVisibleCart()
-			toast.removeAllGroups()
 		}, 1000)
 	}
 
@@ -245,9 +242,6 @@
 
 <template>
 	<div>
-		<ClientOnly>
-			<Toast :position="'top-right'" />
-		</ClientOnly>
 		<Dialog
 			:pt="{
 				root: 'max-w-[1000px] w-[95%]',

@@ -142,3 +142,12 @@ input[type='number'] {
 	opacity: 0;
 	filter: blur(1rem);
 }
+
+@media screen and (max-width: 768px) {
+	.p-toast.p-component {
+		right: 0px !important;
+		left: 0px !important;
+		top: 0px !important;
+		width: 100% !important;
+	}
+}

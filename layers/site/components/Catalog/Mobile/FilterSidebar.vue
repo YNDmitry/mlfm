@@ -27,8 +27,6 @@
 		return (isFilterOpen.value = !isFilterOpen.value)
 	}
 
-	const {activeFiltersCount} = useProducts()
-
 	const router = useRouter()
 	const route = useRoute()
 
@@ -37,7 +35,9 @@
 </script>
 
 <template>
-	<div class="flex items-center justify-between gap-4 pb-[2.5rem] pt-[70]">
+	<div
+		class="sticky top-[4rem] z-10 mb-[1.5rem] flex items-center justify-between gap-4 bg-primary py-[1rem]"
+	>
 		<Dialog
 			position="bottom"
 			v-model:visible="isSortOpen"
@@ -100,16 +100,6 @@
 		>
 			<IconsFilters />
 			<span>Фильтры</span>
-			<Tag
-				v-if="activeFiltersCount"
-				:value="
-					activeFiltersCount === 1
-						? activeFiltersCount + ' активный фильтр'
-						: activeFiltersCount + ' активных фильтров'
-				"
-				:pt="{root: 'bg-red2 text-primary'}"
-				class="absolute -right-[0.5rem] -top-[0.5rem] text-[0.3rem] uppercase"
-			></Tag>
 		</button>
 	</div>
 </template>

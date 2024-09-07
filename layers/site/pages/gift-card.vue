@@ -4,7 +4,6 @@
 
 	const useCart = useCartStore()
 	const websiteStore = useWebsiteStore()
-	const toast = useToast()
 	const type = ref('Виртуальная')
 	const nominal = ref<number | null>(null)
 
@@ -33,19 +32,17 @@
 				price: nominal.value || 0,
 				type: 'gift-card',
 			})
-			toast.add({
-				summary: 'Успешно',
-				detail: 'Подарочная карта добавлена в корзину',
-				life: 3000,
+			websiteStore.showToast({
 				severity: 'success',
+				detail: 'Подарочная карта добавлена в корзину',
+				summary: 'Успешно',
 			})
 			setTimeout(() => websiteStore.handleVisibleCart(), 3000)
 		} catch (error) {
-			toast.add({
-				summary: 'Ошибка',
-				detail: 'Что-то пошло не так',
-				life: 3000,
+			websiteStore.showToast({
 				severity: 'error',
+				detail: 'Что-то пошло не так',
+				summary: 'Ошибка',
 			})
 		}
 	}
@@ -53,9 +50,6 @@
 
 <template>
 	<div>
-		<ClientOnly>
-			<Toast position="top-right" />
-		</ClientOnly>
 		<!-- Карточка товара -->
 		<section class="pb-20 pt-[78px] max-tablet:pt-0">
 			<div class="mx-auto my-0 max-w-[1189px] px-[1rem]">
