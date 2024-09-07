@@ -27,6 +27,8 @@
 		return (isFilterOpen.value = !isFilterOpen.value)
 	}
 
+	const {activeFiltersCount} = useProducts()
+
 	const router = useRouter()
 	const route = useRoute()
 
@@ -94,10 +96,20 @@
 		<button
 			type="button"
 			@click="handleFilterModal()"
-			class="flex h-[3.125rem] w-full items-center justify-center gap-[0.625rem] rounded-[12px] border-[1px] border-black text-[0.625rem] max-mobile:h-[38px]"
+			class="relative flex h-[3.125rem] w-full items-center justify-center gap-[0.625rem] rounded-[12px] border-[1px] border-black text-[0.625rem] max-mobile:h-[38px]"
 		>
 			<IconsFilters />
 			<span>Фильтры</span>
+			<Tag
+				v-if="activeFiltersCount"
+				:value="
+					activeFiltersCount === 1
+						? activeFiltersCount + ' активный фильтр'
+						: activeFiltersCount + ' активных фильтров'
+				"
+				:pt="{root: 'bg-red2 text-primary'}"
+				class="absolute -right-[0.5rem] -top-[0.5rem] text-[0.3rem] uppercase"
+			></Tag>
 		</button>
 	</div>
 </template>

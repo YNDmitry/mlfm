@@ -27,6 +27,22 @@ interface filterObject {
 export function useProducts() {
 	const route = useRoute()
 
+	const activeFiltersCount = computed(() => {
+		let count = 0
+
+		if (route.query.brand) count++
+		if (route.query.stone) count++
+		if (route.query.material) count++
+		if (route.query.collectionId) count++
+		if (route.query.color) count++
+		if (route.query.size) count++
+		if (route.query.category && route.query.category.length > 0) count++
+		if (route.query.minPrice) count++
+		if (route.query.maxPrice) count++
+
+		return count
+	})
+
 	const filterObj = computed(() => {
 		const obj = ref({} as filterObject)
 
@@ -92,11 +108,13 @@ export function useProducts() {
 			products: res.products,
 			totalProducts: productCount,
 			isLoading: isProductLoading,
-		} // Вернем продукты
+			activeFiltersCount: activeFiltersCount.value,
+		}
 	}
 
 	return {
 		refresh,
 		isProductLoading,
+		activeFiltersCount,
 	}
 }
