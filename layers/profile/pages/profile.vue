@@ -1,9 +1,8 @@
 <script setup lang="ts">
 	import {gql} from 'nuxt-graphql-request/utils'
-	import {useUserStore} from '~~/core/src/stores/user'
+	import type {Order, OrdersResponse} from '../types/order.interface'
 
 	const {$graphql} = useNuxtApp()
-	const userStore = useUserStore()
 
 	definePageMeta({
 		middleware: ['auth'],
@@ -18,10 +17,10 @@
 
 	const token = useCookie('directus_token')
 
-	const activeOrders = ref([])
-	const completedOrders = ref([])
+	const activeOrders = ref<Order[]>([])
+	const completedOrders = ref<Order[]>([])
 
-	const fetchOrders = async () => {
+	const fetchOrders = async (): Promise<void> => {
 		const query = gql`
 			query Orders {
 				customer_orders {
@@ -33,17 +32,17 @@
 			}
 		`
 		try {
-			const data: any = await $graphql.profile.request(
+			const data: OrdersResponse = await $graphql.profile.request(
 				query,
 				{},
 				{authorization: `Bearer ${token.value}`},
 			)
 			if (data?.customer_orders.length) {
 				activeOrders.value = data.customer_orders.filter(
-					(order: any) => order.status !== 'completed',
+					(order: Order) => order.status !== 'completed',
 				)
 				completedOrders.value = data.customer_orders.filter(
-					(order: any) => order.status === 'completed',
+					(order: Order) => order.status === 'completed',
 				)
 			}
 		} catch (error) {
