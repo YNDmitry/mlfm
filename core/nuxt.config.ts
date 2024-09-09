@@ -1,7 +1,5 @@
 import Aura from '@primevue/themes/aura'
 
-console.log('Adding layer: core')
-
 export default defineNuxtConfig({
 	app: {
 		pageTransition: {name: 'page', mode: 'out-in'},

@@ -12,9 +12,11 @@
 </script>
 
 <template>
-	<div
-		:class="{'max-tablet:hidden': !isOpen}"
-		class="bg-black px-5 py-4 max-tablet:fixed max-tablet:left-0 max-tablet:right-0 max-tablet:top-0 max-tablet:z-40 max-tablet:h-screen max-tablet:bg-primary max-tablet:pt-28 max-mobile:bottom-0"
+	<Dialog
+		v-bind:visible="isOpen"
+		:blockScroll="true"
+		:closable="false"
+		:pt="{root: 'w-full h-screen', mask: 'pt-[10px]'}"
 	>
 		<div
 			class="flex items-center justify-center gap-4 max-tablet:flex-col max-tablet:items-start max-tablet:gap-5"
@@ -31,7 +33,7 @@
 			</NuxtLink>
 			<HeaderSearchWishlistProfile @closeMenu="$emit('closeMenu')" />
 		</div>
-	</div>
+	</Dialog>
 </template>
 
 <style scoped>

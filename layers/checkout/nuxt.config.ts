@@ -1,5 +1,3 @@
-console.log('Adding layer: checkout')
-
 export default defineNuxtConfig({
 	components: [
 		{

@@ -52,6 +52,7 @@
 			</div>
 			<HeaderMenuBtn
 				@click="openMenu"
+				:is-open="isOpen"
 				class="hidden max-tablet:mr-auto max-tablet:block"
 			/>
 			<HeaderLogo />

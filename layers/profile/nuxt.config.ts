@@ -1,5 +1,3 @@
-console.log('Adding layer: profile')
-
 export default defineNuxtConfig({
 	components: [
 		{
