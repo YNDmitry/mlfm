@@ -28,11 +28,15 @@
 		<div class="relative flex items-center justify-center bg-primary px-5 py-5">
 			<div class="relative flex items-center max-tablet:hidden" v-auto-animate>
 				<div @click="isDesktopMenuOpen = !isDesktopMenuOpen">
-					<HeaderMenuBtn class="max-tablet:hidden" />
+					<HeaderMenuBtn
+						:is-open="isDesktopMenuOpen"
+						class="max-tablet:hidden"
+					/>
 				</div>
 				<div
-					v-show="isDesktopMenuOpen"
-					class="absolute left-8 flex items-center gap-3"
+					v-if="isDesktopMenuOpen"
+					v-auto-animate
+					class="absolute left-10 flex items-center gap-3"
 				>
 					<NuxtLink
 						to="/profile"
@@ -59,6 +63,7 @@
 			<HeaderIcons :isMobile="isMobile" />
 		</div>
 		<HeaderMobileMenu :isOpen="isOpen" :links="links" @closeMenu="openMenu" />
+		<HeaderDesktopMenu :links="links" />
 		<PopupsTheCart />
 		<PopupsSearch />
 	</header>
