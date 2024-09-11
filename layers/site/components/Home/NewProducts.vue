@@ -24,6 +24,8 @@
 	}
 
 	const props = defineProps<Props>()
+
+	console.log(props.productBanners)
 </script>
 
 <template>

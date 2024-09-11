@@ -73,63 +73,20 @@
 		<div class="relative">
 			<p
 				v-if="totalProducts"
-				class="relative mb-[1.875rem] pb-[35px] text-[12px] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-['']"
+				class="relative mb-4 pb-4 text-[12px] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-['']"
 			>
 				{{ totalProducts }} Товаров
 			</p>
 
-			<!-- Чекбоксы -->
-			<div
-				class="relative pb-[1.25rem] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-gray2 after:content-['']"
-				data-lenis-prevent
-				v-if="categories"
-			>
-				<p class="pb-[1.25rem] text-[0.875rem]">Категория</p>
-
-				<ScrollPanel style="width: 100%; height: 140px" class="overflow-hidden">
-					<div class="flex flex-col gap-[0.625rem] text-[0.625rem]">
-						<label
-							class="flex cursor-pointer items-center gap-[0.625rem]"
-							v-for="category in categories"
-							:key="category.id"
-							:for="category.id"
-						>
-							<Checkbox
-								v-model="currentCategories"
-								:inputId="category.id"
-								:name="category.title"
-								:value="category.title"
-								@change="
-									router.replace({
-										query: {
-											...route.query,
-											category: currentCategories,
-										},
-									})
-								"
-								:aria-label="'Категория - ' + category.title"
-								:pt="{
-									box: 'shadow-none border-gray border',
-								}"
-							/>
-							<span>{{ category.title }}</span>
-						</label>
-					</div>
-				</ScrollPanel>
-
-				<!-- Reset button -->
-				<div class="flex items-center gap-[5px] pt-[1.25rem]">
-					<IconsReset />
-					<button
-						@click="props.resetFilters"
-						class="text-[8px] leading-[1.188rem] underline hover:no-underline"
-					>
-						Сбросить параметры
-					</button>
-				</div>
-				<!-- /Reset button -->
-			</div>
-			<!-- /Чекбоксы -->
+			<!-- Категория -->
+			<CatalogFilter
+				:filters="categories"
+				:title="`Категория`"
+				:routeTitle="'category'"
+				:currentFilter="route.query.category"
+				@update:currentFilter="route.query.category = $event"
+			/>
+			<!-- /Категория -->
 
 			<!-- Коллекция -->
 			<CatalogFilter
@@ -252,6 +209,18 @@
 				</div>
 			</div>
 			<!-- /Цена -->
+
+			<!-- Reset button -->
+			<div class="flex items-center gap-[5px] pt-[1.25rem]">
+				<IconsReset />
+				<button
+					@click="props.resetFilters"
+					class="text-[8px] leading-[1.188rem] underline hover:no-underline"
+				>
+					Сбросить параметры
+				</button>
+			</div>
+			<!-- /Reset button -->
 
 			<!-- Баннер -->
 			<div class="pt-[25px]" v-if="props.data?.catalog?.main_banner?.id">
