@@ -19,10 +19,10 @@
 				<div class="py-12 text-center">
 					<h1 class="text-h1">{{ error?.statusCode }}</h1>
 					<p class="mb-6 mt-2">{{ error?.message }}</p>
-					<div class="mx-auto w-full max-w-96">
+					<div class="mx-auto mt-2 block w-full">
 						<button
 							@click="handleError"
-							class="h-11 rounded-main bg-red2 px-7 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] text-primary transition-colors hover:bg-red2-hover"
+							class="rounded-main bg-red2 px-4 py-3 font-montserrat text-[0.75rem] font-bold uppercase tracking-[3px] text-primary transition-colors hover:bg-red2-hover"
 						>
 							Вернуться на главную
 						</button>

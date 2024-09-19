@@ -150,7 +150,7 @@
 					</div>
 				</div>
 			</Dialog>
-			<form @submit="submitForm" class="pt-8">
+			<form @submit="submitForm" class="pt-8" v-auto-animate>
 				<CheckoutFields />
 				<CheckoutDeliveryOptions v-if="!isOnlyVirtual" />
 				<CheckoutDeliveryAddress

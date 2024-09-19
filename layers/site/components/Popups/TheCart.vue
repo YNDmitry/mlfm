@@ -40,6 +40,7 @@
 					<!--  Товары -->
 					<div
 						class="flex flex-col font-montserrat max-tablet:gap-[1.875rem] max-tablet:py-[1.875rem] tablet:gap-[1.25rem] tablet:pb-[55px] tablet:pt-[45px]"
+						v-auto-animate
 					>
 						<div
 							v-for="(item, idx) in useCart.itemsDetails"

@@ -14,73 +14,19 @@
 		layout: 'default',
 	})
 
-	interface Product {
-		id?: string
-		title?: string
-		slug?: string
-		description?: string
-		brand: {
-			title: string
-		}
-		main_image?: {
-			id?: string
-		}
-		material?: {
-			title: string
-		}
-		stone?: {
-			title: string
-		}
-		category?: {
-			title?: string
-			size_table: {
-				id: string
-			}
-		}
-		product_variants?: [
-			{
-				id?: string
-				color_id?: {title: string}
-				size_id?: {small_title: string}
-				availability?: string
-				price?: number
-			},
-		]
-	}
+	const {data: product, status} = await useProductData(slug as string)
 
-	const {$preview} = useNuxtApp()
-	const keyPrfx = $preview.value ? `-preview-${slug}` : `-product-${slug}`
-
-	const {data: product, status} = await useAsyncData(
-		`catalog-data${keyPrfx}`,
-		async () => {
-			const data = ref<Product>()
-			if ($preview.value) {
-				refreshNuxtData()
-				await GqlGetProductBySlugPreview({slug: slug as string}).then((res) => {
-					data.value = res.products[0] as Product
-				})
-			} else {
-				await GqlGetProductBySlug({
-					slug: slug as string,
-					status: 'published',
-				}).then((res) => (data.value = res.products[0] as Product))
-			}
-			return data.value
-		},
-		{
-			getCachedData(key, nuxtApp) {
-				return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
-			},
-		},
-	)
-
-	if (!product.value) {
+	const firstVariant = product.value?.product_variants?.[0]
+	if (!firstVariant) {
 		throw createError({
 			statusCode: 404,
 			statusMessage: 'Продукт не найден',
 		})
 	}
+
+	const currentVariantId = ref(firstVariant.id)
+	const currentColor = ref(firstVariant.color_id?.title)
+	const currentSize = ref(firstVariant.size_id?.small_title)
 
 	useSeoMeta({
 		title: product?.value?.title + ' | MLFM',
@@ -129,11 +75,6 @@
 
 	const isOnWishlist = computed(() =>
 		wishlistStore.isOnWishlist(product?.value?.id as string),
-	)
-	const currentVariantId = ref(product?.value?.product_variants[0]?.id)
-	const currentColor = ref(product?.value?.product_variants[0]?.color_id?.title)
-	const currentSize = ref(
-		product?.value?.product_variants[0]?.size_id?.small_title,
 	)
 
 	const handleAddToCart = async () => {
@@ -222,19 +163,35 @@
 	})
 
 	const img = useImage()
-	const currentImage = computed(() => {
-		const cI = product?.value?.product_variants?.find(
-			(el: any) => el.id === currentVariantId.value,
+	const imageUrls = computed(() => {
+		const variant = product.value?.product_variants?.find(
+			(el) => el.id === currentVariantId.value,
 		)
 
-		if (cI) {
-			return img(cI.image?.id as string, {}, {provider: 'directus'})
+		const imageIds: string[] = []
+
+		// Add the variant's image if it exists
+		if (variant?.image?.id) {
+			imageIds.push(variant.image.id)
+		} else if (product.value?.main_image?.id) {
+			// Fallback to main_image if variant image doesn't exist
+			imageIds.push(product.value.main_image.id)
 		}
-		return img(
-			product?.value?.main_image?.id as string,
-			{},
-			{provider: 'directus'},
-		)
+
+		// Add images from product.images
+		if (product.value?.images?.length) {
+			product.value.images.forEach((imageObj) => {
+				if (imageObj?.directus_files_id?.id) {
+					imageIds.push(imageObj.directus_files_id.id)
+				}
+			})
+		}
+
+		// Remove duplicates
+		const uniqueImageIds = Array.from(new Set(imageIds))
+
+		// Convert image IDs to URLs using your `img` function
+		return uniqueImageIds.map((id) => img(id, {}, {provider: 'directus'}))
 	})
 
 	const isShowSizeTable = ref(false)
@@ -248,8 +205,13 @@
 			}"
 			:modal="true"
 			v-model:visible="isShowSizeTable"
+			:block-scroll="true"
+			:close-on-escape="true"
 			v-if="product?.category?.size_table?.id"
 		>
+			<template #header>
+				<div>Таблица размеров</div>
+			</template>
 			<div class="flex w-full justify-start overflow-auto">
 				<NuxtImg
 					placeholder
@@ -267,34 +229,53 @@
 			v-if="status === 'success'"
 		>
 			<div class="mx-auto my-0 max-w-[1189px] px-[1rem]">
-				<div class="flex gap-7 max-tablet:flex-col max-tablet:gap-4">
+				<div
+					class="flex justify-center gap-7 max-tablet:flex-col max-tablet:gap-4"
+				>
 					<div
-						class="!sticky top-40 max-h-[650px] max-w-[700px] max-laptop:!static max-laptop:w-full max-tablet:h-[500px]"
+						class="!sticky top-40 max-h-[500px] max-w-[700px] overflow-hidden max-laptop:!static max-laptop:w-full"
 					>
-						<Image
-							preview
-							:pt="{
-								zoomoutbutton: 'text-primary',
-								zoominbutton: 'text-primary',
-								closebutton: 'text-primary',
-								rotateleftbutton: 'hidden',
-								rotaterightbutton: 'hidden',
-								button: 'p-2 bg-black/10 transition-all',
-							}"
-							class="h-full w-full text-primary"
+						<Carousel
+							:value="imageUrls"
+							:numVisible="1"
+							:pt="{indicatorlist: 'hidden'}"
 						>
-							<template #image>
-								<img class="h-full w-full object-cover" :src="currentImage" />
+							<template #item="carouselProps">
+								<Image
+									preview
+									:pt="{
+										zoomoutbutton: 'text-primary',
+										zoominbutton: 'text-primary',
+										closebutton: 'text-primary',
+										rotateleftbutton: 'hidden',
+										rotaterightbutton: 'hidden',
+										button: 'p-2 bg-black/10 transition-all',
+										toolbar: 'bg-black/50',
+										root: 'max-h-[500px] flex items-center max-w-[700px] text-primary',
+										previewIcon:
+											'w-[40px] h-[40px] p-2 rounded-[100%] bg-black/30 transition-all',
+									}"
+								>
+									<template #image>
+										<NuxtImg
+											class="w-full object-cover"
+											:src="carouselProps.data"
+											width="700"
+											height="500"
+										/>
+									</template>
+									<template #preview="slotProps">
+										<NuxtImg
+											:src="carouselProps.data"
+											alt="Превью"
+											width="600"
+											:style="slotProps.style"
+											@click="slotProps.onClick"
+										/>
+									</template>
+								</Image>
 							</template>
-							<template #preview="slotProps">
-								<img
-									:src="currentImage"
-									alt="Превью"
-									:style="slotProps.style"
-									@click="slotProps.onClick"
-								/>
-							</template>
-						</Image>
+						</Carousel>
 					</div>
 
 					<div
@@ -364,59 +345,13 @@
 						<!-- /Кнопки "Добавить" -->
 
 						<!-- Dropdown-ы -->
-						<div
-							class="flex flex-col max-tablet:gap-[0.75rem] tablet:gap-[1.25rem]"
-						>
-							<Accordion value="0">
-								<AccordionPanel value="0" class="p-0">
-									<AccordionHeader class="text-[.875rem] font-normal"
-										><span class="py-2">О продукте</span></AccordionHeader
-									>
-									<AccordionContent>
-										<p
-											class="flex flex-col gap-2 pt-3 text-[.75rem]"
-											v-for="(item, idx) in product?.product_variants"
-											:key="idx"
-										>
-											<span v-if="item.color_id"
-												>Цвет: {{ item.color_id.title }}</span
-											>
-											<span v-if="item.size_id"
-												>Размер: {{ item.size_id.small_title }}</span
-											>
-											<span v-if="product?.stone"
-												>Камень: {{ product?.stone?.title }}</span
-											>
-											<span v-if="product?.material"
-												>Материал: {{ product?.material?.title }}</span
-											>
-										</p>
-										<p class="pt-3 text-[.75rem]" v-if="product?.description">
-											{{ product?.description }}
-										</p>
-									</AccordionContent>
-								</AccordionPanel>
-								<AccordionPanel value="1" class="p-0">
-									<AccordionHeader class="text-[.875rem] font-normal"
-										><span class="py-2"
-											>Категория и бренд</span
-										></AccordionHeader
-									>
-									<AccordionContent>
-										<div
-											class="flex flex-col gap-2 pt-3 max-tablet:text-[0.625rem] tablet:text-[0.75rem]"
-										>
-											<span v-if="product?.category"
-												>Категория: {{ product?.category?.title }}</span
-											>
-											<span v-if="product?.brand"
-												>Бренд: {{ product?.brand?.title }}</span
-											>
-										</div>
-									</AccordionContent>
-								</AccordionPanel>
-							</Accordion>
-						</div>
+						<CatalogProductDropdowns
+							:brand="product?.brand?.title"
+							:category="product?.category?.title"
+							:description="product?.description"
+							:material="product?.material?.title"
+							:stone="product?.stone?.title"
+						/>
 						<!-- /Dropdown-ы -->
 					</div>
 				</div>
@@ -425,32 +360,12 @@
 		<!-- /Карточка товара -->
 
 		<!-- Похожие товары -->
-		<section
-			v-if="product?.product_upsells?.length > 0"
-			class="max-laptop:pb-[3.75rem] max-tablet:pt-[2rem] tablet:pt-[7.25rem] laptop:pb-[12.5rem]"
-		>
-			<div class="container my-0 px-3">
-				<h2
-					class="pb-[2rem] text-center text-h2 font-bold uppercase tracking-[0.25rem] max-tablet:text-h2Mob"
-				>
-					Похожие товары
-				</h2>
-				<div
-					class="no-scrollbar mx-[-1rem] flex scroll-px-3 gap-[45px] overflow-x-auto px-[1rem] max-tablet:gap-[20px]"
-				>
-					<template v-for="item in product?.product_upsells" :key="product.id">
-						<ProductCard
-							:id="item?.related_products_id?.id"
-							:slug="item?.related_products_id?.slug"
-							:title="item?.related_products_id?.title"
-							:imgSrc="item?.related_products_id?.main_image?.id"
-							:price="item?.related_products_id?.product_variants[0].price"
-							class="animation-duration-2000 max-w-[18.31rem] flex-shrink-0 transition-all max-tablet:w-[150px]"
-						/>
-					</template>
-				</div>
-			</div>
-		</section>
+		<CatalogProductUpsells
+			v-if="product?.product_upsells.length > 0"
+			:product_upsells="
+				product?.product_upsells.map((el) => el.related_products_id)
+			"
+		/>
 		<!-- /Похожие товары -->
 	</div>
 </template>
@@ -458,5 +373,32 @@
 <style>
 	.p-accordion .p-accordion-header .p-accordion-header-link {
 		@apply pl-0 pr-0;
+	}
+
+	.p-button.p-component.p-button-icon-only.p-button-secondary.p-button-rounded.p-button-text.p-carousel-prev-button.p-disabled,
+	.p-button.p-component.p-button-icon-only.p-button-secondary.p-button-rounded.p-button-text.p-carousel-next-button.p-disabled {
+		@apply hidden;
+	}
+
+	.p-button.p-component.p-button-icon-only.p-button-secondary.p-button-rounded.p-button-text.p-carousel-prev-button,
+	.p-button.p-component.p-button-icon-only.p-button-secondary.p-button-rounded.p-button-text.p-carousel-next-button {
+		@apply absolute bottom-0 top-0 z-50 h-full rounded-[0px] bg-primary/30 backdrop-blur-md;
+	}
+
+	.p-button.p-component.p-button-icon-only.p-button-secondary.p-button-rounded.p-button-text.p-carousel-prev-button {
+		@apply left-0;
+	}
+	.p-button.p-component.p-button-icon-only.p-button-secondary.p-button-rounded.p-button-text.p-carousel-next-button {
+		@apply right-0;
+	}
+
+	.p-carousel-content-container {
+		@apply relative;
+	}
+
+	.p-carousel-content-container:hover
+		> .p-button.p-component.p-button-icon-only.p-button-secondary.p-button-rounded.p-button-text.p-carousel-prev-button,
+	.p-button.p-component.p-button-icon-only.p-button-secondary.p-button-rounded.p-button-text.p-carousel-next-button {
+		@apply opacity-100;
 	}
 </style>

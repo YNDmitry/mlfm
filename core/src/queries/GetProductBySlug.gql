@@ -24,6 +24,11 @@ fragment ProductFields on products {
 	main_image {
 		id
 	}
+	images {
+		directus_files_id {
+			id
+		}
+	}
 	category {
 		title
 		size_table {

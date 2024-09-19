@@ -132,10 +132,7 @@
 		<!-- /Раздел с карточками -->
 
 		<!-- Пагинация -->
-		<div
-			class="w-ful relative border-t-[1px] border-[#AAAAAA]"
-			v-if="products.length"
-		>
+		<div class="w-ful relative" v-if="products.length !== 0">
 			<Paginator
 				id="pagination"
 				@page="
@@ -155,7 +152,7 @@
 						: '{currentPage} из {totalPages}'
 				"
 				:pt="{
-					root: 'px-0 w-full',
+					root: 'px-0 w-full border-t-[1px] border-[#AAAAAA]',
 					paginatorcontainer: 'w-full',
 					content: 'w-full',
 					prev: 'mr-auto',

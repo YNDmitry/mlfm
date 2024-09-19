@@ -29,6 +29,7 @@
 	<div>
 		<div
 			class="relative mt-8 flex flex-col gap-2 border-t-[1px] border-gray2 pb-[1.25rem] pt-[1.25rem]"
+			v-auto-animate
 		>
 			<div
 				class="flex justify-between"

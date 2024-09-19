@@ -14,7 +14,7 @@
 			:to="{
 				path: '/catalog',
 				query: {
-					category: [category.title],
+					category: category.title,
 				},
 			}"
 			class="flex h-11 items-center justify-center rounded-main border-[1px] border-black px-6 text-center transition-colors hover:bg-black hover:text-primary"
