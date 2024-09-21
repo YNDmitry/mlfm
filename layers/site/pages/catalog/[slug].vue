@@ -233,7 +233,7 @@
 					class="flex justify-center gap-7 max-tablet:flex-col max-tablet:gap-4"
 				>
 					<div
-						class="!sticky top-40 max-h-[500px] max-w-[700px] overflow-hidden max-laptop:!static max-laptop:w-full"
+						class="!sticky top-40 h-[600px] max-w-[700px] overflow-hidden max-laptop:!static max-laptop:w-full max-tablet:h-[500px]"
 					>
 						<Carousel
 							:value="imageUrls"
@@ -251,17 +251,17 @@
 										rotaterightbutton: 'hidden',
 										button: 'p-2 bg-black/10 transition-all',
 										toolbar: 'bg-black/50',
-										root: 'max-h-[500px] flex items-center max-w-[700px] text-primary',
+										root: 'h-[600px] max-tablet:h-[500px] flex items-center max-w-[700px] text-primary',
 										previewIcon:
 											'w-[40px] h-[40px] p-2 rounded-[100%] bg-black/30 transition-all',
 									}"
 								>
 									<template #image>
 										<NuxtImg
-											class="w-full object-cover"
+											class="h-[600px] w-full object-cover max-tablet:h-[500px]"
 											:src="carouselProps.data"
 											width="700"
-											height="500"
+											height="600"
 										/>
 									</template>
 									<template #preview="slotProps">
@@ -382,7 +382,7 @@
 
 	.p-button.p-component.p-button-icon-only.p-button-secondary.p-button-rounded.p-button-text.p-carousel-prev-button,
 	.p-button.p-component.p-button-icon-only.p-button-secondary.p-button-rounded.p-button-text.p-carousel-next-button {
-		@apply absolute bottom-0 top-0 z-50 h-full rounded-[0px] bg-primary/30 backdrop-blur-md;
+		@apply absolute bottom-0 top-0 z-50 h-full rounded-[0px] bg-primary/30 opacity-0 backdrop-blur-md transition-all max-tablet:opacity-100;
 	}
 
 	.p-button.p-component.p-button-icon-only.p-button-secondary.p-button-rounded.p-button-text.p-carousel-prev-button {
@@ -397,8 +397,12 @@
 	}
 
 	.p-carousel-content-container:hover
-		> .p-button.p-component.p-button-icon-only.p-button-secondary.p-button-rounded.p-button-text.p-carousel-prev-button,
-	.p-button.p-component.p-button-icon-only.p-button-secondary.p-button-rounded.p-button-text.p-carousel-next-button {
+		.p-button.p-component.p-button-icon-only.p-button-secondary.p-button-rounded.p-button-text.p-carousel-prev-button {
+		@apply opacity-100;
+	}
+
+	.p-carousel-content-container:hover
+		.p-button.p-component.p-button-icon-only.p-button-secondary.p-button-rounded.p-button-text.p-carousel-next-button {
 		@apply opacity-100;
 	}
 </style>
