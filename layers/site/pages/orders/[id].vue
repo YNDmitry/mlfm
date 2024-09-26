@@ -159,10 +159,17 @@
 								class="my-4"
 								:pt="{text: 'text-[0.7rem]'}"
 								>Оплата в процессе -
-								<NuxtLink :to="product?.payment[0]?.confirm_url" target="_blank"
+								<NuxtLink
+									:to="product?.payment[0]?.confirm_url"
+									target="_blank"
+									class="underline"
 									>Перейти к оплате</NuxtLink
-								></Message
-							>
+								>
+								<span class="block text-[0.7rem] text-black"
+									>Если вы видите это сообщение, но вы оплатили товар, то
+									напишите нам на почту либо в whatsapp</span
+								>
+							</Message>
 							<Message
 								v-if="product?.track_code"
 								severity="success"

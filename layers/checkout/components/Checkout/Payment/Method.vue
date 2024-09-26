@@ -18,12 +18,12 @@
 				value="sberbank"
 				label="SberPay"
 			/>
-			<CheckoutPaymentOption
+			<!-- <CheckoutPaymentOption
 				name="paymentMethod"
 				value="tinkoff_bank"
-				label="TinkoffPay"
+				label="T-Pay"
 			/>
-			<CheckoutPaymentOption name="paymentMethod" value="spb" label="СПБ" />
+			<CheckoutPaymentOption name="paymentMethod" value="sbp" label="СПБ" /> -->
 		</div>
 	</div>
 </template>

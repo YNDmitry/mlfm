@@ -1,3 +1,4 @@
+import {useWebsiteStore} from '../../../core/src/stores/index'
 export const useCheckoutStore = defineStore('checkoutStore', {
 	state: () => ({
 		items: null || [],
@@ -132,6 +133,11 @@ export const useCheckoutStore = defineStore('checkoutStore', {
 				}
 			} catch (error) {
 				console.error('Ошибка создания заказа:', error)
+				useWebsiteStore().showToast({
+					detail: error as string,
+					summary: 'Ошибка',
+					severity: 'error',
+				})
 				return null
 			}
 		},
