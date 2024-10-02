@@ -6,7 +6,9 @@
 			<slot />
 		</main>
 		<Footer />
-		<TheWhatsapp />
-		<PopupsTheNewsletter />
+		<ClientOnly>
+			<LazyTheWhatsapp />
+			<LazyPopupsTheNewsletter />
+		</ClientOnly>
 	</div>
 </template>

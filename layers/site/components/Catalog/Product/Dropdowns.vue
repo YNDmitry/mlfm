@@ -17,7 +17,6 @@
 		brand?: string
 	}
 	const props = defineProps<Props>()
-	console.log(props)
 </script>
 
 <template>

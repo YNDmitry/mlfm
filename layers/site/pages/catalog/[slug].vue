@@ -54,6 +54,7 @@
 					product?.value?.main_image?.id,
 			],
 			description: product?.value?.description,
+			sku: 'N/A',
 			brand: {
 				'@type': 'Brand',
 				name: product?.value?.brand?.title,
@@ -64,12 +65,17 @@
 				priceCurrency: 'RUB',
 				price: product?.value?.product_variants[0].price,
 				itemCondition: 'https://schema.org/NewCondition',
-				availability: 'https://schema.org/InStock',
+				availability: `https://schema.org/${product.value?.product_variants[0].availability === 'out_of_stock' ? 'OutOfStock' : 'InStock'}`, // Динамическая доступность
 				seller: {
 					'@type': 'Organization',
 					name: 'MLFM',
 				},
 			},
+			material: product?.value?.material?.title || 'N/A',
+			color: firstVariant.color_id?.title || 'N/A',
+			size: firstVariant.size_id?.small_title || 'N/A',
+			stone: product?.value?.stone?.title || 'N/A',
+			category: product?.value?.category?.title || 'N/A',
 		},
 	])
 
