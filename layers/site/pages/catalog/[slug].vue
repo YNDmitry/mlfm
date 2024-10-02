@@ -292,7 +292,7 @@
 								severity="success"
 								v-if="product?.is_preorder"
 								:pt="{
-									root: 'text-[0.75rem]',
+									root: 'text-[0.75rem] bg-black/80 text-primary outline-black',
 									text: 'flex items-center justify-center px-4',
 								}"
 								><span class="text-[0.75rem]">Предзаказ</span></Message
