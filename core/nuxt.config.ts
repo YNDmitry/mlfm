@@ -19,7 +19,12 @@ export default defineNuxtConfig({
 	css: ['./src/assets/css/global.css'],
 
 	routeRules: {
-		'/': {prerender: true},
+		'/': {
+			prerender: true,
+			cache: {
+				maxAge: 600000,
+			},
+		},
 		'/auth/*': {
 			ssr: false,
 			index: false,
