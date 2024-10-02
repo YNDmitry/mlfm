@@ -22,7 +22,7 @@ export default defineNuxtConfig({
 		'/': {
 			prerender: true,
 			cache: {
-				maxAge: 600000,
+				maxAge: 60 * 60 * 24 * 1,
 			},
 		},
 		'/auth/*': {
