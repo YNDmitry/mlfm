@@ -287,7 +287,16 @@
 							{{ product?.title }}
 						</h1>
 
-						<div class="flex justify-between gap-4">
+						<div class="flex items-center justify-between gap-4">
+							<Message
+								severity="success"
+								v-if="product?.is_preorder"
+								:pt="{
+									root: 'text-[0.75rem]',
+									text: 'flex items-center justify-center px-4',
+								}"
+								><span class="text-[0.75rem]">Предзаказ</span></Message
+							>
 							<span
 								class="max-tablet:text-[0.625rem] tablet:text-[0.875rem]"
 								v-if="currentPrice"

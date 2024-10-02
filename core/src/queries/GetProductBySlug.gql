@@ -6,6 +6,7 @@ fragment ProductFields on products {
 	brand {
 		title
 	}
+	is_preorder
 	product_variants {
 		id
 		color_id {

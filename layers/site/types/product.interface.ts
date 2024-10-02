@@ -9,6 +9,7 @@ export interface Product {
 	main_image?: {
 		id?: string
 	}
+	is_preorder?: boolean
 	images?: {
 		directus_files_id?: {
 			id: string

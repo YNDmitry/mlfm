@@ -16,7 +16,8 @@
 		category?: string
 		brand?: string
 	}
-	defineProps<Props>()
+	const props = defineProps<Props>()
+	console.log(props)
 </script>
 
 <template>
@@ -40,12 +41,16 @@
 						<span v-if="item.size_id"
 							>Размер: {{ item.size_id.small_title }}</span
 						>
-						<span v-if="stone">Камень: {{ stone }}</span>
-						<span v-if="material">Материал: {{ material }}</span>
 					</p>
 					<p class="pt-3 text-[.75rem]" v-if="description">
 						{{ description }}
 					</p>
+					<span v-if="stone" class="pt-3 text-[.75rem]"
+						>Камень: {{ stone }}</span
+					>
+					<span v-if="material" class="pt-3 text-[.75rem]"
+						>Материал: {{ material }}</span
+					>
 				</AccordionContent>
 			</AccordionPanel>
 			<AccordionPanel value="1" class="p-0">
