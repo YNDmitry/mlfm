@@ -21,9 +21,6 @@ export default defineNuxtConfig({
 	routeRules: {
 		'/': {
 			prerender: true,
-			cache: {
-				maxAge: 60 * 60 * 24 * 1,
-			},
 		},
 		'/auth/*': {
 			ssr: false,
