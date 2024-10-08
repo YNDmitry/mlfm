@@ -14,13 +14,15 @@ interface filterObject {
 	category: {
 		title: {}
 	}
-	price: {}
 	status: {}
 	stone: {
 		title: {}
 	}
 	material: {
 		title: {}
+	}
+	product_variants: {
+		_and: [{price: {_gte: string}}, {price: {_lte: string}}]
 	}
 }
 
@@ -76,14 +78,12 @@ export function useProducts() {
 			obj.value.category = {title: {_in: route.query.category}}
 		}
 
-		if (route.query.minPrice) {
-			obj.value.price = {_gte: route.query.minPrice}
-		}
-
-		if (route.query.maxPrice) {
-			obj.value.price = {
-				...(obj.value.price || {}),
-				_lte: route.query.maxPrice,
+		if (route.query.maxPrice || route.query.minPrice) {
+			obj.value.product_variants = {
+				_and: [
+					{price: {_gte: route.query.minPrice as string}},
+					{price: {_lte: route.query.maxPrice as string}},
+				],
 			}
 		}
 

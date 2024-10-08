@@ -122,6 +122,7 @@ export default defineNuxtConfig({
 				'TabPanels',
 				'TabPanel',
 				'Toast',
+				'TreeSelect',
 				'ScrollPanel',
 				'Drawer',
 				'Breadcrumb',

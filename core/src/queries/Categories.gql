@@ -1,6 +1,12 @@
 query Categories {
-	categories(filter: {status: {_eq: "published"}}) {
+	categories(
+		filter: {parent: {id: {_null: true}}, status: {_eq: "published"}}
+	) {
 		title
 		id
+		sub_categories {
+			title
+			id
+		}
 	}
 }

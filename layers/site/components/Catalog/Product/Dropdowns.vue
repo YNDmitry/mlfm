@@ -31,25 +31,27 @@
 					><span class="py-2">О продукте</span></AccordionHeader
 				>
 				<AccordionContent>
-					<p
-						class="flex flex-col gap-2 pt-3 text-[.75rem]"
-						v-for="(item, idx) in product_variants"
-						:key="idx"
-					>
-						<span v-if="item.color_id">Цвет: {{ item.color_id.title }}</span>
-						<span v-if="item.size_id"
-							>Размер: {{ item.size_id.small_title }}</span
+					<div class="flex flex-col">
+						<p
+							class="flex flex-col gap-2 pt-3 text-[.75rem]"
+							v-for="(item, idx) in product_variants"
+							:key="idx"
 						>
-					</p>
-					<p class="pt-3 text-[.75rem]" v-if="description">
-						{{ description }}
-					</p>
-					<span v-if="stone" class="pt-3 text-[.75rem]"
-						>Камень: {{ stone }}</span
-					>
-					<span v-if="material" class="pt-3 text-[.75rem]"
-						>Материал: {{ material }}</span
-					>
+							<span v-if="item.color_id">Цвет: {{ item.color_id.title }}</span>
+							<span v-if="item.size_id"
+								>Размер: {{ item.size_id.small_title }}</span
+							>
+						</p>
+						<p class="pt-3 text-[.75rem]" v-if="description">
+							{{ description }}
+						</p>
+						<span v-if="stone" class="pt-3 text-[.75rem]"
+							>Камень: {{ stone }}</span
+						>
+						<span v-if="material" class="pt-3 text-[.75rem]"
+							>Материал: {{ material }}</span
+						>
+					</div>
 				</AccordionContent>
 			</AccordionPanel>
 			<AccordionPanel value="1" class="p-0">
