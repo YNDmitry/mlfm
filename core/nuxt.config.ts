@@ -28,6 +28,15 @@ export default defineNuxtConfig({
 		'/': {
 			prerender: true,
 		},
+		'/about': {
+			prerender: true,
+		},
+		'/gift-card': {
+			prerender: true,
+		},
+		'/contact-us': {
+			prerender: true,
+		},
 		'/auth/*': {
 			ssr: false,
 			index: false,
