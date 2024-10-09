@@ -30,16 +30,6 @@ export const useCheckoutStore = defineStore('checkoutStore', {
 			checkout_session_id: '',
 		},
 	}),
-	getters: {
-		isOtpModalVisible: () => {
-			const route = useRoute()
-
-			if (route.query.otp === 'true') {
-				return true
-			}
-			return false
-		},
-	},
 	actions: {
 		handleDeliveryType() {
 			if (this.deliveryType !== 'self-delivery') {

@@ -14,6 +14,11 @@
 	const {otpResendTimeout, resume, pause} = useOtpTimer()
 	const otpQuery = useRouteQuery('otp')
 
+	const route = useRoute()
+	const isOtpModalVisible = computed(() => {
+		return route.query.otp === 'true'
+	})
+
 	const submitForm = handleSubmit(async (formData) => {
 		checkoutStore.updateOrderModel(formData)
 
@@ -61,7 +66,7 @@
 		<div class="container laptop:max-w-[512px]">
 			<Dialog
 				modal
-				v-model:visible="checkoutStore.isOtpModalVisible"
+				v-model:visible="isOtpModalVisible"
 				:closable="false"
 				:pt="{icons: 'hidden', root: 'max-tablet:w-[95%]'}"
 			>
