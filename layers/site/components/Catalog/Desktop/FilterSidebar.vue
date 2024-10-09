@@ -55,6 +55,8 @@
 			},
 		})
 	}
+
+	const currentCategory = ref(route.query.category)
 </script>
 
 <template>
@@ -79,11 +81,11 @@
 			</p>
 
 			<!-- Категория -->
-			<CatalogFilter
+			<CatalogFilterCategory
 				:filters="categories"
 				:title="`Категория`"
 				:routeTitle="'category'"
-				:currentFilter="route.query.category"
+				v-model="currentFilter"
 				@update:currentFilter="route.query.category = $event"
 			/>
 			<!-- /Категория -->

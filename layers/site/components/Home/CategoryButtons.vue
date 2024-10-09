@@ -17,7 +17,7 @@
 					category: category.title,
 				},
 			}"
-			class="flex h-11 items-center justify-center rounded-main border-[1px] border-black px-6 text-center transition-colors hover:bg-black hover:text-primary"
+			class="flex h-11 items-center justify-center rounded-main border-[1px] border-black px-6 text-center transition-colors hover:bg-black hover:text-primary max-tablet:h-8 max-tablet:font-montserrat max-tablet:text-[0.75rem] max-tablet:font-bold max-tablet:uppercase max-tablet:tracking-[3px]"
 		>
 			{{ category.title }}
 		</NuxtLink>

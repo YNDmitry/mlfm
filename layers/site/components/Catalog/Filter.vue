@@ -46,7 +46,6 @@
 			data-lenis-prevent
 		>
 			<Select
-				v-if="title !== 'Категория'"
 				@update:modelValue="(value: any) => update(value)"
 				:modelValue="currentFilter"
 				:options="filters.map((filter) => filter.title)"
@@ -58,50 +57,6 @@
 				class="flex cursor-pointer justify-between border-0 text-[0.625rem] shadow-none outline-none"
 			>
 			</Select>
-			<TreeSelect
-				v-if="title === 'Категория'"
-				:options="
-					filters.map((filters, filterIdx) => ({
-						key: filterIdx + '',
-						label: filters.title,
-						children: filters.sub_categories.map(
-							(sub_category, sub_category_idx) => ({
-								key: sub_category_idx + '',
-								label: sub_category.title,
-							}),
-						),
-					}))
-				"
-				:pt="pt"
-				@node-select="
-					(value: any) => {
-						update(value.label)
-						console.log(currentFilter)
-					}
-				"
-				:placeholder="title"
-				:append-to="'self'"
-				class="flex cursor-pointer justify-between border-0 text-[0.625rem] shadow-none outline-none"
-			>
-			</TreeSelect>
 		</div>
 	</div>
 </template>
-
-<style>
-	[data-pc-section='node'] {
-		@apply outline-none;
-	}
-
-	[data-pc-section='nodetogglebutton'] {
-		@apply h-5 w-5;
-	}
-
-	[data-pc-section='nodechildren'] {
-		@apply ml-2;
-	}
-
-	[data-pc-section='nodetogglebutton'] {
-		@apply p-1 hover:bg-darkGray2 hover:text-primary;
-	}
-</style>
