@@ -45,18 +45,15 @@
 
 	const isOnlyVirtual = ref(false)
 
-	onMounted(() => {
-		const gift = checkoutStore.items.filter(
-			(item: any) =>
-				item.type === 'gift-card' && item.category === 'Виртуальная',
-		)
-		if (checkoutStore.items.length === 1 && gift.length === 1) {
-			checkoutStore.deliveryType = 'self-delivery'
-			return (isOnlyVirtual.value = true)
-		} else {
-			return (isOnlyVirtual.value = false)
-		}
-	})
+	const gift = checkoutStore.items.filter(
+		(item: any) => item.type === 'gift-card' && item.category === 'Виртуальная',
+	)
+	if (checkoutStore.items.length === 1 && gift.length === 1) {
+		checkoutStore.deliveryType = 'self-delivery'
+		isOnlyVirtual.value = true
+	} else {
+		isOnlyVirtual.value = false
+	}
 </script>
 
 <template>
