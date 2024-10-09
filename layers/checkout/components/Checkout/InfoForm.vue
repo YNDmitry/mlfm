@@ -10,37 +10,18 @@
 	const isError = ref(false)
 	const isOtpSubmit = ref(false)
 
-	// Default values for development mode
-	const devDefaultValues = import.meta.env.DEV
-		? {
-				firstName: 'Иван',
-				lastName: 'Иванов',
-				thirdName: 'Иванович',
-				email: 'dredbads@gmail.com',
-				phone: '+7 (999) 123 45-67',
-				deliveryType: 'delivery',
-				city: 'Москва',
-				street: 'Ленина',
-				home: '1',
-				entrance: '2',
-				apartment: '3',
-				postCode: '0000',
-				offer: true,
-			}
-		: {}
-
-	const {handleSubmit} = useCheckoutForm(devDefaultValues)
+	const {handleSubmit} = useCheckoutForm()
 	const {otpResendTimeout, resume, pause} = useOtpTimer()
+	const otpQuery = useRouteQuery('otp')
 
 	const submitForm = handleSubmit(async (formData) => {
 		checkoutStore.updateOrderModel(formData)
 
-		isOtpSubmit.value = true
 		const response = await checkoutStore.sendCode(
 			checkoutStore.orderModel.email,
 		)
 		if (response) {
-			checkoutStore.isOtpVisible = true
+			otpQuery.value = 'true'
 			isOtpSubmit.value = false
 			showToast({
 				severity: 'success',
@@ -58,7 +39,7 @@
 	})
 
 	const submitOtp = async () => {
-		checkoutStore.isOtpVisible = true
+		otpQuery.value = 'true'
 		await checkoutStore.submitOrder()
 	}
 
@@ -83,14 +64,17 @@
 		<div class="container laptop:max-w-[512px]">
 			<Dialog
 				modal
-				v-model:visible="checkoutStore.isOtpVisible"
+				v-model:visible="checkoutStore.isOtpModalVisible"
 				:closable="false"
 				:pt="{icons: 'hidden', root: 'max-tablet:w-[95%]'}"
 			>
 				<div class="flex-column align-items-center flex flex-col text-center">
 					<div class="text-xl mb-2 font-bold">Подтвердите свою почту</div>
-					<p class="text-color-secondary mb-5 block">
+					<p class="text-color-secondary mb-5 flex flex-col">
 						Пожалуйста, введите код который был выслан вам на почту
+						<span class="text-[0.7rem] text-black/50"
+							>Не забудьте проверить папку спама</span
+						>
 					</p>
 					<InputOtp
 						v-model="checkoutStore.orderModel.otpCode"
@@ -158,7 +142,10 @@
 				/>
 				<CheckoutOrderComment />
 				<CheckoutPaymentMethod />
-				<CheckoutSubmitButton :isSubmitting="checkoutStore.isSubmitting" />
+				<CheckoutSubmitButton
+					:isSubmitting="checkoutStore.isSubmitting"
+					:submit="submitForm"
+				/>
 			</form>
 		</div>
 	</div>

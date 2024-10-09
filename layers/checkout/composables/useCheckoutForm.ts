@@ -1,7 +1,26 @@
 import {boolean, object, string} from 'yup'
 import {useForm} from 'vee-validate'
 
-export const useCheckoutForm = (devDefaultValues: any) => {
+export const useCheckoutForm = () => {
+	// Default values for development mode
+	const devDefaultValues = import.meta.env.DEV
+		? {
+				firstName: 'Иван',
+				lastName: 'Иванов',
+				thirdName: 'Иванович',
+				email: 'dredbads@gmail.com',
+				phone: '+7 (999) 123 45-67',
+				deliveryType: 'delivery',
+				city: 'Москва',
+				street: 'Ленина',
+				home: '1',
+				entrance: '2',
+				apartment: '3',
+				postCode: '0000',
+				offer: true,
+			}
+		: null
+
 	const schema = object({
 		firstName: string().required('Обязательное поле'),
 		lastName: string().required('Обязательное поле'),

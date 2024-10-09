@@ -3,6 +3,9 @@
 		isSubmitting: {
 			type: Boolean,
 		},
+		submit: {
+			type: Function,
+		},
 	})
 
 	const offer = useField('offer')
