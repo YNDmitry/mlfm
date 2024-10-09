@@ -72,9 +72,11 @@
 			>
 				<div class="flex-column align-items-center flex flex-col text-center">
 					<div class="text-xl mb-2 font-bold">Подтвердите свою почту</div>
-					<p class="text-color-secondary mb-5 flex flex-col">
+					<p
+						class="text-color-secondary mb-5 flex flex-col max-tablet:text-[0.7rem]"
+					>
 						Пожалуйста, введите код который был выслан вам на почту
-						<span class="text-[0.7rem] text-black/50"
+						<span class="text-[0.7rem] text-black/50 max-tablet:text-[0.5rem]"
 							>Не забудьте проверить папку спама</span
 						>
 					</p>

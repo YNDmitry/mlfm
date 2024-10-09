@@ -10,7 +10,7 @@ export const useCheckoutForm = () => {
 				thirdName: 'Иванович',
 				email: 'dredbads@gmail.com',
 				phone: '+7 (999) 123 45-67',
-				deliveryType: 'delivery',
+				// deliveryType: 'delivery',
 				city: 'Москва',
 				street: 'Ленина',
 				home: '1',
@@ -80,7 +80,7 @@ export const useCheckoutForm = () => {
 	const {handleSubmit, resetForm, errors, values} = useForm({
 		validationSchema: schema,
 		initialValues: {
-			deliveryType: 'delivery',
+			deliveryType: 'self-delivery',
 			offer: false,
 			...devDefaultValues,
 		},
