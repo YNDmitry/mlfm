@@ -16,6 +16,13 @@ export default defineNuxtConfig({
 					content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0',
 				},
 			],
+			script: [
+				{
+					src: 'https://umami.mlfm.store/script.js',
+					defer: true,
+					'data-website-id': 'e4df7543-c20b-4932-8489-bc29d2f0af2c',
+				},
+			],
 		},
 	},
 
@@ -106,20 +113,6 @@ export default defineNuxtConfig({
 		'nuxt-graphql-request',
 		'@nuxt/scripts',
 	],
-
-	scripts: {
-		globals: {
-			umami: [
-				{
-					src: 'https://umami.mlfm.store/script.js',
-					defer: true,
-					processTemplateParams: {
-						'data-website-id': 'e4df7543-c20b-4932-8489-bc29d2f0af2c',
-					},
-				},
-			],
-		},
-	},
 
 	image: {
 		format: ['webp'],
