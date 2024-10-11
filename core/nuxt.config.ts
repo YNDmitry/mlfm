@@ -28,6 +28,21 @@ export default defineNuxtConfig({
 		'/': {
 			prerender: true,
 		},
+		'/about': {
+			prerender: true,
+		},
+		'/gift-card': {
+			prerender: true,
+		},
+		'/contact-us': {
+			prerender: true,
+		},
+		'/docs/offer': {
+			prerender: true,
+		},
+		'/docs/privacy': {
+			prerender: true,
+		},
 		'/auth/*': {
 			ssr: false,
 			index: false,
@@ -89,7 +104,22 @@ export default defineNuxtConfig({
 		'@nuxtjs/device',
 		'nuxt-schema-org',
 		'nuxt-graphql-request',
+		'@nuxt/scripts',
 	],
+
+	scripts: {
+		globals: {
+			umami: [
+				{
+					src: 'https://umami.mlfm.store/script.js',
+					defer: true,
+					processTemplateParams: {
+						'data-website-id': 'e4df7543-c20b-4932-8489-bc29d2f0af2c',
+					},
+				},
+			],
+		},
+	},
 
 	image: {
 		format: ['webp'],
