@@ -31,7 +31,12 @@
 			<div
 				class="relative flex h-5 w-5 cursor-pointer items-center justify-center rounded-[100%] border-[1px] border-black"
 			></div>
-			<span class="text-[0.625rem]">Доставка (+500 ₽)</span>
+			<span class="text-[0.625rem]"
+				>Доставка
+				<span class="underline"
+					>(оплачивается покупателем наложенным платежом)</span
+				></span
+			>
 		</label>
 		<label class="flex cursor-pointer items-center gap-[0.625rem]">
 			<input

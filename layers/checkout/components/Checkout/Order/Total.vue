@@ -14,15 +14,9 @@
 			currency: 'RUB',
 		}).format(num as number)
 
-	const price: any = ref(props.totalPrice)
+	const price: Ref<number> = ref(props.totalPrice as number)
 
 	const checkoutStore = useCheckoutStore()
-
-	const newTotal = computed(() => {
-		return checkoutStore.deliveryType === 'delivery'
-			? (price.value += 500)
-			: (price.value = props.totalPrice)
-	})
 </script>
 
 <template>
@@ -31,13 +25,6 @@
 			class="relative mt-8 flex flex-col gap-2 border-t-[1px] border-gray2 pb-[1.25rem] pt-[1.25rem]"
 			v-auto-animate
 		>
-			<div
-				class="flex justify-between"
-				v-if="checkoutStore.deliveryType === 'delivery'"
-			>
-				<span>Доставка</span>
-				<span>500 ₽</span>
-			</div>
 			<div class="flex justify-between" v-if="discount">
 				<span>Скидка</span>
 				<span>{{ discount }}</span>
@@ -52,7 +39,7 @@
 			</div>
 			<div class="flex justify-between">
 				<span>Итого</span>
-				<span>{{ priceFormated(newTotal) }}</span>
+				<span>{{ priceFormated(price) }}</span>
 			</div>
 		</div>
 	</div>
